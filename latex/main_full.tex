@@ -1,0 +1,314 @@
+\documentclass[a4paper, 12pt, oneside, titlepage, openany]{book}
+
+% ── xcolor ANTES de todo para evitar option clash ─────────────────────────
+\PassOptionsToPackage{usenames,dvipsnames,table}{xcolor}
+\usepackage{xcolor}
+\usepackage{colortbl}   % \cellcolor, \rowcolor (explícito por robustez)
+
+% ── Encoding ──────────────────────────────────────────────────────────────
+\usepackage{cmap}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{mathptmx}   % Times New Roman
+
+% ── Idioma ────────────────────────────────────────────────────────────────
+\usepackage[english,spanish,es-nodecimaldot]{babel}
+\usepackage{csquotes}
+\addto\captionsspanish{
+    \renewcommand{\contentsname}{Índice}
+    \renewcommand{\listfigurename}{Lista de Figuras}
+    \renewcommand{\listtablename}{Lista de Tablas}
+    \renewcommand{\tablename}{TABLA}
+}
+
+% ── Bibliografía: norma ISO 690 (numérica) con biblatex-iso690 ──
+\usepackage[backend=biber, style=iso-numeric, sorting=none]{biblatex}
+\addbibresource{biblio.bib}
+% Estilo de cita único: número entre paréntesis en todo el documento.
+% iso-numeric ya usa paréntesis en \parencite; \textcite heredaba corchetes de
+% numeric.cbx, así que se redefinen sus macros con paréntesis.
+\makeatletter
+\renewbibmacro*{textcite}{%
+  \iffieldequals{namehash}{\cbx@lasthash}
+    {\setunit{\multicitedelim}}
+    {\ifnameundef{labelname}
+       {\printfield[citetitle]{labeltitle}}
+       {\printnames{labelname}}%
+     \setunit*{\printdelim{namelabeldelim}}%
+     \printtext{\bibopenparen}\global\booltrue{cbx:parens}%
+     \stepcounter{textcitecount}%
+     \savefield{namehash}{\cbx@lasthash}}%
+  \ifnumequal{\value{citecount}}{1}
+    {\usebibmacro{prenote}}
+    {}%
+  \usebibmacro{cite}%
+  \setunit{%
+    \ifbool{cbx:parens}
+      {\bibcloseparen\global\boolfalse{cbx:parens}}
+      {}%
+    \textcitedelim}}
+\renewbibmacro*{textcite:postnote}{%
+  \usebibmacro{postnote}%
+  \ifthenelse{\value{multicitecount}=\value{multicitetotal}}
+    {\setunit{}%
+     \printtext{%
+       \ifbool{cbx:parens}
+         {\bibcloseparen\global\boolfalse{cbx:parens}}
+         {}}}
+    {\setunit{%
+       \ifbool{cbx:parens}
+         {\bibcloseparen\global\boolfalse{cbx:parens}}
+         {}%
+       \textcitedelim}}}
+\makeatother
+% Permite cortar URLs largas de la bibliografía en cualquier carácter (evita overfull).
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\appto{\bibsetup}{\emergencystretch=1.5em}
+
+
+% ── Márgenes ──────────────────────────────────────────────────────────────
+\usepackage[top=2.9cm, bottom=2.5cm, left=2.7cm, right=2.3cm,
+            headheight=56pt, headsep=0.5cm]{geometry}
+
+% ── Encabezado y pie (fancyhdr: estándar y robusto) ──────────────────────
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{graphicx}
+
+% Logo institucional del encabezado (./images/UADE_LARGE.png): \IfFileExists
+% evita que la compilación se interrumpa si falta el archivo; en ese caso se
+% omite el logo.
+\newcommand{\uadelogo}{\IfFileExists{./images/UADE_LARGE.png}{\includegraphics[height=26pt]{./images/UADE_LARGE}}{}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\uadelogo}
+\fancyhead[C]{\small\parbox[b]{0.38\textwidth}{\centering
+    \MakeUppercase{ImprontIA}\\[1pt]
+    \MakeUppercase{Trazabilidad de autoría en evaluaciones digitales}}}
+\fancyhead[R]{\small\begin{tabular}[b]{@{}r@{}}Hackbartt, M.J.\\Ferreira, J.I.\end{tabular}}
+\fancyfoot[C]{Página \thepage\ de~\pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% La misma cabecera en páginas de inicio de capítulo
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[L]{\uadelogo}
+  \fancyhead[C]{\small\parbox[b]{0.38\textwidth}{\centering
+      \MakeUppercase{ImprontIA}\\[1pt]
+      \MakeUppercase{Trazabilidad de autoría en evaluaciones digitales}}}
+  \fancyhead[R]{\small\begin{tabular}[b]{@{}r@{}}Hackbartt, M.J.\\Ferreira, J.I.\end{tabular}}
+  \fancyfoot[C]{Página \thepage\ de~\pageref*{LastPage}}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% ── Seccionado ────────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\chapter}{\bfseries\fontsize{14pt}{14pt}\selectfont\color{accent}}{\thechapter}{1em}{}[{\color{accent}\vspace{-2pt}\hrule height 1.1pt}]
+\titlespacing*{\chapter}{0pt}{12pt}{8pt}
+\titleformat{\section}{\bfseries\fontsize{14pt}{14pt}\selectfont}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titleformat{\subsection}{\bfseries\fontsize{14pt}{14pt}\selectfont}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titleformat{\subsubsection}{\bfseries\fontsize{14pt}{14pt}\selectfont}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% ── Tabla de contenidos ───────────────────────────────────────────────────
+% Sin líneas viudas ni huérfanas
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\usepackage{tocloft}
+\cftsetindents{table}{0em}{4em}
+\renewcommand{\cfttoctitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+\setlength{\cftbeforetoctitleskip}{12pt}
+\setlength{\cftaftertoctitleskip}{6pt}
+\renewcommand{\cftlottitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+\renewcommand{\cftloftitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+\setlength{\cftbeforeloftitleskip}{12pt}
+\setlength{\cftafterloftitleskip}{6pt}
+\cftsetindents{figure}{0em}{4em}
+\setlength{\cftbeforelottitleskip}{12pt}
+\setlength{\cftafterlottitleskip}{6pt}
+
+% ── Floats y tablas ───────────────────────────────────────────────────────
+\usepackage[section,above,below]{placeins}
+\setlength{\textfloatsep}{5pt}
+\usepackage{array, longtable, booktabs, tabularx, multirow, multicol}
+\renewcommand{\arraystretch}{1.3}
+\renewcommand{\thetable}{\thechapter.\Roman{table}}
+
+% ── Rotación de elementos ─────────────────────────────────────────────────
+\usepackage{rotating}
+
+% ── Interlineado ──────────────────────────────────────────────────────────
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Párrafos ──────────────────────────────────────────────────────────────
+\usepackage{indentfirst}
+\setlength{\parindent}{36pt}
+
+% ── Listas ────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\renewcommand{\labelitemii}{\textasteriskcentered}
+\renewcommand{\labelitemiii}{-}
+
+% ── Tipografía ────────────────────────────────────────────────────────────
+\usepackage{microtype}
+\usepackage[normalem]{ulem}
+
+% ── Matemática ────────────────────────────────────────────────────────────
+\usepackage{amsmath, amsfonts, amssymb}
+
+% ── Notas de edición ──────────────────────────────────────────────────────
+\usepackage[textsize=small]{todonotes}
+\setlength{\marginparwidth}{2cm}
+\newcommand{\NotaEdit}[1]{\todo[color=gray!20,inline]{\textbf{Nota:} #1}}
+
+% ── Hipervínculos — todo negro ────────────────────────────────────────────
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}  % permite cortar URLs largas en cualquier carácter
+
+% ── PDF páginas ───────────────────────────────────────────────────────────
+\usepackage{pdfpages}
+\usepackage{adjustbox}   % recorte relativo de capturas (\adjustimage)
+
+% ── Recursos visuales (cajas, colores, reglas) ─────────────────────────────
+\usepackage{pifont}          % \ding{55} para marcas
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins,breakable}
+% Bibliotecas TikZ de los diagramas funcionales (figures/diagramas/*.tex, T25).
+% Se cargan una sola vez aquí: dentro de un entorno figure la carga quedaría local.
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.multipart}
+\definecolor{accent}{RGB}{22,64,109}      % azul académico para títulos y cajas
+\definecolor{accentlight}{RGB}{223,232,242}
+\definecolor{warnbg}{RGB}{255,244,229}
+\definecolor{warnline}{RGB}{184,110,15}
+
+% Regla fina bajo section/subsection (estética tipo paper científico)
+\titleformat{\section}{\bfseries\fontsize{14pt}{14pt}\selectfont\color{accent}}{\thesection}{1em}{}[{\color{accent}\vspace{-4pt}\hrule height 0.6pt}]
+\titleformat{\subsection}{\bfseries\fontsize{14pt}{14pt}\selectfont\color{accent}}{\thesubsection}{1em}{}
+
+% Caja de "resumen del capítulo" (estilo abstract de paper)
+\newtcolorbox{chapterabstract}{
+    breakable, enhanced, colback=accentlight, colframe=accent,
+    boxrule=0.5pt, left=10pt, right=10pt, top=6pt, bottom=6pt,
+    fontupper=\itshape\small,
+    before upper={\textbf{\upshape\color{accent}Resumen del capítulo.\ }}
+}
+
+% Caja de "hallazgo clave" / punto destacado
+\newtcolorbox{keyfinding}[1]{
+    breakable, enhanced, colback=accentlight, colframe=accent,
+    boxrule=0.6pt, left=10pt, right=10pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries, coltitle=white, colbacktitle=accent,
+    title={#1}
+}
+
+% Caja de "decisión abierta / pendiente" (tono ámbar de advertencia)
+\newtcolorbox{opendecision}[1]{
+    breakable, enhanced, colback=warnbg, colframe=warnline,
+    boxrule=0.6pt, left=10pt, right=10pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries, coltitle=white, colbacktitle=warnline,
+    title={#1}
+}
+
+% Estilo de encabezado de tabla reutilizable
+\newcommand{\tblhead}{\rowcolor{accent!15}}
+
+% Caja de cita de persona (User Research) / ficha de entrevista
+\newtcolorbox{pquote}{
+    breakable, enhanced, colback=gray!6, colframe=gray!45,
+    boxrule=0.4pt, left=10pt, right=10pt, top=5pt, bottom=5pt,
+    fontupper=\itshape
+}
+\newtcolorbox{ficha}[1]{
+    breakable, enhanced, colback=accentlight, colframe=accent,
+    boxrule=0.5pt, left=8pt, right=8pt, top=5pt, bottom=5pt,
+    fonttitle=\bfseries, coltitle=white, colbacktitle=accent,
+    title={#1}
+}
+% Caja liviana con barra lateral, para entradas repetidas de codebook/anexos
+\newtcolorbox{infobox}{
+    breakable, enhanced, colback=gray!5, colframe=gray!5,
+    borderline west={2.5pt}{0pt}{accent},
+    left=10pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+% ── Gráficos de datos (pgfplots; también carga TikZ para los diagramas) ──
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Referencia al capítulo de negocio (Investigador, T28): si la etiqueta
+% ch:negocio todavía no existe, se escribe el nombre del capítulo sin número.
+\newcommand{\refnegocio}{\ifcsname r@ch:negocio\endcsname Capítulo~\ref{ch:negocio}\else capítulo de modelo de negocio\fi}
+
+% Versión evaluada del MVP (Apéndice de reproducibilidad). El hash del commit se
+% completa al etiquetar la versión en el repositorio.
+\newcommand{\versionmvp}{v1.0}
+% Versión del repositorio sobre la que se corrió el recuento vigente de pruebas.
+\newcommand{\commitpruebas}{v1.0}
+\newcommand{\repomvp}{\url{https://github.com/01juanf/ImprontIA-PFI}}
+
+% ── Config del template ───────────────────────────────────────────────────
+\input{config/environment}
+
+% ════════════════════════════════════════════════════════════════
+\begin{document}
+
+% NOTA: no se incluye chapters/faltantes_50.tex (solo se usó en el seguimiento
+% intermedio).
+
+\input{chapters/title}
+\newpage
+\input{chapters/summary}
+\newpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+\input{chapters/chapter01}
+\input{chapters/chapter_antecedentes}
+\input{chapters/chapter16_userresearch}
+\input{chapters/chapter13_requerimientos}
+\input{chapters/chapter15_tecnologias}
+\input{chapters/chapter17_implementacion}
+\input{chapters/chapter18_piloto_etica}
+\input{chapters/chapter18b_viabilidad}
+\input{chapters/chapter20_negocio}
+\input{chapters/chapter19_conclusiones}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Referencias}
+\printbibliography[title=Referencias]
+
+\appendix
+\input{chapters/appendix/apx_intro}
+\newpage
+\input{chapters/appendix/apx_personas}
+\newpage
+\input{chapters/appendix/apx_encuesta}
+\newpage
+\input{chapters/appendix/apx_entrevistas}
+\newpage
+\input{chapters/appendix/apx_cualitativo}
+\newpage
+\input{chapters/appendix/apx_triangulacion}
+\newpage
+\input{chapters/appendix/apx_reproducibilidad}
+\newpage
+\input{chapters/appendix/apx_modelo_financiero}
+
+\end{document}

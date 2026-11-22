@@ -1,0 +1,82 @@
+% Diagrama de clases del dominio (UML simplificado) del MVP de ImprontIA (T25, rúbrica 3.2).
+% Transcripción de TESIS/pfi/mvp/backend/app/models.py tras el Incremento 16 (verificado el 22/10/2026): mismos nombres de
+% clase y atributo que el código (SQLAlchemy); "FK" = clave foránea; propiedades
+% derivadas entre «». Las clases de unión materializan las relaciones N:M.
+% Uso:
+%   \begin{figure}[h!]
+%     \centering
+%     \input{figures/diagramas/clases_dominio}
+%     \caption{...}\label{fig:diag_clases}
+%   \end{figure}
+% IMPORTANTE: las bibliotecas TikZ se cargan UNA vez en el preámbulo de main_full.tex:
+%   \usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.multipart}
+\begin{tikzpicture}[
+    font={\linespread{1}\tiny},
+    execute at begin node={\hyphenpenalty=10000\def\arraystretch{1.05}},
+    clase/.style={rectangle split, rectangle split parts=2, rectangle split part align={center,left},
+                  rectangle split part fill={accentlight,white}, draw=accent, anchor=north,
+                  align=left, inner xsep=3pt, inner ysep=2pt, font={\linespread{1}\tiny\ttfamily}},
+    rel/.style={draw=black!70, semithick},
+    mult/.style={font={\linespread{1}\tiny}, inner sep=1pt, fill=white},
+    rol/.style={font={\linespread{1}\tiny\itshape}, inner sep=1pt, fill=white, text=black!70},
+]
+% \cls{nombre}{atributos separados por \\}: encabezado + compartimento de atributos
+\def\cls#1#2{{\normalfont\bfseries\scriptsize #1}\nodepart{second}#2}
+
+% ---------------- Fila 1 ----------------
+\node[clase] (user) at (0,0) {\cls{User}{%
+  id: str (UUID)\\ email: str\\ password\_hash: str\\ role: UserRole\\ created\_at: datetime}};
+\node[clase] (exam) at (5.4,0) {\cls{Exam}{%
+  id: str\\ teacher\_id: FK User\\ name: str\\ join\_code: str\\ prompt\_text: str\\ created\_at: datetime\\ cerrada\_at: datetime | None\\
+  «current\_policy»\\ «policy\_version»}};
+\node[clase] (pol) at (10.9,0) {\cls{PolicyCapture}{%
+  id: str\\ exam\_id: FK Exam\\ info\_text: str\\ rules\_text: str\\ allowed\_signals: JSON\\ created\_at: datetime\\ retencion\_dias: int | None}};
+
+% ---------------- Fila 2 ----------------
+\node[clase] (rev) at (0,-4.1) {\cls{Review}{%
+  id: str\\ session\_id: FK Session\\ teacher\_id: FK User\\ action: ReviewAction\\ notes: str | None\\ created\_at: datetime}};
+\node[clase] (sess) at (5.4,-4.1) {\cls{Session}{%
+  id: str\\ exam\_id: FK Exam\\ policy\_id: FK PolicyCapture\\ participant\_id: str\\ session\_type: str\\
+  status: SessionStatus\\ context: JSON\\ session\_token: str\\ consent\_given: bool\\ needs\_review: bool\\
+  next\_event\_seq: int\\ last\_batch\_seq: int\\ started\_at, ended\_at: datetime\\ condicion\_simulacion: str | None\\ procesada\_at: datetime | None\\ estado\_modelo: str\\ respuesta: str | None}};
+\node[clase] (ev) at (10.9,-4.1) {\cls{Event}{%
+  id: str\\ session\_id: FK Session\\ seq: int\\ client\_t: float\\ server\_received\_at: datetime\\
+  type: str\\ item\_ref: str | None\\ payload: JSON}};
+
+% ---------------- Fila 3 ----------------
+\node[clase] (rind) at (0,-10.3) {\cls{ReviewIndicator}{%
+  id: str\\ review\_id: FK Review\\ indicator\_id: FK Indicator}};
+\node[clase] (ind) at (5.4,-10.3) {\cls{Indicator}{%
+  id: str\\ session\_id: FK Session\\ kind: str\\ level: IndicatorLevel\\ description: str\\
+  explanation: JSON\\ computed\_at: datetime\\ estado: str}};
+\node[clase] (met) at (10.9,-8.75) {\cls{Metric}{%
+  id: str\\ session\_id: FK Session\\ name: str\\ value: float\\ item\_ref: str | None\\ computed\_at: datetime\\ evento\_desde, evento\_hasta: int | None}};
+\node[clase] (imet) at (10.9,-11.6) {\cls{IndicatorMetric}{%
+  id: str\\ indicator\_id: FK Indicator\\ metric\_id: FK Metric}};
+
+% ---------------- Enumeraciones ----------------
+\node[draw=black!45, fill=black!3, anchor=north west, align=left, inner sep=3pt, text width=54mm] (enums) at (-1.85,-12.55) {%
+  \textbf{Enumeraciones}\\
+  \texttt{UserRole}: docente\\
+  \texttt{SessionStatus}: active, ended\\
+  \texttt{IndicatorLevel}: low, medium, high\\
+  \texttt{ReviewAction}: marked\_reviewed, additional\_validation\\[2pt]
+  \textbf{Valores admitidos (str)}\\
+  \texttt{Session.estado\_modelo}: pendiente, no\_evaluada, sin\_marca, con\_marca\\
+  \texttt{Indicator.estado}: pendiente, atendido};
+
+% ---------------- Asociaciones (multiplicidades del lado de cada clase) ----------------
+\draw[rel] (user.east) -- node[rol, above] {docente} node[mult, pos=0.12, below] {1} node[mult, pos=0.85, below] {0..*} (exam.west |- user.east);
+\draw[rel] (exam.east |- pol.west) -- node[rol, above] {versiones} node[mult, pos=0.15, below] {1} node[mult, pos=0.85, below] {1..*} (pol.west);
+\draw[rel] (exam.south) -- node[mult, pos=0.2, right] {1} node[mult, pos=0.8, right] {0..*} (sess.north);
+\draw[rel] (pol.south) -- ++(0,-0.35) -| node[rol, pos=0.25, above] {fijada al iniciar} node[mult, pos=0.08, below] {1} node[mult, pos=0.92, right] {0..*} ($(sess.north)+(1.2,0)$);
+\draw[rel] (user.south) -- node[rol, right, pos=0.45] {docente} node[mult, pos=0.15, left] {1} node[mult, pos=0.85, left] {0..*} (rev.north);
+\draw[rel] (sess.west |- rev.east) -- node[mult, pos=0.15, above] {1} node[mult, pos=0.85, above] {0..*} (rev.east);
+\draw[rel] (sess.east |- ev.west) -- node[mult, pos=0.15, above] {1} node[mult, pos=0.85, above] {0..*} (ev.west);
+\draw[rel] (sess.south) -- node[mult, pos=0.2, right] {1} node[mult, pos=0.85, right] {0..*} (ind.north);
+\draw[rel] ($(sess.south east)+(-0.25,0)$) |- node[mult, pos=0.1, right] {1} node[mult, pos=0.92, above] {0..*} (met.west);
+\draw[rel] (met.south) -- node[mult, pos=0.2, right] {1} node[mult, pos=0.8, right] {0..*} (imet.north);
+\draw[rel] (ind.east |- imet.west) -- node[mult, pos=0.12, above] {1} node[mult, pos=0.88, above] {0..*} (imet.west);
+\draw[rel] (rev.south) -- node[mult, pos=0.1, right] {1} node[mult, pos=0.9, right] {0..*} (rind.north);
+\draw[rel] (ind.west |- rind.east) -- node[mult, pos=0.12, above] {1} node[mult, pos=0.88, above] {0..*} (rind.east);
+\end{tikzpicture}

@@ -1,0 +1,65 @@
+# Blueprint de Render — TODO EN RENDER, PLANES PAGOS (ver mvp/docs/despliegue.md, camino B1).
+# Va en la RAÍZ del repo. Render: New > Blueprint > elegir el repo y la rama `produccion`.
+#
+# Por qué pago: la Postgres `free` de Render VENCE a los 30 días (14 de gracia y después se borra
+# con los datos) y el web service `free` se duerme tras 15 min sin tráfico (~1 min en despertar).
+# Con estos planes la base no vence (y tiene backups de Render) y la API no se duerme.
+#
+# Para la variante con la base en Neon/Supabase (sin Postgres de Render): render.externo.yaml
+# (al crear el Blueprint, poner ese nombre en "Blueprint Path").
+#
+# Nombres de plan: verificados en https://render.com/docs/blueprint-spec el 30/10/2026
+# (web: free, 0.5c-512mb, 1c-2g, …; base: free, 0.1c-256mb, 0.5c-1g, …). Los nombres viejos
+# (`starter`, `basic-256mb`) no figuran en la spec actual: no usarlos.
+#
+# VOLVER A FREE (solo para pruebas: la base se borra a los 30 + 14 días):
+#   - databases > improntia-db  > plan: free   (y borrar la línea diskSizeGB)
+#   - services  > improntia-api > plan: free
+# De free a pago se puede pasar después desde el panel de Render sin perder datos,
+# mientras la base free no haya vencido.
+
+databases:
+  - name: improntia-db
+    plan: 0.1c-256mb            # la Postgres paga más chica (free: vence a los 30 días)
+    diskSizeGB: 1               # 1 GB (1 o múltiplos de 5); se puede agrandar después, no achicar
+    postgresMajorVersion: "16"  # la versión con la que se probó la suite (no se puede cambiar después)
+    region: virginia            # la MISMA región que la API (no hay Sudamérica; no se cambia después)
+    databaseName: improntia
+    user: improntia
+
+services:
+  - type: web
+    name: improntia-api
+    runtime: docker
+    plan: 0.5c-512mb            # el web service pago más chico: no se duerme (free: se duerme a los 15 min)
+    region: virginia            # misma región que la base
+    rootDir: mvp/backend        # dockerfilePath es relativo a rootDir (docs de Render, "Monorepo support")
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: IMPRONTIA_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:           # URL interna de la base de Render (no sale a internet)
+          name: improntia-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true     # Render genera un secreto aleatorio y lo guarda
+      - key: CORS_ORIGINS
+        sync: false             # se completa a mano: URL del dashboard, p. ej. https://improntia-dashboard.onrender.com
+      - key: SEED_TEACHERS
+        sync: false             # se completa a mano: mail:clave,mail:clave
+
+  - type: web
+    name: improntia-dashboard
+    runtime: static             # los sitios estáticos no tienen plan: son gratis y no se duermen
+    rootDir: mvp/dashboard
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite           # SPA: todas las rutas sirven index.html (React Router)
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false             # se completa a mano: URL de la API, p. ej. https://improntia-api.onrender.com

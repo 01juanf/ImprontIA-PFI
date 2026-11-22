@@ -1,0 +1,130 @@
+\chapter{Viabilidad legal y técnica}
+\label{ch:viabilidad}
+
+\begin{chapterabstract}
+Este capítulo analiza si ImprontIA puede usarse legalmente y construirse y operarse técnicamente en el contexto previsto: una institución de educación superior argentina que la adopta para sus evaluaciones digitales. En lo legal, se identifica el marco aplicable (Ley~25.326 y su reglamentación, criterios de la autoridad de aplicación y el Convenio~108 modernizado), se distribuyen las responsabilidades entre la institución y el proveedor, se contrasta cada exigencia con lo que el diseño resuelve y con las condiciones que completan su cumplimiento, y se formula un \textbf{descargo de responsabilidad de uso}. En lo técnico, se muestra que la solución funciona con \textbf{\textit{hardware} de uso general} y se detallan los requisitos de infraestructura, el volumen de datos esperado y los riesgos técnicos con su mitigación. Se concluye que ambas viabilidades son favorables bajo condiciones explícitas y alcanzables, que definen el paso del MVP a un uso en producción.
+\end{chapterabstract}
+
+\section{Viabilidad legal}
+\label{sec:viab_legal}
+
+\subsection{Marco normativo aplicable}
+
+Los metadatos de interacción que registra ImprontIA se asocian a la sesión de un estudiante determinable y constituyen, por lo tanto, datos personales en los términos de la Ley~25.326 de Protección de los Datos Personales (art.~2)~\parencite{Argentina2000Ley25326}, reglamentada por el Decreto~1558/2001~\parencite{Argentina2001Dec1558}. Completan el marco los criterios orientadores de la Agencia de Acceso a la Información Pública (AAIP), autoridad de aplicación~\parencite{AAIP2019Res4}, su guía de evaluación de impacto en la protección de datos~\parencite{AAIP2020GuiaEIPD} y la Ley~27.699, que aprobó el Protocolo modificatorio del Convenio para la protección de las personas respecto del tratamiento automatizado de datos de carácter personal~\parencite{Argentina2022Ley27699}. El tratamiento normativo de la privacidad como dimensión del problema ya se desarrolló en el marco teórico (Sección~\ref{sec:privacidad}); aquí se lo aplica al producto.
+
+\subsection{Roles y responsabilidades}
+
+En un uso institucional, la universidad decide para qué y cómo se tratan los datos de sus estudiantes: es la \textbf{responsable} de la base de datos. ImprontIA, ofrecida como servicio, trata esos datos por cuenta de la institución y en los términos que esta fija, lo que corresponde a la figura de prestación de servicios de tratamiento de datos por cuenta de terceros que contempla el artículo~25 de la ley: los datos no pueden aplicarse a una finalidad distinta de la contratada ni cederse, y deben destruirse al terminar la prestación, salvo que la institución autorice expresamente su conservación, ante la posibilidad de encargos posteriores, por un plazo de hasta dos años~\parencite{Argentina2000Ley25326}. Esta distribución tiene dos consecuencias prácticas. Primero, la inscripción de la base ante la autoridad de aplicación cuando corresponda (art.~21), la información a los estudiantes (art.~6) y la definición de los plazos de conservación (art.~4) son obligaciones de la institución, que ImprontIA debe facilitar pero no puede reemplazar. Segundo, la relación entre ambas partes necesita un contrato que fije finalidad, medidas de seguridad, lugar de alojamiento y destino de los datos al finalizar.
+
+\subsection{Exigencias legales y respuesta del diseño}
+
+La Tabla~\ref{tab:viab_legal} contrasta los principios de la ley con las decisiones de diseño ya tomadas en los Capítulos~\ref{ch:requerimientos} y~\ref{ch:tecnologias} y con su estado en el MVP (Capítulo~\ref{ch:implementacion}).
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{7cm} >{\raggedright\arraybackslash}p{3.6cm}}
+    \caption{Principios de la Ley~25.326 y respuesta del diseño de ImprontIA}
+    \label{tab:viab_legal} \\
+    \toprule
+    \tblhead \textbf{Principio} & \textbf{Respuesta del diseño} & \textbf{Estado} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Principio} & \textbf{Respuesta del diseño} & \textbf{Estado} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    Calidad y finalidad (art.~4): datos adecuados, pertinentes y no excesivos para una finalidad determinada & Captura limitada a las señales habilitadas en la política de cada evaluación, validada también en el servidor; eventos sin contenido escrito ni del portapapeles y sin identificar las teclas pulsadas; la respuesta entregada se guarda como entrega del examen y no se analiza; finalidad única: apoyar la revisión docente (RF04, RNF01). & Implementado (Sección~\ref{sec:impl_limitaciones}) \\
+    Consentimiento libre, expreso e informado (art.~5) & Casilla de consentimiento obligatoria antes de iniciar la sesión, registrada por la plataforma (RF02). & Implementado \\
+    Información previa al titular (art.~6) & Qué se registra, con qué finalidad y bajo qué reglas se muestra antes del consentimiento, desde la misma versión de política que gobierna la captura (RF01, RNF02). & Implementado; para producción se agregan el responsable y los derechos del titular \\
+    Seguridad y confidencialidad (arts.~9 y~10) & Comunicación cifrada, base no expuesta a los clientes, acceso docente restringido a sus evaluaciones, \textit{token} opaco por sesión (RNF03). & Implementado; auditoría de seguridad prevista antes de producción \\
+    Derechos de acceso, rectificación y supresión (arts.~14 y~16) & El modelo vincula todos los registros a la sesión; el docente puede eliminar una sesión a pedido del estudiante y su propia cuenta con todos sus datos (RF17). & Supresión implementada; el procedimiento para ejercer los derechos lo fija la institución \\
+    Conservación limitada (art.~4) & Plazo de conservación en la política de captura, con un tope de doce meses, y purga automática de las sesiones vencidas (RNF10). & Implementado (Sección~\ref{sec:impl_retencion}) \\
+    Valoraciones personales automatizadas (art.~20) & Ningún indicador es una decisión: no hay columna de veredicto y toda conclusión la registra un docente (RF10). & Implementado \\
+\end{longtable}
+}
+
+El último principio merece atención especial. El artículo~20 de la ley establece que las decisiones judiciales y los actos administrativos que impliquen una valoración de conductas humanas no pueden tener como único fundamento el resultado de un tratamiento informatizado de datos que defina el perfil de la persona~\parencite{Argentina2000Ley25326}. En una universidad nacional, una sanción disciplinaria puede revestir el carácter de acto administrativo y quedar alcanzada de forma directa; en una universidad privada, la regla opera como principio orientador. A ello se suma el Convenio modernizado, que reconoce el derecho a no quedar sujeto a decisiones que afecten significativamente a la persona basadas únicamente en un tratamiento automatizado sin que se tenga en cuenta su punto de vista~\parencite{Argentina2022Ley27699}. El principio de diseño de ImprontIA, según el cual un indicador nunca es un veredicto y la revisión siempre la realiza un docente, es la condición que hace legalmente viable el producto, y no solo una preferencia ética.
+
+\subsection{Alojamiento de los datos}
+
+Si la plataforma se aloja en un proveedor de infraestructura fuera del país, el tratamiento implica una transferencia internacional de datos, que el artículo~12 de la ley restringe a países u organismos que ofrezcan niveles de protección adecuados~\parencite{Argentina2000Ley25326}; el artículo~12 de su reglamentación admite además la transferencia cuando el titular la consiente expresamente o cuando cláusulas contractuales garantizan una protección equivalente~\parencite{Argentina2001Dec1558}. Esta exigencia se considera en la elección del proveedor de infraestructura: debe optarse por alojamiento en jurisdicciones con protección adecuada o por cláusulas contractuales que la garanticen, y el empaquetado en contenedores permite cumplir con cualquiera de las dos alternativas sin cambiar el \textit{software}, incluido el alojamiento en servidores de la propia institución.
+
+\subsection{Evaluación de impacto y referencias internacionales}
+
+Antes de un uso real corresponde realizar una evaluación de impacto en la protección de datos, porque la guía de la AAIP identifica el tratamiento automatizado mediante algoritmos o inteligencia artificial como un motivo para hacerla~\parencite{AAIP2020GuiaEIPD}. Como referencia, en la Unión Europea un sistema de IA destinado a detectar conductas prohibidas de estudiantes durante exámenes se considera de alto riesgo y exige gestión de riesgos, documentación técnica y supervisión humana~\parencite{UE2024AIAct, UE2026AIOmnibus}. Esa normativa no rige en Argentina, pero sus exigencias son coherentes con el diseño y orientan la documentación que debería acompañar al producto si se ofreciera fuera del país.
+
+\subsection{Propiedad intelectual de los componentes}
+
+El MVP se construye exclusivamente con componentes de código abierto (React, FastAPI, SQLAlchemy, scikit-learn y PostgreSQL, entre otros) distribuidos bajo licencias permisivas que admiten su uso comercial, con la obligación de conservar los avisos de autoría y de licencia. No se incorporan conjuntos de datos ni modelos preentrenados de terceros: el modelo se entrena con las sesiones de cada evaluación. No existen, por lo tanto, restricciones de licencia que impidan explotar el producto.
+
+\subsection{Descargo de responsabilidad de uso}
+
+\begin{keyfinding}{Descargo de responsabilidad}
+ImprontIA es una herramienta de apoyo a la revisión académica. Sus indicadores señalan patrones de interacción atípicos respecto de una población de referencia y \textbf{no constituyen prueba de fraude, plagio, uso de inteligencia artificial ni de ninguna otra conducta}, ni acreditan la autoría de una respuesta o la identidad de quien la escribió. Un indicador puede originarse en causas legítimas, como una interrupción, una dificultad técnica, una discapacidad o un estilo de trabajo distinto, y la ausencia de indicadores tampoco garantiza que no haya existido una conducta indebida. Toda decisión académica o disciplinaria corresponde a las personas e instancias que la institución designe, conforme a sus procedimientos, y no puede fundarse únicamente en los indicadores de la plataforma. La institución que adopta ImprontIA es responsable de informar a los estudiantes, de definir qué señales se habilitan en cada evaluación y por cuánto tiempo se conservan, y del uso que haga de la evidencia. Los proveedores de ImprontIA no asumen responsabilidad por decisiones tomadas a partir de los indicadores sin la revisión humana que el sistema exige.
+\end{keyfinding}
+
+Este descargo debe figurar en los términos de uso del servicio, en la información que se muestra al estudiante antes de consentir y en la interfaz docente junto a cada indicador, donde el MVP ya incluye una advertencia sobre el carácter orientativo de los indicadores.
+
+\subsection{Conclusión sobre la viabilidad legal}
+
+El uso de ImprontIA es legalmente viable en Argentina siempre que la institución actúe como responsable de la base de datos, informe y obtenga el consentimiento de los estudiantes, y mantenga la revisión humana como fundamento de toda decisión. El diseño resuelve la minimización, el consentimiento, la información previa sobre qué se registra y con qué finalidad, la seguridad básica y la ausencia de valoraciones automatizadas, y el MVP ya implementa la eliminación de datos a pedido y la purga automática al vencer el plazo de conservación. El cumplimiento para un uso en producción se completa con tres tareas acotadas, que no exigen cambios de arquitectura: agregar a la vista del estudiante la identificación del responsable y los derechos del titular, definir con la institución el procedimiento para ejercer los derechos de acceso, rectificación y supresión, y realizar la evaluación de impacto en la protección de datos, que la inversión inicial del \refnegocio\ ya presupuesta. La viabilidad legal es, por lo tanto, factible y queda condicionada a completar esas tareas.
+
+\section{Viabilidad técnica}
+\label{sec:viab_tecnica}
+
+\subsection{\textit{Hardware}}
+
+ImprontIA es un producto exclusivamente de \textit{software} y \textbf{no requiere fabricar ni adquirir \textit{hardware} específico}. Del lado del estudiante solo se necesita una computadora con teclado y un navegador web moderno: la captura usa eventos nativos del navegador y no exige instalar programas ni extensiones, ni usar cámara o micrófono (Sección~\ref{sec:impl_captura_embebida}). Del lado del docente, cualquier navegador. Del lado del servidor, capacidad de cómputo genérica, disponible en cualquier proveedor de infraestructura o en los servidores de la propia institución.
+
+\subsection{Requisitos de infraestructura}
+
+La Tabla~\ref{tab:viab_infra} resume los componentes que deben desplegarse. Todos cuentan con descriptores de contenedores Docker, con la configuración verificada (Apéndice~\ref{apx:reproducibilidad}), y la base de datos es un motor relacional de uso general, por lo que la solución es independiente del proveedor de infraestructura. Los costos asociados a esta infraestructura se cuantifican en el análisis económico-financiero del \refnegocio, con servidores dedicados. La demostración del MVP está desplegada en servicios en la nube con planes gratuitos (Vercel y Neon; Sección~\ref{sec:impl_acceso}); esos planes no se usan para costear la producción porque están pensados para uso no comercial, suspenden los recursos por inactividad y limitan la capacidad de cómputo y de almacenamiento.
+
+\begin{table}[h!]
+    \caption{Componentes de infraestructura requeridos}
+    \label{tab:viab_infra}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.6cm}}
+        \toprule
+        \tblhead \textbf{Componente} & \textbf{Requisito} & \textbf{Observación} \\
+        \midrule
+        \textit{Frontend} & Archivos estáticos servidos por HTTPS. & Puede alojarse en un servidor web o una red de distribución de contenido. \\
+        \textit{Backend} & Contenedor con Python 3.11 o 3.12 y las dependencias fijadas; CPU de uso general, sin aceleradores gráficos. & El procesamiento ocurre al finalizar cada sesión, no en tiempo real. \\
+        Base de datos & PostgreSQL con almacenamiento persistente y copias de seguridad. & Accesible solo desde el backend. \\
+        Certificado y dominio & Certificado TLS para HTTPS. & Requisito de seguridad (RNF03). \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Carga de procesamiento y volumen de datos}
+
+El componente más exigente es el modelo poblacional, que se entrena una sola vez al cerrar cada evaluación, sobre las métricas de todas sus sesiones. Se trata de un problema pequeño: cinco variables y, en una cátedra, decenas o cientos de sesiones; en las mediciones de rendimiento, el cierre de una evaluación de 500 sesiones tomó entre 8 y 10\,s en una computadora de dos núcleos (Sección~\ref{sec:eval_rnf}). Como referencia de escala, la evaluación sintética del Capítulo~\ref{ch:evaluacion} procesa en cada repetición 80 sesiones completas, evento por evento, y entrena el modelo con 40, y sus 20 repeticiones, junto con el barrido de dificultad y el análisis de sensibilidad, se ejecutan con un único comando en una computadora de uso general, sin aceleradores gráficos. La capacidad de cómputo genérica alcanza, por lo tanto, sin infraestructura de aprendizaje automático dedicada.
+
+El volumen de datos crece con la tabla de eventos. Cada pulsación genera dos eventos y el movimiento del mouse se muestrea como máximo cada 100\,ms, lo que acota el mouse a 36.000 eventos por hora de interacción continua; en la prueba interna, una sesión con una respuesta de unos 130 caracteres generó 301 eventos (Sección~\ref{sec:eval_resultados_prueba}). Es un volumen manejable para una base relacional indexada por sesión y secuencia, como prevé el modelo de datos (Sección~\ref{sec:modelo_datos}), y la purga de las sesiones vencidas (RNF10) limita su acumulación. En una sola máquina, con PostgreSQL, el sistema sostuvo 200 sesiones activas enviando lotes sin errores y consultas docentes por debajo de 2\,s, mientras que la entrega simultánea de 200 sesiones superó la cota de 5\,s (Sección~\ref{sec:eval_rnf}), un caso que orienta las mitigaciones de la Tabla~\ref{tab:viab_riesgos}; las pruebas de carga en la infraestructura de producción forman parte de la puesta en producción (RNF09).
+
+\subsection{Riesgos técnicos y mitigación}
+
+\begin{table}[h!]
+    \caption{Riesgos técnicos identificados y su mitigación}
+    \label{tab:viab_riesgos}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Riesgo} & \textbf{Mitigación} \\
+        \midrule
+        Pérdida de eventos por conexión inestable & Envío por lotes con reintentos de espera exponencial, \textit{buffer} local acotado, registro del \textit{buffer} agotado y de las fallas persistentes, y recepción idempotente, verificados con cortes de red simulados (Sección~\ref{sec:eval_prueba_red}); persistencia del \textit{buffer} en el navegador prevista como mejora. \\
+        Diferencias entre navegadores y equipos & Uso exclusivo de eventos estándar de la plataforma web; la latencia de medición observada en la prueba interna (Sección~\ref{sec:eval_prueba_interna}) obliga a calibrar los umbrales con equipos reales. \\
+        Evaluaciones con pocas sesiones & El modelo se activa desde 20 sesiones; por debajo de ese mínimo operan las reglas por umbral. \\
+        Observación limitada a la pestaña de la plataforma & La plataforma aloja la superficie de respuesta; la integración con otras plataformas de examen se plantea como extensión (Sección~\ref{sec:concl_trabajo_futuro}). \\
+        Escalabilidad medida solo en una máquina; entrega simultánea por encima de la cota & Monolito modular separable en componentes y base relacional estándar; \textit{pool} de conexiones dimensionado; puntaje del modelo por lotes y pruebas de carga en la infraestructura de producción antes de un despliegue amplio (RNF09). \\
+        Dependencias desactualizadas & Versiones fijadas y empaquetado en contenedores; actualización de las dependencias que hoy no admiten Python 3.13. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Conclusión sobre la viabilidad técnica}
+
+La solución es técnicamente factible con tecnologías maduras y de uso general: funciona sin \textit{hardware} específico, sin infraestructura de aprendizaje automático y sin instalaciones en los equipos de los estudiantes, y el MVP ya demuestra la cadena completa funcionando de punta a punta en un navegador automatizado sobre el sistema real, con escenarios guionados (Capítulo~\ref{ch:evaluacion}). El paso a producción se completa con las pruebas de carga en la infraestructura de producción, una auditoría de seguridad, la calibración con datos reales y el despliegue en un servicio en la nube, para el que el MVP ya cuenta con una guía y un \textit{script} de verificación. Los riesgos identificados son de madurez y no de factibilidad, se abordan con trabajo de ingeniería conocido y la inversión inicial del \refnegocio\ contempla la puesta en producción y la auditoría. La viabilidad técnica es, por lo tanto, factible y queda condicionada a completar esas tareas.

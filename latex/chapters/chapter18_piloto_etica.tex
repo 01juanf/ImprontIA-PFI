@@ -1,0 +1,675 @@
+\chapter{Evaluación del MVP y consideraciones éticas}
+\label{ch:evaluacion}
+\label{ch:piloto}
+\begingroup\sloppy
+% Dentro de este capítulo, permitir cortes de línea después de \_ en nombres de código largos.
+\let\EvalOrigUnderscore\_
+\renewcommand{\_}{\EvalOrigUnderscore\allowbreak}
+
+\begin{chapterabstract}
+Este capítulo presenta la evaluación del MVP descripto en el Capítulo~\ref{ch:implementacion} y las consideraciones éticas que la enmarcan. La evaluación combina seis técnicas: las \textbf{pruebas automatizadas} del \textit{backend} y del \textit{frontend}; una \textbf{evaluación con datos sintéticos} generados por el equipo, que mide el \textit{pipeline} real frente a anomalías de forma conocida y el aporte del modelo sobre las reglas; una \textbf{prueba interna de punta a punta} que ejecuta escenarios guionados sobre el sistema completo en un navegador; una \textbf{prueba de resiliencia} que verifica el comportamiento de la captura ante fallas de red; \textbf{mediciones de rendimiento} de los RNF07, RNF09 y RNF11; y una \textbf{evaluación experta y automatizada de usabilidad y navegabilidad}. Se describen el conjunto de datos sintético (origen, parámetros y pertinencia), la convención de métricas, los resultados con su incertidumbre y las decisiones que se tomaron a partir de ellos. Los resultados constituyen una validación técnica: verifican el procedimiento de medición y el funcionamiento interno del sistema, y no estiman el desempeño de detección con estudiantes reales. El capítulo trata además las consideraciones éticas y normativas de la plataforma, distingue tres niveles ---MVP implementado, validación técnica realizada y uso institucional no habilitado--- y deja planteado como trabajo futuro el diseño metodológico del piloto con voluntarios.
+\end{chapterabstract}
+
+\section{Objetivo y alcance de la evaluación}
+\label{sec:eval_objetivo}
+
+El Capítulo~\ref{ch:tecnologias} estableció que el componente de IA es un requisito del MVP y previó validarlo con un conjunto de datos propio, recolectado con voluntarios en una evaluación simulada (Sección~\ref{sec:dataset_piloto}). La validación técnica de este trabajo se realizó con datos sintéticos y pruebas automatizadas sobre el sistema real, que permiten medir el comportamiento de cada nivel con etiquetas conocidas; el piloto con voluntarios es la etapa siguiente (Sección~\ref{sec:eval_piloto_futuro}), y la Sección~\ref{sec:eval_niveles} delimita qué nivel de validación alcanzan los resultados de este capítulo.
+
+La evaluación responde cuatro preguntas:
+
+\begin{enumerate}[label=\textbf{E\arabic*.}]
+    \item \textbf{Procedimiento de medición.} ¿El cálculo de métricas de detección (falsas alarmas, anomalías no detectadas, AUC-ROC, EER y precisión promedio) funciona de punta a punta sobre el mismo código que usa la plataforma, de forma reproducible?
+    \item \textbf{Comportamiento del \textit{pipeline}.} Frente a anomalías de forma conocida, ¿qué detecta cada nivel del \textit{pipeline} (reglas por umbral y modelo poblacional), con qué tasa de falsas alarmas y a partir de qué magnitud de desvío?
+    \item \textbf{Funcionamiento del sistema completo.} ¿La cadena captura en el navegador $\to$ envío por lotes $\to$ persistencia $\to$ métricas $\to$ indicadores $\to$ vista docente produce el resultado esperado ante cada comportamiento guionado, sin que los eventos contengan el texto de la respuesta (RF03, RF08, RNF01, RNF04)? ¿Y conserva la evidencia, o registra su pérdida, cuando la conexión del estudiante falla durante la sesión (RNF04, RNF07)?
+    \item \textbf{Rendimiento e interfaz.} ¿El sistema cumple las cotas de tiempo de los RNF07, RNF09 y RNF11? ¿Qué problemas de usabilidad, navegabilidad y accesibilidad pueden detectarse sin participantes, antes de una prueba con usuarios?
+\end{enumerate}
+
+Las respuestas a E1 y E2 provienen de la evaluación con datos sintéticos (Sección~\ref{sec:eval_sintetica}); la respuesta a E3, de la prueba interna (Sección~\ref{sec:eval_prueba_interna}) y de la prueba de resiliencia (Sección~\ref{sec:eval_prueba_red}); la respuesta a E4, de las mediciones de rendimiento (Sección~\ref{sec:eval_rnf}) y de la evaluación experta y automatizada de usabilidad (Sección~\ref{sec:eval_usabilidad}).
+
+\section{Estrategia de pruebas}
+\label{sec:eval_estrategia}
+
+La verificación del MVP se organizó en niveles, desde la función aislada hasta el sistema completo, siguiendo la previsión de la Sección ``Calidad, pruebas y despliegue'' del Capítulo~\ref{ch:tecnologias}. La Tabla~\ref{tab:eval_estrategia} resume la técnica usada en cada nivel, qué verifica y su resultado.
+
+\begin{table}[h!]
+    \caption{Técnicas de prueba aplicadas al MVP y resultado obtenido}
+    \label{tab:eval_estrategia}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.5cm}}
+        \toprule
+        \tblhead \textbf{Técnica} & \textbf{Qué verifica} & \textbf{Resultado} \\
+        \midrule
+        Pruebas unitarias (\texttt{pytest} y \texttt{node -{}-test}) & Cálculo de métricas, reglas por umbral, modelo poblacional, validación de eventos y cálculo de las métricas de evaluación en el \textit{backend}; cola de sincronización, emparejamiento de pulsaciones, borrador de la respuesta y textos en el \textit{frontend}; cada uno de forma aislada. & 178 aprobadas: 142 del \textit{backend} y 36 del \textit{frontend}; una prueba adicional de PostgreSQL se omite en la corrida sobre SQLite (Sección~\ref{sec:impl_pruebas}). \\
+        Pruebas de integración de la API (\texttt{pytest}) & Ciclo de vida de la sesión, consentimiento, idempotencia, aislamiento entre docentes, versionado de política, trazabilidad, estado de revisión, cierre de la evaluación, eliminación y purga, sobre SQLite y PostgreSQL~16. & En verde (Sección~\ref{sec:impl_pruebas}). \\
+        Evaluación con datos sintéticos & Métricas de detección del \textit{pipeline} real frente a sesiones normales y anómalas generadas por el equipo con parámetros declarados, y aporte incremental del modelo sobre las reglas con el protocolo de cohorte al cierre (E1, E2). & 20 repeticiones y 30 semillas con valores fijos (Secciones~\ref{sec:eval_sintetica} y~\ref{sec:eval_aporte_modelo}). \\
+        Prueba funcional de sistema (\textit{end-to-end}) & Cadena completa desde la vista del estudiante hasta la vista docente y la base de datos, con escenarios guionados ejecutados por automatización en un navegador (E3). & 47 de 48 sesiones conformes en cuatro corridas; 12 de 12 sobre la versión final del código (Sección~\ref{sec:eval_prueba_interna}). \\
+        Prueba de resiliencia ante fallas de red (\textit{end-to-end}) & Espera exponencial de los reintentos, conservación de lo capturado sin conexión, registro del \textit{buffer} agotado y de las fallas persistentes, y su presentación al docente, con cortes de red simulados desde el navegador (E3). & 3 de 3 escenarios conformes (Sección~\ref{sec:eval_prueba_red}). \\
+        Mediciones de rendimiento & Tiempos de procesamiento, de cierre y de consulta, concurrencia y costo de la captura en el navegador, sobre el sistema real con sesiones sintéticas (E4). & RNF07 cumple; RNF11 cumple en procesamiento y consultas, excepto con 200 entregas simultáneas, que superan la cota de 5\,s y registraron errores; RNF09 cumple con PostgreSQL y no con SQLite (Sección~\ref{sec:eval_rnf}). \\
+        Evaluación experta y automatizada de usabilidad & Recorridos instrumentados de tareas, accesibilidad WCAG~2.1 AA con axe-core, heurísticas de Nielsen y comportamiento en pantallas angostas (E4). & 14 problemas priorizados; correcciones aplicadas y verificadas por la suite automatizada (Sección~\ref{sec:eval_usabilidad}). \\
+        Revisión visual del recorrido & Que cada pantalla del recorrido funcional muestre lo esperado; se hace sobre capturas generadas automáticamente. & Dos defectos de interfaz detectados y corregidos (Sección~\ref{sec:impl_recorrido}). \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Ninguna de estas técnicas involucró personas. Las pruebas de usabilidad con docentes y estudiantes y las pruebas de carga en la infraestructura de producción requieren, respectivamente, participantes y un entorno de despliegue que exceden el alcance de este trabajo, y forman parte del trabajo futuro (Sección~\ref{sec:eval_niveles}).
+
+\section{Métricas}
+\label{sec:eval_metricas}
+
+\subsection{Convención}
+
+En biometría, la tasa de falsa aceptación (FAR) y la de falso rechazo (FRR) se definen respecto de un usuario legítimo que debe ser aceptado \parencite{Jain2004, Teh2013}. En ImprontIA el caso ``positivo'' es la sesión marcada como atípica, lo que invierte el sentido intuitivo de ``aceptar''. Para evitar ambigüedades se adopta la convención de \textcite{Mehta2025}, que estudia un problema análogo, y se nombra cada tasa por su consecuencia:
+
+\begin{itemize}
+    \item \textbf{Tasa de anomalías no detectadas} (FAR): proporción de sesiones anómalas que el sistema no marca.
+    \item \textbf{Tasa de falsas alarmas} (FRR): proporción de sesiones normales que el sistema marca. Es la métrica más relevante desde el punto de vista ético, porque cada falsa alarma es una sesión de un estudiante que no hizo nada indebido y que el sistema pone frente a un docente.
+\end{itemize}
+
+\subsection{Métricas por nivel del \textit{pipeline}}
+
+\begin{table}[h!]
+    \caption{Métricas de evaluación y nivel del \textit{pipeline} al que se aplican}
+    \label{tab:eval_metricas}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.4cm}}
+        \toprule
+        \tblhead \textbf{Métrica} & \textbf{Qué mide} & \textbf{Aplica a} \\
+        \midrule
+        Falsas alarmas y anomalías no detectadas & Errores en el punto de operación configurado. & Cada regla, el modelo y la marca combinada de ``requiere revisión''. \\
+        EER & Punto de la curva donde ambas tasas se igualan; resume una configuración en un número \parencite{Teh2013, Killourhy2009}. & Modelo poblacional (tiene un \textit{score} continuo). \\
+        AUC-ROC & Probabilidad de que una sesión anómala reciba un \textit{score} más atípico que una normal, independiente del umbral \parencite{Fawcett2006}. & Modelo poblacional. \\
+        Precisión promedio (AP) & Resumen de la curva precisión-exhaustividad, más informativa que la ROC cuando las anomalías son minoría \parencite{Saito2015}. & Modelo poblacional. \\
+        Conformidad de escenario & Si una sesión guionada generó exactamente los indicadores de regla esperados. & Prueba interna. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Las reglas por umbral producen una marca binaria y no un \textit{score}, por lo que para ellas solo se informan las dos tasas en el umbral vigente. El modelo, en cambio, produce un \textit{score} continuo sobre el que se pueden trazar las curvas. El reporte sigue los principios de la norma ISO/IEC 19795-1 para pruebas de desempeño biométrico: declarar el protocolo, la población, la cantidad de sesiones por condición y la forma en que se fijaron los umbrales \parencite{ISOIEC2021_19795}.
+
+Hay que tener presente un efecto del diseño: con el parámetro de proporción esperada de atípicos en 0{,}1, el modelo marca por construcción alrededor del 10\,\% de su población de entrenamiento (Sección~\ref{sec:impl_isolation_forest}). La tasa de falsas alarmas del modelo en el punto de operación del MVP está, por lo tanto, condicionada por ese valor, y por eso se informan también la AUC y la EER, que no dependen del punto de operación.
+
+\section{Evaluación con datos sintéticos}
+\label{sec:eval_sintetica}
+
+\subsection{\textit{Dataset} sintético: origen, características y pertinencia}
+\label{sec:eval_dataset}
+
+\textbf{Origen.} El conjunto de datos no proviene de personas ni de terceros: lo produce un generador desarrollado para este proyecto (Incremento~6, Sección~\ref{sec:impl_incrementos}), que crea sesiones completas \textbf{compuestas por eventos crudos}, en el mismo formato que emite el módulo de captura del navegador; como la captura real, el generador no incluye la identidad de las teclas, y una prueba automatizada verifica que las métricas no dependen de ese dato (Sección~\ref{sec:impl_pruebas}). Por eso cada sesión sintética recorre el mismo cálculo de métricas, las mismas reglas y el mismo modelo que una sesión real: la función que decide los indicadores es una sola y la usan tanto la API como la evaluación.
+
+\textbf{Pertinencia.} Se eligió un conjunto de datos sintético por tres motivos. Primero, no se encontró un conjunto de datos público de eventos de interacción en exámenes, en español, etiquetado según conducta y con el formato de eventos de ImprontIA, y el conjunto de datos propio previsto dependía del piloto. Segundo, para calcular tasas de error hace falta saber de antemano qué sesiones son anómalas; un examen real sin etiquetas solo admite análisis exploratorios \parencite{Akcapinar2025}. Tercero, la generación controlada permite variar la magnitud de una anomalía y observar a partir de qué punto el modelo la distingue, algo imposible con datos recolectados. La contracara es conocida: las anomalías sintéticas reflejan los supuestos de quien las genera y no necesariamente las conductas reales \parencite{Emmott2013, Campos2016}. Por eso los parámetros se declaran completos, como recomienda la literatura sobre construcción de \textit{benchmarks} de anomalías \parencite{Emmott2013}, y los resultados se interpretan como validación del procedimiento y del comportamiento del \textit{pipeline}.
+
+\textbf{Características.} La Tabla~\ref{tab:eval_generador} resume la población normal y los cuatro perfiles anómalos. Los valores de la población normal se eligieron para producir variación plausible entre participantes y dentro de cada sesión, sin calibrarlos con mediciones de personas.
+
+\begin{table}[h!]
+    \caption{Parámetros del generador de sesiones sintéticas}
+    \label{tab:eval_generador}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Tipo de sesión} & \textbf{Parámetros} \\
+        \midrule
+        Normal & Tiempo de pulsación (\textit{dwell}) con media por participante $\sim N(95, 15)$\,ms y desvío dentro de la sesión entre 15 y 30\,ms; tiempo entre teclas (\textit{flight}) con media $\sim N(160, 35)$\,ms y desvío entre 40 y 80\,ms; entre 250 y 499 pulsaciones; entre 60 y 149 movimientos de mouse, separados entre 100 y 400\,ms, con velocidad media $\sim N(0{,}6;\ 0{,}15)$\,px/ms y coeficiente de variación 0{,}3; cambios de pestaña $\sim$ Poisson(0{,}6) con duración exponencial de 4\,s de media; pegado pequeño (5 a 59 caracteres) con probabilidad 0{,}2; copias $\sim$ Poisson(0{,}3). \\
+        \texttt{pegado\_masivo} & Sesión normal con el 30\,\% de las pulsaciones (mínimo 30) y entre 1 y 3 pegados que suman entre 400 y 2000 caracteres, por encima del umbral de 200 de la regla de volumen pegado. \\
+        \texttt{cambio\_pestana} & Sesión normal con entre 6 y 12 cambios de pestaña, por encima del umbral de 5, con una duración media fuera de la pestaña de entre 5 y 15\,s. \\
+        \texttt{tecleo\_automatizado} & Sesión normal con un desvío de la duración de las pulsaciones dentro de la sesión de entre 0,5 y 3\,ms y del tiempo entre teclas de entre 0,5 y 5\,ms, por debajo del umbral de 5\,ms de la regla de ritmo uniforme. \\
+        \texttt{ritmo\_distinto} & Medias de pulsación, tiempo entre teclas y velocidad de mouse desplazadas $k$ desvíos poblacionales (15\,ms, 35\,ms y 0{,}15\,px/ms por desvío; $k=2$ por defecto y de 0 a 3 en el barrido), sumado a la variación normal entre participantes y \textbf{sin ninguna señal discreta}: solo puede verlo el modelo. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Los tres primeros perfiles se construyeron alrededor de los umbrales de las reglas de la Tabla~\ref{tab:impl_umbrales}: que las reglas los detecten verifica que se disparan cuando corresponde (Sección~\ref{sec:eval_amenazas}). El perfil informativo para el componente de IA es \texttt{ritmo\_distinto}.
+
+\subsection{Protocolo}
+
+Cada repetición sigue un protocolo inductivo, que corresponde al modo de operación del MVP hasta el Incremento~15: se genera una población de 40 sesiones normales de una misma evaluación, se entrena el modelo una vez sobre ella y se procesan 80 sesiones de prueba disjuntas, 40 normales y 40 anómalas repartidas en partes iguales entre los cuatro perfiles. Los umbrales de las reglas y la proporción esperada de atípicos se evalúan tal como están en el código, \textbf{sin ajustarlos mirando las etiquetas}, para no sobrestimar el desempeño \parencite{Goldstein2016}. El protocolo se repite 20 veces con semillas fijas distintas y se informa la media, el desvío entre repeticiones y el intervalo entre los percentiles 2{,}5 y 97{,}5, porque con muestras de decenas de sesiones una estimación puntual tiene barras de error amplias \parencite{Varoquaux2018}. Se agregan dos análisis: un barrido de la magnitud del desvío del perfil \texttt{ritmo\_distinto} entre 0 y 3 desvíos poblacionales, y un análisis de sensibilidad con la población de entrenamiento contaminada con un 10\,\% de sesiones anómalas, como ocurriría en un examen real. El procedimiento completo es reproducible con un único comando del repositorio (Apéndice~\ref{apx:reproducibilidad}) y se ejecutó con scikit-learn 1.5.2. Desde el Incremento~16 el modelo opera de forma transductiva, sobre la cohorte completa al cerrar la evaluación. Por eso la evaluación sintética se organiza en tres partes: el protocolo inductivo, que valida el procedimiento y caracteriza cada nivel del \textit{pipeline} (Sección~\ref{sec:eval_resultados_sinteticos}); su réplica con el protocolo de cohorte al cierre (Sección~\ref{sec:eval_replica_cierre}); y la medición del aporte incremental del modelo sobre las reglas con ese protocolo y prevalencias más cercanas a un uso real (Sección~\ref{sec:eval_aporte_modelo}).
+
+\subsection{Resultados}
+\label{sec:eval_resultados_sinteticos}
+
+La Tabla~\ref{tab:eval_global} muestra los errores en el punto de operación con el protocolo inductivo, sobre datos sintéticos generados por el equipo (no sobre personas), para el \textit{pipeline} completo (una sesión se marca si la marca alguna regla o el modelo) y para cada nivel por separado.
+
+\begin{table}[h!]
+    \caption[Errores en el punto de operación con datos sintéticos]{Errores en el punto de operación con datos sintéticos (20 repeticiones; media $\pm$ desvío [percentiles 2,5--97,5])}
+    \label{tab:eval_global}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{4.4cm}}
+        \toprule
+        \tblhead \textbf{Componente} & \textbf{Anomalías no detectadas} & \textbf{Falsas alarmas} \\
+        \midrule
+        \textit{Pipeline} completo (reglas o modelo) & 3,6\,\% $\pm$ 4,2 [0,0--12,6] & 11,7\,\% $\pm$ 6,7 [1,2--25,1] \\
+        Solo reglas por umbral & 25,0\,\% $\pm$ 0,0 & 0,0\,\% $\pm$ 0,0 \\
+        Solo modelo poblacional & 65,0\,\% $\pm$ 10,8 [51,2--85,1] & 11,7\,\% $\pm$ 6,7 [1,2--25,1] \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+La Tabla~\ref{tab:eval_perfiles} desagrega la detección por perfil. Las reglas detectan siempre los tres perfiles construidos alrededor de sus umbrales y nunca el perfil \texttt{ritmo\_distinto}; el modelo, a la inversa, detecta poco los tres primeros y el 85,5\,\% del último. Sobre las sesiones normales, ninguna de las cuatro reglas produjo falsas alarmas en ninguna repetición: todas las falsas alarmas del \textit{pipeline} provienen del modelo.
+
+\begin{table}[h!]
+    \caption{Detección por perfil de anomalía con datos sintéticos (media $\pm$ desvío entre 20 repeticiones)}
+    \label{tab:eval_perfiles}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{2cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{2.5cm}}
+        \toprule
+        \tblhead \textbf{Perfil} & \textbf{\textit{Pipeline}} & \textbf{Reglas} & \textbf{Modelo} & \textbf{AUC-ROC modelo} \\
+        \midrule
+        \texttt{pegado\_masivo} & 100\,\% & 100\,\% & 19,0\,\% $\pm$ 19,4 & 0,55 $\pm$ 0,12 \\
+        \texttt{cambio\_pestana} & 100\,\% & 100\,\% & 11,5\,\% $\pm$ 10,9 & 0,48 $\pm$ 0,11 \\
+        \texttt{tecleo\_automatizado} & 100\,\% & 100\,\% & 24,0\,\% $\pm$ 13,5 & 0,72 $\pm$ 0,05 \\
+        \texttt{ritmo\_distinto} & 85,5\,\% $\pm$ 16,7 & 0\,\% & 85,5\,\% $\pm$ 16,7 & 0,94 $\pm$ 0,04 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Sobre el \textit{score} continuo del modelo, considerando todas las anomalías sintéticas juntas, se obtuvo una AUC-ROC de 0,67 $\pm$ 0,05, una precisión promedio de 0,70 $\pm$ 0,05 y una EER de 0,39 $\pm$ 0,05. Ese valor global es bajo porque mezcla perfiles que el modelo no tiene forma de ver: el pegado y los cambios de pestaña no alteran las cinco métricas continuas con las que trabaja (Sección~\ref{sec:impl_isolation_forest}). La medida informativa para el modelo es el desempeño frente a \texttt{ritmo\_distinto}, que la Figura~\ref{fig:eval_barrido} y la Tabla~\ref{tab:eval_barrido} muestran en función de la magnitud del desvío.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.82\textwidth, height=6.2cm,
+            xlabel={Desvío de la sesión respecto de la población (desvíos poblacionales)},
+            ylabel={Valor},
+            xmin=0, xmax=3, ymin=0, ymax=1.05,
+            xtick={0,0.5,1,1.5,2,3},
+            ytick={0,0.2,0.4,0.6,0.8,1},
+            /pgf/number format/use comma,
+            legend style={at={(0.5,-0.32)}, anchor=north, legend columns=3}, legend cell align=left,
+            legend style={font=\small},
+            grid=major, grid style={gray!25},
+            label style={font=\small}, tick label style={font=\small},
+        ]
+            \addplot[color=accent, mark=*, thick] coordinates {(0,0.493) (0.5,0.556) (1,0.699) (1.5,0.839) (2,0.932) (3,0.989)};
+            \addlegendentry{AUC-ROC}
+            \addplot[color=warnline, mark=square*, thick] coordinates {(0,0.508) (0.5,0.465) (1,0.345) (1.5,0.236) (2,0.136) (3,0.048)};
+            \addlegendentry{EER}
+            \addplot[color=gray, mark=triangle*, thick, dashed] coordinates {(0,0.140) (0.5,0.200) (1,0.361) (1.5,0.612) (2,0.841) (3,0.985)};
+            \addlegendentry{Proporción detectada}
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Barrido de dificultad del perfil \texttt{ritmo\_distinto}]{Barrido de dificultad del perfil \texttt{ritmo\_distinto} (solo modelo poblacional, datos sintéticos, media de 20 repeticiones). Con desvío nulo el modelo no distingue la sesión (AUC $\approx$ 0,5); la separación crece de forma monótona con el desvío. Fuente: elaboración propia a partir de la evaluación con datos sintéticos.}
+    \label{fig:eval_barrido}
+\end{figure}
+
+\begin{table}[h!]
+    \caption[Barrido de dificultad del perfil \texttt{ritmo\_distinto}]{Barrido de dificultad del perfil \texttt{ritmo\_distinto} (solo modelo; media $\pm$ desvío entre 20 repeticiones)}
+    \label{tab:eval_barrido}
+    \centering
+    \small
+    \begin{tabular}{l l l l l}
+        \toprule
+        \tblhead \textbf{Desvío} & \textbf{AUC-ROC} & \textbf{EER} & \textbf{Detección} & \textbf{Falsas alarmas} \\
+        \midrule
+        0 & 0,49 $\pm$ 0,07 & 0,51 $\pm$ 0,06 & 14,0\,\% & 11,7\,\% \\
+        0,5 & 0,56 $\pm$ 0,07 & 0,47 $\pm$ 0,05 & 20,0\,\% & 11,7\,\% \\
+        1 & 0,70 $\pm$ 0,08 & 0,35 $\pm$ 0,07 & 36,1\,\% & 11,7\,\% \\
+        1,5 & 0,84 $\pm$ 0,06 & 0,24 $\pm$ 0,06 & 61,2\,\% & 11,7\,\% \\
+        2 & 0,93 $\pm$ 0,04 & 0,14 $\pm$ 0,05 & 84,1\,\% & 11,7\,\% \\
+        3 & 0,99 $\pm$ 0,01 & 0,05 $\pm$ 0,04 & 98,5\,\% & 11,7\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+En el análisis de sensibilidad, con la población de entrenamiento contaminada con un 10\,\% de sesiones anómalas, las anomalías no detectadas por el \textit{pipeline} completo subieron a 6,1\,\% $\pm$ 4,5 y las falsas alarmas bajaron a 7,0\,\% $\pm$ 6,7, mientras que la AUC-ROC del modelo frente a \texttt{ritmo\_distinto} se mantuvo en 0,94 $\pm$ 0,04.
+
+\subsection{Interpretación}
+
+\begin{itemize}
+    \item \textbf{El procedimiento funciona (E1).} El cálculo de las métricas se ejecuta de punta a punta sobre el código de la plataforma, es determinístico para una semilla dada y cuenta con pruebas que fijan casos calculados a mano (por ejemplo, EER nula con separación perfecta y cercana a 0{,}5 cuando el \textit{score} no aporta información). Durante su construcción permitió detectar un error del propio generador: una primera versión del perfil \texttt{ritmo\_distinto} producía sesiones más centrales que las normales y una AUC de 0,23, menor que la del azar; la corrección quedó cubierta por una prueba.
+    \item \textbf{Los dos niveles son complementarios (E2).} Las reglas cubren las señales discretas sin falsas alarmas en este escenario, y el modelo cubre los desvíos simultáneos en varias métricas continuas que ninguna regla ve. Combinados, con el protocolo inductivo dejan sin marcar el 3,6\,\% de las anomalías sintéticas. Este resultado es coherente con la división de tareas que propuso la Sección~\ref{sec:procesamiento_ia} (eventos discretos con reglas explícitas y métricas continuas con el modelo poblacional), aunque en parte se deriva de cómo se construyeron los perfiles, cada uno pensado para alterar un tipo de señal.
+    \item \textbf{La proporción marcada por el modelo es un parámetro de diseño.} El parámetro \texttt{contamination} (0{,}1) fija aproximadamente la proporción total de sesiones que marca el modelo; con este protocolo, en el que la población de entrenamiento es solo normal, el 11,7\,\% de falsas alarmas resulta cercano a ese valor. La proporción de sesiones normales marcadas depende, en general, de la composición de la cohorte y de la separación que logra el modelo, y las reglas pueden sumar otras sesiones a revisión. En un uso real, ese parámetro debe decidirse según la capacidad de revisión de la cátedra.
+    \item \textbf{El modelo necesita desvíos marcados.} Por debajo de un desvío poblacional, el modelo apenas supera al azar; con dos desvíos detecta alrededor del 84\,\%. Un estudiante cuyo ritmo de escritura difiere poco del de su cohorte no será distinguido, lo cual es coherente con la finalidad de priorizar la revisión.
+    \item \textbf{La contaminación de la línea base degrada poco la separación.} Con un 10\,\% de anómalas en la población, la AUC del modelo frente a \texttt{ritmo\_distinto} se mantuvo en 0,94, aunque las anomalías no detectadas por el \textit{pipeline} completo subieron de 3,6 a 6,1\,\%. La línea base poblacional tolera, por lo tanto, la presencia de algunas sesiones atípicas, situación esperable en un examen real, a costa de una leve pérdida de detección.
+\end{itemize}
+
+\subsection{Réplica con el protocolo de cohorte al cierre}
+\label{sec:eval_replica_cierre}
+
+La misma evaluación sintética se repitió con el protocolo vigente: un único ajuste del modelo sobre la cohorte completa, formada por la población y las sesiones de prueba, con una prevalencia de anómalas del 33\,\%, elegida para disponer de suficientes casos positivos y no representativa de un examen real. Con ese protocolo, el \textit{pipeline} completo dejó sin marcar el 12,4\,\% $\pm$ 2,4 de las anomalías sintéticas, con un 2,9\,\% $\pm$ 2,7 de falsas alarmas; la AUC-ROC global del modelo fue de 0,72 $\pm$ 0,05 y frente a \texttt{ritmo\_distinto} de 0,93 $\pm$ 0,04, con una detección del 50,5\,\% $\pm$ 9,4 de esas sesiones. Como la proporción esperada de atípicos fija que el modelo marque alrededor del 10\,\% de la cohorte, con una prevalencia alta de anómalas parte de ellas queda sin marcar y las falsas alarmas bajan: estas tasas dependen de la prevalencia y no son comparables directamente con las de la Tabla~\ref{tab:eval_global}. Por eso la Sección~\ref{sec:eval_aporte_modelo} mide el aporte del modelo con este protocolo y prevalencias más cercanas a un uso real, de entre el 5 y el 10\,\%.
+
+\subsection{Aporte incremental del modelo con el protocolo de cohorte al cierre}
+\label{sec:eval_aporte_modelo}
+
+\textbf{Pregunta y método.} Con el modo de operación del Incremento~16, la pregunta relevante para el componente de IA es qué sesiones marca el modelo que las reglas no marcan, y a qué costo en falsas alarmas. Para responderla, un \textit{script} aplica el código real del MVP ---generador sintético, cálculo de métricas, reglas por defecto, sin reglas propias del examen, y una única llamada al análisis de la cohorte con \texttt{contamination} de 0{,}1 y mínimo de 20 sesiones--- sobre cohortes de 40 y 100 sesiones, con 30 semillas. En cada cohorte, el 10\,\% de las sesiones corresponde a una condición y el resto es normal; en una cohorte mixta, el 5\,\% corresponde a cada una de las cuatro condiciones. Cada perfil sintético se identifica por lo que efectivamente simula: pegado masivo (\texttt{pegado\_masivo}), tecleo automatizado (\texttt{tecleo\_automatizado}), cambio de pestaña (\texttt{cambio\_pestana}) y ritmo distinto (\texttt{ritmo\_distinto}, con un desvío de 2 desvíos poblacionales; 1 en el análisis de sensibilidad). En el kit de simulación del MVP estos perfiles corresponden, por analogía, a las condiciones de pegado, transcripción, consulta externa y suplantación. Se informa la proporción de sesiones del perfil marcadas (detección) y de sesiones normales marcadas (falsas alarmas), y como \textbf{detección incremental} la proporción marcada por el modelo y no por las reglas. Como en un examen real, la detección es transductiva: las sesiones anómalas forman parte de la población con la que se ajusta el modelo.
+
+\begin{table}[h!]
+    \caption[Aporte del modelo sobre las reglas por perfil sintético, con el protocolo de cohorte al cierre]{Aporte del modelo sobre las reglas por perfil sintético, con datos sintéticos y el protocolo de cohorte al cierre (cohorte con 10\,\% del perfil; media entre 30 semillas, en \%, con intervalo de confianza del 95\,\% entre semillas)}
+    \label{tab:eval_aporte}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{0.7cm} >{\centering\arraybackslash}p{1.7cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{2.4cm}}
+        \toprule
+        \tblhead \textbf{Perfil sintético} & \textbf{N} & \textbf{Detección reglas} & \textbf{Detección modelo} & \textbf{Detección incremental} & \textbf{Falsas alarmas (reglas o modelo)} \\
+        \midrule
+        Pegado masivo & 40 & 100 & 8,3 [3,9--12,8] & 0,0 & 10,2 [9,7--10,7] \\
+         & 100 & 100 & 13,0 [9,3--16,7] & 0,0 & 9,7 [9,3--10,1] \\
+        Tecleo automatizado & 40 & 100 & 42,5 [34,3--50,7] & 0,0 & 6,4 [5,5--7,3] \\
+         & 100 & 100 & 42,0 [37,5--46,5] & 0,0 & 6,4 [5,9--6,9] \\
+        Cambio de pestaña & 40 & 100 & 14,2 [8,9--19,5] & 0,0 & 9,5 [8,9--10,1] \\
+         & 100 & 100 & 10,3 [6,6--14,1] & 0,0 & 10,0 [9,5--10,4] \\
+        Ritmo distinto & 40 & 0 & 62,5 [56,6--68,4] & 62,5 [56,6--68,4] & 4,2 [3,5--4,8] \\
+         & 100 & 0 & 54,0 [49,9--58,1] & 54,0 [49,9--58,1] & 5,1 [4,7--5,6] \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Cohorte mixta (5\,\% de cada perfil)}} \\
+        Ritmo distinto & 40 & 0 & 66,7 [53,4--79,9] & 66,7 [53,4--79,9] & 3,8 [2,9--4,6] \\
+         & 100 & 0 & 63,3 [54,3--72,3] & 63,3 [54,3--72,3] & 3,8 [3,2--4,3] \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Sensibilidad: ritmo distinto con desvío de 1 desvío poblacional}} \\
+        Ritmo distinto & 40 & 0 & 24,2 [17,5--30,9] & 24,2 [17,5--30,9] & 8,4 [7,7--9,2] \\
+         & 100 & 0 & 25,7 [21,3--30,0] & 25,7 [21,3--30,0] & 8,3 [7,8--8,8] \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Resultados.} La Tabla~\ref{tab:eval_aporte} resume los resultados. Con estos datos sintéticos, en los perfiles de pegado masivo, tecleo automatizado y cambio de pestaña el modelo \textbf{no agrega ninguna detección}: todo lo que marca ya lo marcaban las reglas, también en la cohorte mixta. Todo su aporte se concentra en el perfil de ritmo distinto, que ninguna regla detecta: el modelo marca entre el 54 y el 67\,\% de esas sesiones según el tamaño y la composición de la cohorte, y alrededor del 25\,\% cuando el desvío se reduce a la mitad. Como las reglas casi no se disparan en las sesiones normales con estos parámetros, prácticamente todas las falsas alarmas provienen del modelo: entre el 3,8 y el 10,2\,\% de las sesiones normales, según la condición presente en la cohorte, y en promedio el 7,6\,\% con 40 sesiones y el 7,8\,\% con 100. El parámetro \texttt{contamination} fija aproximadamente la proporción total de la cohorte que marca el modelo; la proporción de sesiones normales marcadas depende, además, de la composición de la cohorte y de la separación que logra el modelo, y las reglas pueden sumar otras sesiones a revisión.
+
+\textbf{Independencia del orden.} Al permutar el orden en que se entregan las sesiones al análisis, manteniendo sus identificadores, marcas y \textit{scores} resultaron idénticos en 60 de 60 cohortes (las primeras cinco semillas de cada escenario y tamaño). Al reasignar los identificadores, la marca del modelo coincidió en el 100\,\% de las sesiones.
+
+\textbf{Desviaciones que acompañan las marcas.} De las 2520 marcas del modelo en estas cohortes, el 17,4\,\% tenía su mayor desviación respecto de la cohorte por debajo de 2 desvíos estándar y el 0,2\,\% por debajo de 1,5: una parte de las marcas no tiene ninguna métrica individual extrema. Por eso las desviaciones se presentan al docente como un dato descriptivo de en qué se aleja la sesión de la cohorte y no como el motivo de la marca (Sección~\ref{sec:impl_isolation_forest}).
+
+\textbf{Limitaciones.} Los datos son sintéticos y no están validados con personas. Los perfiles de pegado masivo, cambio de pestaña y tecleo automatizado se definieron alrededor de los umbrales de las reglas, de modo que la detección completa de las reglas y el aporte nulo del modelo en esos perfiles son en buena parte consecuencia del diseño del generador. La correspondencia con las conductas reales es una analogía: en particular, una transcripción humana no produce un tecleo casi constante. El aporte del modelo en el perfil de ritmo distinto depende de cuánto se separe el ritmo de la persona del de la cohorte, una separación que con personas reales es desconocida. Con 40 sesiones y 10\,\% de prevalencia hay solo 4 sesiones de la condición por cohorte, por lo que los intervalos son anchos. Por último, el modelo no ve las métricas discretas de pegado y de pestañas: por diseño, solo complementa a las reglas en la dinámica continua de teclado y mouse.
+
+\subsection{Qué trabajo de revisión ahorra al docente}
+\label{sec:eval_ahorro_docente}
+
+La Tabla~\ref{tab:eval_global} muestra que el modelo poblacional, por sí solo, deja sin marcar el 65\,\% de las anomalías sintéticas. Esa cifra plantea una pregunta legítima: si el modelo deja pasar la mayoría de las anomalías, ¿qué parte del trabajo de revisión le ahorra realmente al docente? La respuesta, con los datos disponibles, tiene tres partes.
+
+\textbf{Primero, el modelo no opera solo.} El 65\,\% mide al modelo frente a perfiles que, por diseño, no puede ver: el pegado y los cambios de pestaña no alteran las cinco métricas continuas con las que trabaja (Sección~\ref{sec:impl_isolation_forest}), y esas señales las cubren las reglas por umbral. Lo que recibe el docente es la salida del \textit{pipeline} completo, que con el protocolo inductivo deja sin marcar el 3,6\,\% de las anomalías sintéticas y, con el protocolo vigente de cohorte al cierre y una prevalencia alta de anómalas (33\,\%), el 12,4\,\% (Sección~\ref{sec:eval_replica_cierre}). El aporte del modelo es específico: detecta entre el 54 y el 67\,\% de las sesiones de ritmo distinto, un tipo de desvío que ninguna regla detecta, a cambio de entre el 3,8 y el 10,2\,\% de falsas alarmas sobre las sesiones normales (Tabla~\ref{tab:eval_aporte}).
+
+\textbf{Segundo, el ahorro está en la priorización, no en la decisión.} Sin la plataforma, un docente que quiere revisar el proceso de producción de las respuestas no tiene más alternativa que mirar todas las entregas, o ninguna, y sin información sobre cómo se produjeron. Con la plataforma, el panorama de la evaluación (Sección~\ref{sec:impl_panorama}) indica qué sesiones requieren revisión. Con los resultados de la Tabla~\ref{tab:eval_aporte}, en una cohorte de 40 sesiones con un 10\,\% de sesiones anómalas, quedan marcadas alrededor de 4 sesiones (10\,\%) cuando la anomalía es de ritmo distinto ---unas 2,5 anómalas detectadas y 1,5 falsas alarmas--- y entre 6 y 8 sesiones (15 a 19\,\%) cuando la anomalía es una señal discreta ---las 4 anómalas, que las reglas detectan siempre, y entre 2 y 4 falsas alarmas del modelo---. En esos escenarios, la revisión detallada se concentra en una de cada diez a una de cada cinco sesiones, en lugar de todas. Además, cada sesión marcada llega con la señal que la originó, el momento en que ocurrió y la cadena hasta los eventos (RF09, RNF06), de modo que la revisión parte de un punto concreto en lugar de una lectura completa de la entrega. Las sesiones no marcadas siguen visibles con sus métricas: la marca ordena la revisión, pero no exime de ella ni constituye una acusación (RNF08).
+
+\textbf{Tercero, el ahorro no está medido con personas.} Las proporciones anteriores provienen de datos sintéticos y dependen de la prevalencia real de conductas anómalas, de cuánto se separen de la cohorte y del parámetro \texttt{contamination}, que fija aproximadamente la proporción de sesiones que marca el modelo y que la cátedra debería elegir según su capacidad de revisión. Tampoco se midió el tiempo que le insume al docente revisar una sesión marcada frente a revisar una entrega sin información de proceso; el \textit{User Research} ya había señalado la carga de revisión como una consideración relevante pero no cuantificada (Sección~\ref{sec:ur_limitaciones}). Por eso el piloto con voluntarios (Sección~\ref{sec:eval_piloto_futuro}) incluye una etapa en la que docentes que no conocen la condición revisan sesiones marcadas y no marcadas, para medir la proporción de sesiones a revisar, el tiempo de revisión por sesión y la coincidencia entre su lectura y la etiqueta. Hasta contar con esos datos, la afirmación que el trabajo sostiene es acotada: la plataforma reduce el conjunto de sesiones que conviene mirar primero y le da al docente evidencia localizada para mirarlas, pero la magnitud de ese ahorro en un examen real queda por medir.
+
+\section{Prueba interna de punta a punta}
+\label{sec:eval_prueba_interna}
+
+\subsection{Procedimiento}
+
+La prueba interna es una prueba funcional de sistema, de caja negra desde la interfaz del estudiante: un guion automatizado con Playwright controla un navegador Chromium que abre la vista de rendición del \textit{dashboard} real, completa el código de participante, consiente, ejecuta el comportamiento del escenario y entrega. La captura la hace el módulo real del cliente, los eventos viajan por lotes como en uso normal y el procesamiento se dispara al finalizar la sesión. Para que el modelo tenga población, cada evaluación se carga antes con una línea base de 24 sesiones sintéticas normales a través de la misma API.
+
+Del lado docente se verifican tres cosas por sesión: (a) que los indicadores devueltos por la API coincidan con los esperados para el escenario; (b) que la vista de detalle del \textit{dashboard} muestre la misma cantidad de indicadores y el mismo estado; y (c) que ningún evento guardado en la base contenga texto de la respuesta ni del bloque pegado. Una sesión se considera \textbf{conforme} si se generaron todos los indicadores de regla esperados y ningún otro. La Tabla~\ref{tab:eval_escenarios} describe los cuatro escenarios.
+
+La prueba se ejecutó en \textbf{cuatro corridas} de tres repeticiones por escenario, es decir, 12 sesiones por corrida y 48 en total, con el guion, las semillas y la línea base idénticos. Entre la primera y la segunda se modificó únicamente la captura de teclado, que dejó de registrar qué tecla se pulsa (Sección~\ref{sec:eval_decisiones}); desde la segunda se agrega una verificación (d): que ningún evento de teclado guardado identifique la tecla. Entre la segunda y la tercera se incorporaron los cambios del Incremento~10 (cola de sincronización, lista de señales previa al consentimiento, lectura condicionada del portapapeles y nivel del indicador por percentiles). La cuarta corrida se ejecutó sobre la versión final del código (Incremento~16) y es la vigente: en ella el modelo poblacional ya no corre al finalizar cada sesión, sino al cerrar la evaluación, sobre la cohorte formada por la línea base sintética y la sesión de navegador, y se agrega una verificación (e): que la respuesta entregada quede guardada con la sesión.
+
+\begin{table}[h!]
+    \caption{Escenarios guionados de la prueba interna}
+    \label{tab:eval_escenarios}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.6cm}}
+        \toprule
+        \tblhead \textbf{Escenario} & \textbf{Guion} & \textbf{Indicador de regla esperado} \\
+        \midrule
+        Normal & Movimiento de mouse y tecleo de una respuesta de unos 130 caracteres con ritmo variable (pulsación de 60 a 130\,ms, 70 a 220\,ms entre teclas) y una salida de pestaña de unos 2\,s. & Ninguno \\
+        Pegado masivo & Tecleo de una frase corta y pegado de un bloque de 461 caracteres mediante el evento de pegado real del navegador. & \texttt{paste\_volume\_alto} \\
+        Cambios de foco & Tecleo con ritmo variable intercalado con 7 salidas de pestaña de 1,5 a 3\,s. & \texttt{cambios\_pestana\_frecuentes} \\
+        Transcripción & Tecleo a ritmo constante: pulsación fija de 80\,ms y 110\,ms entre teclas, como el de un texto transcripto mecánicamente. & \texttt{ritmo\_tecleo\_atipico} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Resultados}
+\label{sec:eval_resultados_prueba}
+
+\begin{table}[h!]
+    \caption[Resultados de la prueba interna de punta a punta]{Resultados de la prueba interna de punta a punta (cuatro corridas de 3 repeticiones por escenario)}
+    \label{tab:eval_prueba_interna}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{3.6cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{1.9cm}}
+        \toprule
+        \tblhead \textbf{Escenario} & \textbf{Conformes (corridas 1 / 2 / 3 / 4)} & \textbf{Marcadas por el modelo (1--3 / 4)} & \textbf{\textit{Dashboard} igual a API} & \textbf{Sin texto en eventos} \\
+        \midrule
+        Normal & 3/3 · 3/3 · 3/3 · 3/3 & 0/9 · 0/3 & 12/12 & 12/12 \\
+        Pegado masivo & 3/3 · 3/3 · 3/3 · 3/3 & 0/9 · 0/3 & 12/12 & 12/12 \\
+        Cambios de foco & 3/3 · 3/3 · 3/3 · 3/3 & 0/9 · 0/3 & 12/12 & 12/12 \\
+        Transcripción & 2/3 · 3/3 · 3/3 · 3/3 & 0/9 · 3/3 & 12/12 & 12/12 \\
+        \midrule
+        \textbf{Total} & \textbf{47/48} & \textbf{0/36 · 3/12} & \textbf{48/48} & \textbf{48/48} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+La Tabla~\ref{tab:eval_prueba_interna} resume los resultados. En las 48 sesiones, los eventos capturados en el navegador llegaron al \textit{backend} y se procesaron. Lo que muestra el \textit{dashboard} docente coincidió con lo que devuelve la API, y los eventos persistidos contenían solo metadatos (instantes, coordenadas, estados de visibilidad y cantidades de caracteres), sin ninguna palabra de la respuesta ni del bloque pegado. En la segunda, la tercera y la cuarta corridas, además, ningún evento de teclado guardado identificaba la tecla pulsada, y las métricas de teclado difirieron entre corridas en menos de 1,5\,ms de media, lo que indica que ni ese cambio ni los del Incremento~10 alteraron el cálculo de tiempos. En la tercera corrida, la cola de sincronización no introdujo pérdidas ni avisos: la cantidad de eventos de cada escenario fue idéntica a la de las corridas anteriores y ninguna sesión registró captura incompleta. En la cuarta corrida, la respuesta entregada quedó guardada con la sesión en las 12 sesiones, separada de los eventos, y la cantidad de eventos de cada escenario volvió a coincidir con la de las corridas anteriores. Los valores observados coinciden con el guion: cada sesión normal, con una respuesta de unos 130 caracteres, generó 301 eventos; en el pegado masivo la métrica de caracteres pegados registró exactamente 461 en las nueve sesiones de las tres primeras corridas, es decir, la longitud del bloque y no su contenido; en los cambios de foco se registraron 7 cambios de pestaña y entre 15 y 16\,s fuera de foco, sin disparar la regla de pérdida de foco prolongada (umbral de 60\,s), como correspondía.
+
+\subsection{Hallazgos}
+
+\textbf{La captura registraba qué tecla se pulsaba.} La verificación de la primera corrida mostró que cada evento de teclado conservaba el código de la tecla física. Ese dato no lo usa ninguna métrica, pero su secuencia permitiría reconstruir aproximadamente lo tecleado, en contradicción con RNF01. La captura se modificó para no enviarlo y las corridas segunda a cuarta confirmaron que ya no se almacena (Sección~\ref{sec:impl_limitaciones}).
+
+\textbf{La regla de ritmo uniforme es frágil ante una sola pulsación atípica.} En el escenario de transcripción hubo una sesión problemática en cada una de las dos primeras corridas. En ambas, 128 de 129 pulsaciones midieron entre 85 y 93\,ms, pero una se prolongó por una demora puntual de la cadena de automatización: 189\,ms en la primera corrida y 141\,ms en la segunda. Esa única pulsación llevó el desvío del tiempo de pulsación de alrededor de 1,5\,ms a 9,1\,ms en el primer caso, por encima del umbral de 5\,ms, de modo que la regla no se disparó; en el segundo caso lo llevó a 4,9\,ms y la regla se disparó por apenas 0,1\,ms. Además, todas las pulsaciones se midieron unos 7\,ms más largas que lo indicado por el guion, porque el tiempo registrado incluye la latencia de la cadena de eventos del navegador. Ambos hechos muestran que el desvío estándar, sensible a los propios valores atípicos \parencite{Leys2013}, no es una medida robusta para esta regla y que el umbral de 5\,ms está cerca del ruido de medición: en la tercera corrida no hubo pulsaciones demoradas y el desvío quedó entre 1,3 y 2,4\,ms, lo que confirma que el resultado depende de un evento aislado y no del guion, de modo que la conformidad completa de las corridas segunda a cuarta no indica que el problema haya desaparecido.
+
+\textbf{El resultado del modelo depende del protocolo.} En las tres primeras corridas, con el modelo entrenado sobre la línea base y aplicado a cada sesión al finalizarla, ninguna sesión de navegador fue marcada: las de transcripción se apartaban entre 3,9 y 4,7 desvíos de la línea base en el desvío del tiempo de pulsación, pero un valor fuera del rango visto en el entrenamiento cae en la misma región que el extremo observado, de modo que estar muy por debajo del mínimo puntúa igual que estar en el mínimo. En la cuarta corrida, con el análisis de la cohorte al cierre, la sesión forma parte de la población con la que se ajusta el modelo, y las tres sesiones de transcripción fueron marcadas (con una desviación de $-$4,4 desvíos en el desvío del tiempo de pulsación), mientras que ninguna de las sesiones normales, de pegado o de cambios de foco lo fue. Para ese patrón la regla ya detectaba la sesión, por lo que la marca del modelo no agrega detección, en línea con la Sección~\ref{sec:eval_aporte_modelo}. Que ninguna sesión normal fuera marcada es compatible con el parámetro de diseño, pero esa cantidad de sesiones no permite estimar la tasa de falsas alarmas.
+
+\textbf{Una métrica absorbe las pausas fuera de foco.} En el escenario de cambios de foco, el tiempo medio entre teclas subió a unos 270\,ms (alrededor de 3 desvíos sobre la línea base), porque las pausas fuera de la pestaña quedan dentro del intervalo entre soltar una tecla y pulsar la siguiente. Es un efecto de la definición de la métrica y no del comportamiento de escritura.
+
+\textbf{Limitaciones propias de la prueba.} El navegador automatizado mantiene la página como visible aunque se cambie de pestaña, por lo que el escenario de cambios de foco simula el cambio de visibilidad y despacha el evento nativo correspondiente; todo lo que sigue (módulo de captura, envío, procesamiento y vista) es el código real. Además, el movimiento de mouse del guion se generó con los mismos parámetros que el generador sintético para que la comparación con la línea base fuera justa: en la generación de capturas de demostración, el movimiento de mouse por defecto de la herramienta de automatización sí fue marcado por el modelo, a unos 12 desvíos estándar de la media de la línea base en la variabilidad de la velocidad. Esto confirma que la línea base de un examen real debe construirse con sesiones reales de ese examen y no con datos sintéticos.
+
+\section{Prueba de resiliencia ante fallas de red}
+\label{sec:eval_prueba_red}
+
+\subsection{Procedimiento}
+
+La Sección ``Captura de señales'' del Capítulo~\ref{ch:tecnologias} exige que una caída de conectividad no interrumpa la evaluación ni descarte evidencia en silencio: el envío debe reintentarse con espera creciente, el \textit{buffer} local debe estar acotado, y su agotamiento o una falla persistente deben quedar registrados y visibles para el docente. El Incremento~10 implementó esos mecanismos (Sección~\ref{sec:impl_sincronizacion}) y esta prueba los verifica sobre el sistema real. Es una prueba de resiliencia del sistema completo, con la misma infraestructura que la prueba interna: un guion automatizado levanta el \textit{backend} y el \textit{dashboard} con una base de datos temporal y rinde tres sesiones desde la vista del estudiante en un navegador Chromium. La falla de red se simula de dos maneras: abortando los envíos de eventos, de modo que el navegador no advierte la falla y solo fallan los envíos, como en una red que aparenta estar conectada; y con el modo sin conexión del navegador, que emite los avisos de pérdida y recuperación de la red. La Tabla~\ref{tab:eval_red_escenarios} describe los escenarios.
+
+\begin{table}[h!]
+    \caption{Escenarios de la prueba de resiliencia ante fallas de red}
+    \label{tab:eval_red_escenarios}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Escenario} & \textbf{Guion} & \textbf{Resultado esperado} \\
+        \midrule
+        Corte prolongado & Se escriben 40 caracteres, se corta la red, se escriben 40 más sin conexión y la red vuelve después de la tercera falla consecutiva. & Intentos espaciados 5, 10, 20 y 40\,s ($\pm 20$\,\%); llegan las 80 pulsaciones; se registra una falla persistente; el docente ve el aviso de captura incompleta y la sesión no queda priorizada por él. \\
+        \textit{Buffer} lleno & Con la red cortada se generan 25\,000 eventos de teclado, frente a una capacidad de 20\,000. & Los eventos que no entran se cuentan y llegan como evento de \textit{buffer} agotado; guardados más descartados igual a capturados; aparece el aviso de captura incompleta. \\
+        Reconexión avisada & Corte breve, informado por el navegador. & Al volver la red se reintenta enseguida, sin esperar el siguiente intento; un corte breve no se registra como falla persistente. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Resultados}
+
+Los tres escenarios resultaron conformes en la corrida vigente, ejecutada con el código del Incremento~10. Los cambios posteriores de la cola de sincronización (descarte de un lote rechazado por el servidor y continuidad de la numeración al retomar una sesión) se verificaron con pruebas unitarias; la prueba de resiliencia no se repitió sobre la versión final del código. La Tabla~\ref{tab:eval_red_resultados} resume las verificaciones.
+
+\begin{table}[h!]
+    \caption{Resultados de la prueba de resiliencia ante fallas de red}
+    \label{tab:eval_red_resultados}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{1.8cm}}
+        \toprule
+        \tblhead \textbf{Escenario} & \textbf{Observado} & \textbf{Conforme} \\
+        \midrule
+        Corte prolongado & Intervalos entre intentos de 5,0; 9,4; 18,1 y 44,0\,s, todos dentro de la banda esperada; 80 pulsaciones tipeadas y 80 guardadas, en orden y sin duplicados; un evento de falla persistente con tres intentos fallidos; aviso de captura incompleta de nivel bajo, sin marca de ``requiere revisión''. & Sí \\
+        \textit{Buffer} lleno & 20\,039 pulsaciones guardadas y 5\,001 descartadas registradas, que suman las 25\,040 capturadas; aviso de captura incompleta. & Sí \\
+        Reconexión avisada & Resincronización 0,1\,s después del aviso de reconexión (sin él, el siguiente intento habría ocurrido alrededor de los 10\,s); 80 de 80 pulsaciones guardadas y ningún registro de falla persistente. & Sí \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+En tres ejecuciones previas del mismo guion durante el desarrollo, los intervalos del escenario de corte prolongado también quedaron dentro de la banda esperada, con variaciones atribuibles a la componente aleatoria de la espera. Mientras no había conexión, el estudiante veía un mensaje con la cantidad de lotes pendientes y el tiempo hasta el siguiente intento, y la indicación de que podía seguir escribiendo porque los registros se conservaban en el navegador.
+
+\subsection{Hallazgos y límites}
+
+\textbf{La verificación debe exigir que la cuenta cierre, no una cifra exacta.} En la primera ejecución, el guion exigía exactamente 5\,000 eventos descartados y registró 5\,002, porque en el instante del corte quedaban eventos sin enviar en el \textit{buffer}. Lo exigible es que los eventos guardados más los descartados registrados igualen a los capturados, es decir, que nada se pierda sin registro, y esa es la condición que verifica el guion.
+
+\textbf{Límites.} La red se simula desde el navegador automatizado: no se probó una red móvil real ni la caída del propio \textit{backend}. El \textit{buffer} vive en la memoria de la pestaña, por lo que si el estudiante la cierra o la recarga sin conexión lo pendiente se pierde. La capacidad de 20\,000 eventos alcanza para unos 20 minutos sin conexión con teclado y mouse habilitados; es un valor de diseño, no calibrado con sesiones reales.
+
+\section{Mediciones de rendimiento}
+\label{sec:eval_rnf}
+
+\subsection{Procedimiento}
+
+Los RNF07, RNF09 y RNF11 fijan cotas cuantitativas (Tabla~\ref{tab:rnf_medicion}). Un \textit{script} las mide sobre el sistema real: el \textit{backend} levantado con un único proceso de uvicorn, como en el contenedor de despliegue, con una base SQLite o PostgreSQL~16, y el \textit{dashboard} compilado en Chromium. La carga se genera con sesiones sintéticas del mismo generador de la evaluación (Sección~\ref{sec:eval_dataset}), enviadas por la API. Se ejecutaron dos corridas en la misma máquina, de dos núcleos y 7,8\,GB de memoria, una con cada base. Cada corrida carga una evaluación de 500 sesiones finalizadas, con unos 850 eventos cada una (alrededor de 419\,000 eventos en total), y mide: el tiempo entre la entrega de cada sesión y la disponibilidad de sus indicadores, también para sesiones de unos 9000 y 43\,000 eventos; el cierre de la evaluación con el análisis de la cohorte; las consultas del docente (listado, detalle y panorama) con la evaluación abierta y cerrada; 200 sesiones activas a la vez enviando un lote cada 5\,s durante 60\,s, con las consultas del docente en paralelo; y la entrega simultánea de esas 200 sesiones. El RNF07 se mide en el navegador, envolviendo los \textit{listeners} de captura para registrar el tiempo de cada ejecución mientras un guion tipea con ritmo humano y mueve el mouse, con la CPU normal y ralentizada cuatro veces. Los tiempos del servidor se miden desde el cliente HTTP, en la misma máquina; se informan los percentiles 50 y 95 y el máximo.
+
+\subsection{Resultados}
+
+\begin{table}[h!]
+    \caption[Mediciones de los RNF07, RNF09 y RNF11 sobre el sistema real con sesiones sintéticas]{Mediciones de los RNF07, RNF09 y RNF11 sobre el sistema real con sesiones sintéticas (p50 / p95 / máximo)}
+    \label{tab:eval_rnf}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{3.0cm} >{\centering\arraybackslash}p{3.0cm}}
+        \toprule
+        \tblhead \textbf{Medición} & \textbf{Cota} & \textbf{PostgreSQL~16} & \textbf{SQLite} \\
+        \midrule
+        RNF11: entrega $\to$ indicadores, 500 sesiones & 5\,s & 49 / 176 / 240\,ms & 41 / 170 / 272\,ms \\
+        RNF11: entrega $\to$ indicadores, sesión de unos 43\,000 eventos & 5\,s & 1,7 / 2,1 / 2,1\,s & 1,8 / 1,9 / 1,9\,s \\
+        RNF11: listado, detalle y panorama (máximo de los tres), 500 sesiones & 2\,s & hasta 264\,ms & hasta 211\,ms \\
+        Cierre de la evaluación, 500 sesiones (una medición) & --- & 9,5\,s & 8,3\,s \\
+        Modelo sobre la cohorte, fuera de línea (p50) & --- & 6,8\,s & 6,7\,s \\
+        RNF09: lotes con 200 sesiones activas & --- & 88 / 403 / 796\,ms; 0 errores & 97 / 1595 / 5254\,ms; 5 errores \\
+        RNF09 + RNF11: consultas con 200 sesiones activas & 2\,s & hasta 562\,ms & hasta 440\,ms \\
+        RNF09 + RNF11: 200 entregas simultáneas & 5\,s & 5,6 / 10,4 / 10,5\,s; 2 errores & 4,8 / 8,5 / 9,0\,s; 4 errores \\
+        RNF07: costo por evento de captura, CPU normal & 50\,ms & \multicolumn{2}{c}{máximo 0,4\,ms; ninguna tarea larga} \\
+        RNF07: costo por evento de captura, CPU $\times$4 & 50\,ms & \multicolumn{2}{c}{máximo 3,5\,ms; ninguna tarea larga} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+La Tabla~\ref{tab:eval_rnf} resume los resultados. El \textbf{RNF07 se cumple} con amplio margen: la ejecución más lenta de un \textit{listener} de captura fue de 0,4\,ms con la CPU normal y de 3,5\,ms con la CPU ralentizada, frente a una cota de 50\,ms, y no se registraron tareas largas. El \textbf{RNF11 se cumple en el procesamiento y en las consultas}: el procesamiento por reglas de una sesión típica tomó como máximo 272\,ms y el de una sesión de unos 43\,000 eventos, alrededor de 2\,s; las consultas del docente no superaron los 264\,ms con la evaluación abierta o cerrada. El cierre de una evaluación de 500 sesiones, que incluye el análisis de la cohorte, tomó entre 8 y 10\,s; es una operación única por evaluación, sin cota en el requerimiento, cuyo tiempo se informa. La excepción es el escenario de 200 entregas simultáneas, que superó la cota de 5\,s y registró errores de transporte; se analiza junto con el RNF09. El \textbf{RNF09 se cumple con PostgreSQL y no con SQLite}: con PostgreSQL, las 200 sesiones activas enviaron sus lotes sin errores y las consultas del docente bajo esa carga se mantuvieron por debajo de 2\,s; con SQLite, que serializa las escrituras, el percentil~95 de los lotes llegó a 1,6\,s y 5 lotes fallaron. En ambas bases, en cambio, la \textbf{entrega simultánea de 200 sesiones superó la cota de 5\,s} en la mediana o en el percentil~95, con algunos errores: el caso corresponde a un horario límite en el que todos los estudiantes entregan a la vez.
+
+\subsection{Hallazgos y límites}
+
+Las primeras mediciones de concurrencia mostraron fallas que llevaron a las correcciones de la Sección~\ref{sec:impl_robustez}: con 200 entregas simultáneas, los pedidos que esperaban una conexión a la base más de 30\,s fallaban, porque el \textit{pool} de conexiones admitía menos conexiones que los hilos que atienden pedidos. Los valores de la Tabla~\ref{tab:eval_rnf} corresponden a la versión corregida. Las mediciones tienen límites: los datos son sintéticos, con unos dos minutos de escritura por sesión, mientras que un examen real dura más; cliente de carga, servidor y base comparten las mismas CPU, lo que agrega la contención del propio generador de carga y excluye la latencia de una red real y de un servicio gestionado; se usó un único proceso de servidor; y el cierre se midió una vez por corrida. Quedan como trabajo futuro el puntaje del modelo por lotes para acortar el cierre, ajustar el mantenimiento de las conexiones (\textit{keep-alive}) entre el cliente y el servidor, que provocó reintentos de lotes durante la carga, y repetir las pruebas de carga en la infraestructura de producción.
+
+\section{Pruebas funcionales de la interfaz}
+\label{sec:eval_interfaz}
+
+\subsection{Evaluación experta y automatizada de usabilidad y navegabilidad}
+\label{sec:eval_usabilidad}
+
+\textbf{Alcance.} Esta evaluación es una inspección experta asistida por automatización, realizada por el equipo sobre la versión compilada del \textit{dashboard}, con el \textit{backend} real y una base temporal con 25 sesiones sintéticas. No hubo participantes, cuestionarios de usabilidad percibida ni opiniones, y los tiempos registrados son los de la automatización. Su valor está en detectar problemas antes de una prueba con docentes y estudiantes.
+
+\textbf{Método.} Un \textit{script} reproducible combina cuatro técnicas:
+
+\begin{itemize}
+    \item \textbf{Recorridos instrumentados de tareas} con Playwright en Chromium: nueve tareas docentes (iniciar sesión, crear una evaluación con su política, encontrar el código para compartir, localizar las sesiones a revisar, abrir el detalle e interpretar los indicadores, registrar una revisión, cerrar la evaluación y ver el análisis poblacional, leer el panorama y eliminar una sesión) y cuatro del estudiante (ingresar con el código, leer la información y consentir, escribir y entregar, y entregar con un corte de red y reintentar). Para cada tarea se registran el resultado, las acciones contra el mínimo de la interfaz, las rutas visitadas, el tiempo y los errores de consola y de red; las tareas se repiten usando solo el teclado.
+    \item \textbf{Accesibilidad} con axe-core~4.10 según las reglas de WCAG~2.1 niveles A y AA, más verificaciones manuales de criterios que la herramienta no cubre (título por pantalla, mensajes de estado, gestión del foco).
+    \item \textbf{Inspección heurística} según las diez heurísticas de Nielsen, con una escala de severidad de 0 (no es un problema) a 4 (catastrófico).
+    \item \textbf{Navegabilidad y diseño adaptable}: mapa de rutas, profundidad, botón Atrás, enlaces directos y recarga, rutas inexistentes, y métricas por pantalla en escritorio (1366$\times$768) y en móvil (375$\times$667): desborde horizontal, tamaño mínimo de fuente, objetivos táctiles menores a 24\,px, legibilidad y estabilidad visual.
+\end{itemize}
+
+\textbf{Resultados de la corrida inicial.} La Tabla~\ref{tab:eval_usab_inicial} resume los resultados obtenidos antes de aplicar las correcciones.
+
+\begin{table}[h!]
+    \caption{Evaluación experta y automatizada de usabilidad: resultados de la corrida inicial}
+    \label{tab:eval_usab_inicial}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Aspecto} & \textbf{Resultado} \\
+        \midrule
+        Tareas & 23 de 23 ejecuciones completas (13 con mouse y 10 solo con teclado); 6 terminaron con problemas. La tarea de ingresar solo con el código quedaba bloqueada: la raíz llevaba al inicio de sesión docente. \\
+        Accesibilidad (axe-core) & Ninguna violación crítica ni moderada; 15 violaciones serias en 20 nodos, todas de contraste de color (4,46:1 y 4,22:1 frente al mínimo de 4,5:1). \\
+        Teclado & Las 10 tareas evaluadas se completaron solo con teclado y el foco fue visible en las 87 paradas recorridas; el foco no se gestionaba en las navegaciones ni al abrir confirmaciones. \\
+        Navegabilidad & Sin página de ruta inexistente; un \textit{token} vencido no llevaba al inicio de sesión; el título del documento no cambiaba por pantalla. \\
+        Diseño adaptable & Desborde horizontal a 375\,px en todo el panel docente (hasta 889\,px en el listado de sesiones); textos de 11\,px y objetivos táctiles de 13 a 16\,px. \\
+        Carga & Carga completa del contenido principal entre 120 y 316\,ms y desplazamiento acumulado del diseño de hasta 0,04, en red local. \\
+        Heurísticas de Nielsen & Severidad máxima 4 en control y libertad del usuario (recargar o salir durante el examen perdía la respuesta y creaba otra sesión); severidad 3 en prevención de errores (entrega en un clic, sin confirmación) y en reconocer antes que recordar (sin ingreso por código ni botón para copiar el enlace); severidad 1 o 2 en las demás. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Problemas y correcciones aplicadas.} La evaluación produjo 14 problemas priorizados con su propuesta de corrección. En el Incremento~16 se aplicaron, entre otras, las siguientes correcciones:
+
+\begin{itemize}
+    \item \textbf{Retomar el examen al recargar} (severidad 4): la sesión en curso y el borrador de la respuesta se guardan en el almacenamiento de la pestaña, de modo que una recarga o una salida y regreso retoman la misma sesión sin crear otra, con un aviso del navegador mientras la respuesta no se entregó.
+    \item \textbf{Ingreso con el código} (severidad 3): una pantalla pública en \texttt{/rendir} (y en \texttt{/exam} sin código) permite al estudiante escribir el código del examen.
+    \item \textbf{Copiar el enlace} (severidad 3): el enlace absoluto del examen se muestra con un botón para copiarlo.
+    \item \textbf{Confirmación de la entrega} (severidad 3): la entrega pide una confirmación en línea y la vista solo informa que la entrega quedó registrada cuando el servidor lo confirma (Figura~\ref{fig:cap_entrega}).
+    \item \textbf{Eliminación de una sesión} (severidad 3): después de eliminarla se vuelve al listado de la evaluación con un aviso, y la confirmación usa un estilo propio de acción destructiva.
+    \item \textbf{Contraste y diseño adaptable} (severidad 2): color primario con un contraste de 5,3:1 sobre texto blanco, foco visible definido en la hoja de estilos, tablas con desplazamiento propio y barras que se reacomodan en pantallas angostas.
+    \item \textbf{Página de ruta inexistente y redirección ante un \textit{token} vencido} (severidad 2): las rutas desconocidas muestran una página propia, y un \textit{token} vencido o inválido lleva al inicio de sesión, que después vuelve a la ruta pedida.
+    \item \textbf{Otras mejoras} (severidad 1 o 2): título por pantalla, mensajes de estado anunciados a los lectores de pantalla, foco llevado al botón de confirmación, sesiones que requieren revisión al principio del listado, política plegable para que la tabla quede arriba y vocabulario sin nombres internos de métricas.
+\end{itemize}
+
+Las correcciones se verificaron con la suite automatizada: las pruebas unitarias del \textit{frontend} que cubren el borrador, el enlace, el orden de las sesiones, la redirección segura y el vocabulario (Sección~\ref{sec:impl_pruebas}), y la prueba interna de punta a punta sobre la versión final (Sección~\ref{sec:eval_prueba_interna}).
+La Tabla~\ref{tab:eval_usab_antes_despues} compara la corrida inicial con una segunda corrida del mismo \textit{script} sobre la versión corregida. Durante esa segunda corrida aparecieron tres problemas menores (desborde residual de las tablas, un desplazamiento del diseño al cargar el listado de sesiones y pestañas sin navegación con flechas), que se corrigieron y se verificaron con una nueva corrida.
+
+\begin{table}[h!]
+    \caption{Evaluación experta y automatizada de usabilidad: antes y después de las correcciones}
+    \label{tab:eval_usab_antes_despues}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.6cm}}
+        \toprule
+        \tblhead \textbf{Medida} & \textbf{Corrida inicial} & \textbf{Después de las correcciones} \\
+        \midrule
+        Tareas completadas & 23 de 23 & 23 de 23 \\
+        Tareas completadas con problemas & 6 & 0 \\
+        Violaciones serias o críticas (axe-core, WCAG 2.1 A/AA) & 15, todas de contraste & 0 \\
+        Pantallas con desborde horizontal a 375\,px & 11 de 17 & 0 de 17 \\
+        Tamaño mínimo de texto & 11\,px & 12\,px \\
+        Objetivos táctiles menores de 24\,px (suma de pantallas) & 37 & 13 (casillas de 18\,px dentro de etiquetas clicables) \\
+        Pérdida del foco del teclado & En confirmaciones y tras un error de inicio de sesión & Ninguna \\
+        Severidad heurística máxima (escala 0--4) & 4 & 2 \\
+        \bottomrule
+    \end{tabularx}
+    \par\smallskip{\footnotesize Fuente: elaboración propia a partir de \texttt{mvp/docs/evaluacion/usabilidad\_resultados.md}.}
+\end{table}
+
+\textbf{Límites.} La automatización no reproduce la comprensión, las expectativas ni la carga de trabajo de una persona, y la inspección heurística la hizo el mismo equipo que construyó el sistema. La evaluación con 5 docentes y 5 estudiantes, con tiempos humanos y una escala estandarizada de usabilidad percibida, sigue pendiente (Sección~\ref{sec:concl_trabajo_futuro}).
+
+\section{Decisiones tomadas a partir de los resultados}
+\label{sec:eval_decisiones}
+
+La Tabla~\ref{tab:eval_decisiones} reúne las decisiones que se tomaron a partir de la evaluación sintética, de la prueba interna, de la prueba de resiliencia, de las mediciones de rendimiento y de la evaluación de usabilidad. Un criterio transversal guió todas las decisiones: no introducir, antes de contar con datos de personas, cambios que alteren qué sesiones marcan las reglas y el modelo, porque cualquier ajuste de umbrales o de medidas hecho solo sobre datos sintéticos carecería de calibración. Las correcciones de los Incrementos~9 y~10 cumplen esa condición: después de aplicarlas, el protocolo sintético se volvió a ejecutar y produjo exactamente los mismos resultados. El análisis de la cohorte al cierre del Incremento~16 sí modifica qué sesiones marca el modelo, porque cambia la población de referencia; no ajusta umbrales ni parámetros con las etiquetas, y su comportamiento se evaluó con el protocolo de la Sección~\ref{sec:eval_aporte_modelo}.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{6.4cm} >{\raggedright\arraybackslash}p{2.6cm}}
+    \caption{Hallazgos y decisiones adoptadas a partir de la evaluación}
+    \label{tab:eval_decisiones} \\
+    \toprule
+    \tblhead \textbf{Hallazgo} & \textbf{Decisión} & \textbf{Estado} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Hallazgo} & \textbf{Decisión} & \textbf{Estado} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    Los eventos de teclado conservaban el código de la tecla física (primera corrida de la prueba interna). & Dejar de enviarlo desde el cliente; el emparejamiento de pulsación y liberación se resolvió primero en el servidor por orden de llegada y, desde el Incremento~16, en el navegador, sin enviar la tecla. & Aplicada y verificada en las corridas segunda a cuarta \\
+    Reglas y modelo detectan tipos de anomalía distintos (Tablas~\ref{tab:eval_perfiles} y~\ref{tab:eval_prueba_interna}). & Mantener la arquitectura de dos niveles: reglas para señales discretas y puntuales, modelo como complemento para desvíos multidimensionales. Ninguno de los dos reemplaza al otro. & Adoptada \\
+    Las falsas alarmas del modelo dependen de la proporción esperada de atípicos. & Presentar ese parámetro como la proporción de la cohorte que el modelo prioriza para revisión y no como estimación de fraude, y permitir en el futuro configurarlo por evaluación. & Adoptada; configuración por evaluación como trabajo futuro \\
+    El modelo no distingue desvíos menores a un desvío poblacional. & No usar el modelo como mecanismo único de priorización y mantener visibles las métricas de origen en el detalle de sesión. & Adoptada \\
+    La regla de ritmo uniforme falla ante una pulsación atípica aislada. & Reemplazar el desvío estándar por una medida robusta de dispersión, como el rango intercuartílico o la desviación absoluta mediana \parencite{Leys2013}, y calibrar el umbral con la latencia medida en distintos equipos. & Trabajo futuro prioritario \\
+    El tiempo entre teclas incluye pausas fuera de foco. & Excluir del cálculo los intervalos que contienen una pérdida de foco. & Trabajo futuro \\
+    Cambiar de aplicación sin ocultar el navegador solo genera una pérdida de foco de ventana, que hoy no alimenta ningún indicador. & Evaluar la pérdida de foco de ventana como señal de atención adicional, informándola al estudiante como cualquier otra señal. & Trabajo futuro \\
+    Una sesión de navegador frente a una línea base sintética es marcada por el mouse. & La línea base de una evaluación real se construye solo con sesiones reales de esa evaluación; los datos sintéticos se usan únicamente para validar el procedimiento. & Adoptada \\
+    Umbrales de las reglas cerca del ruido de medición. & Mantenerlos como valores provisorios explícitos hasta calibrarlos con el piloto. & Adoptada \\
+    Las mejoras identificadas alteran qué sesiones se marcan y no pueden calibrarse con datos sintéticos. & No modificar antes de la entrega el cálculo de métricas ni la decisión de marcar; registrar esas mejoras como trabajo futuro, para aplicarlas junto con la calibración con datos de personas. & Adoptada \\
+    El nivel del indicador del modelo dependía de un corte fijo sobre el \textit{score}, cuya escala varía con la población. & Decidir el nivel por percentiles de la línea base (alto: 5\,\% más atípico) y mostrar al docente la posición relativa en lugar del \textit{score}. & Aplicada; resultados sintéticos sin cambios \\
+    Una falla de red puede dejar la evidencia incompleta (prueba de resiliencia). & Registrar la pérdida con un aviso informativo de captura incompleta que \textbf{no} prioriza la sesión, porque una mala conexión no es un indicio sobre la conducta del estudiante. & Aplicada y verificada \\
+    Con el \textit{buffer} lleno hay que elegir qué eventos perder. & Conservar los más antiguos, contar los descartados con su rango temporal y admitir siempre los eventos de estado de la captura. & Aplicada y verificada \\
+    Los cortes breves se recuperan solos. & Registrar como falla persistente solo tres intentos consecutivos fallidos, para no llenar la evidencia de avisos sin consecuencia. & Aplicada; valor provisorio \\
+    La espera exponencial demora la resincronización aunque el navegador ya sepa que volvió la red. & Reintentar de inmediato ante el aviso de reconexión del navegador y, al finalizar, hasta tres veces antes de cerrar; si quedan registros sin enviar, informarlo al estudiante en lugar de confirmar la sesión. & Aplicada y verificada \\
+    El \textit{buffer} vive en la memoria de la pestaña. & Evaluar su persistencia en el almacenamiento del navegador; desde el Incremento~16 ya se conservan la sesión en curso y el borrador de la respuesta. & Trabajo futuro \\
+    El resultado del modelo dependía del orden de entrega y las primeras 20 sesiones de cada evaluación no se analizaban. & Aplicar el modelo una sola vez, al cerrar la evaluación, sobre la cohorte completa. & Aplicada (Incremento~16); independencia del orden verificada en 60 de 60 cohortes \\
+    Con datos sintéticos, el modelo no agrega detecciones a las reglas en los perfiles de pegado masivo, tecleo automatizado y cambio de pestaña, y aporta todas las del perfil de ritmo distinto (Sección~\ref{sec:eval_aporte_modelo}). & Mantener el modelo como complemento de las reglas para desvíos en la dinámica continua, y no presentarlo como detector de las conductas que cubren las reglas. & Adoptada; a confirmar con datos de personas \\
+    Una parte de las marcas del modelo no tiene ninguna métrica individual extrema. & Presentar las métricas con mayor desviación como dato descriptivo respecto de la cohorte y no como explicación de la marca. & Aplicada (Incremento~16) \\
+    Con 200 entregas simultáneas, los pedidos que esperaban una conexión fallaban; la entrega simultánea sigue superando los 5\,s. & Dimensionar el \textit{pool} de conexiones y limitar los pedidos en curso; evaluar el puntaje por lotes y repetir las pruebas de carga en producción. & Aplicada la primera parte; el resto, trabajo futuro \\
+    La evaluación experta de usabilidad detectó pérdida de la respuesta al recargar, falta de ingreso por código y de confirmación de entrega, y problemas de contraste y de diseño adaptable. & Corregirlos antes de cualquier prueba con usuarios. & Aplicada (Incremento~16); prueba con docentes y estudiantes pendiente \\
+    En conjunto, los resultados muestran que una marca del modelo no equivale a una conducta indebida: la proporción que marca está fijada aproximadamente por un parámetro de diseño; con el protocolo por sesión, el modelo no marcó ninguna de las 36 sesiones de navegador de las tres primeras corridas y la regla de ritmo uniforme resultó frágil ante una sola pulsación atípica. & Orientar la propuesta hacia la trazabilidad e inteligencia del proceso de evaluación: un panorama agregado de cada evaluación, útil aunque ninguna sesión requiera revisión; la interpretación de los eventos según las reglas del examen; y la lectura del indicador del modelo como un proceso de interacción distinto al de la cohorte, que indica dónde mirar. No se modifican el cálculo de métricas, las reglas por defecto ni el modelo (Sección~\ref{sec:impl_panorama}). & Aplicada (Incremento~12); resultados sintéticos sin cambios \\
+\end{longtable}
+}
+
+\section{Consideraciones éticas y normativas}
+\label{sec:eval_etica}
+
+Como la evaluación de este capítulo no trató datos personales, esta sección se ocupa de las consideraciones éticas y normativas de la plataforma: el encuadre legal de los datos que captura, las garantías que implementa y las exigencias de un uso institucional. Los identificadores de las sesiones sintéticas usan un prefijo propio para que en el \textit{dashboard} quede a la vista que no corresponden a personas.
+
+\subsection{Encuadre normativo de la plataforma}
+
+Los metadatos de interacción que captura la plataforma (tiempos de tecla, velocidad de mouse, eventos de foco y de pegado) están asociados a la sesión de una persona determinable y son, por lo tanto, datos personales en los términos de la Ley~25.326 \parencite{Argentina2000Ley25326}. Su tratamiento exige calidad y finalidad de los datos, consentimiento libre, expreso e informado, información previa y seguridad; la reglamentación precisa además que el consentimiento debe estar precedido de una explicación y que es revocable \parencite{Argentina2001Dec1558}. El análisis de la viabilidad legal del producto se desarrolla en el Capítulo~\ref{ch:viabilidad}.
+
+ImprontIA no identifica ni verifica a las personas por su forma de tipear: no construye plantillas individuales y su línea base es poblacional. Aun así, según los criterios orientadores de la autoridad de aplicación, la sensibilidad de un dato de este tipo depende de su potencial discriminatorio \parencite{AAIP2019Res4}, y una marca de atipicidad podría afectar la consideración de un estudiante. Por eso la plataforma trata estos datos con resguardos equivalentes a los de datos sensibles, en línea con RNF03.
+
+\subsection{Garantías que implementa la plataforma}
+
+La Tabla~\ref{tab:etica_garantias} reúne las garantías que el MVP implementa y su fundamento.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{7.2cm} >{\raggedright\arraybackslash}p{3.2cm}}
+    \caption[Garantías de información, consentimiento, minimización y control humano implementadas en la plataforma]{Garantías de información, consentimiento, minimización y control humano implementadas en la plataforma}
+    \label{tab:etica_garantias} \\
+    \toprule
+    \tblhead \textbf{Garantía} & \textbf{Cómo se implementa} & \textbf{Fundamento} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Garantía} & \textbf{Cómo se implementa} & \textbf{Fundamento} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    Información previa & Antes de cada sesión, el estudiante ve qué señales se registran, para qué se usan, qué no se registra y las reglas del examen, generadas a partir de la misma política que limita la captura. & \parencite{Argentina2000Ley25326, Argentina2001Dec1558}; RF01, RNF02 \\
+    Consentimiento expreso & La captura comienza solo después de que el estudiante acepta en forma explícita; el consentimiento queda registrado con la sesión. & \parencite{Argentina2000Ley25326}; RF01, RF03 \\
+    Minimización & Los eventos no contienen el texto escrito, el contenido del portapapeles ni la identidad de las teclas, y el servidor rechaza los que no cumplen ese esquema; el estudiante se identifica con un código. & RNF01; \parencite{Argentina2000Ley25326} \\
+    Conservación limitada & Cada evaluación declara su plazo de conservación, con un máximo de doce meses, y una purga automática elimina las sesiones vencidas. & RNF10; \parencite{Argentina2000Ley25326} \\
+    Supresión & El docente puede eliminar una sesión, una evaluación completa o su cuenta, con todos los datos asociados. & RF17; \parencite{Argentina2000Ley25326} \\
+    Seguridad & Acceso por roles, \textit{token} de sesión acotado a la escritura de eventos, contraseñas con \textit{hash} y comunicación cifrada. & RNF03; \parencite{Argentina2000Ley25326} \\
+    Revisión humana & Los indicadores no son veredictos: indican dónde mirar, cada uno se explica hasta el evento que lo originó y la decisión queda siempre a cargo del docente. & RF10, RNF06; \parencite{Coghlan2021} \\
+\end{longtable}
+}
+
+\subsection{Uso institucional}
+
+Un despliegue en evaluaciones reales plantea exigencias adicionales. La guía de evaluación de impacto de la AAIP señala el tratamiento automatizado mediante algoritmos o inteligencia artificial como un motivo de análisis previo y propone, entre las mitigaciones, monitorear o limitar las decisiones automatizadas \parencite{AAIP2020GuiaEIPD}; por eso, antes de un uso real, corresponde realizar una evaluación de impacto en la protección de datos. En la Unión Europea, un sistema de IA destinado a monitorear y detectar conductas prohibidas de estudiantes durante exámenes se clasifica como de alto riesgo, lo que exige gestión de riesgos, documentación técnica y supervisión humana \parencite{UE2024AIAct}, con obligaciones aplicables desde diciembre de 2027 según la modificación introducida en 2026 \parencite{UE2026AIOmnibus}. El mismo reglamento prohíbe inferir emociones en instituciones educativas, algo que ImprontIA no hace. Aunque esa normativa no rige en Argentina, sirve de referencia: la revisión humana obligatoria, la explicación de cada indicador y la ausencia de veredictos automáticos son las salvaguardas que la literatura ética sobre supervisión de exámenes pide a las instituciones que justifiquen y gobiernen \parencite{Coghlan2021}, y ImprontIA las incorpora desde su diseño.
+
+\section{Amenazas a la validez}
+\label{sec:eval_amenazas}
+
+\begin{itemize}
+    \item \textbf{Validez externa: datos sintéticos.} Las sesiones normales y anómalas provienen de distribuciones elegidas por el equipo, no medidas en personas. Las tasas obtenidas describen el comportamiento del \textit{pipeline} frente a esas distribuciones y no se trasladan a estudiantes reales \parencite{Emmott2013}.
+    \item \textbf{Validez de constructo: qué es ``anómalo''.} Los perfiles sintéticos y los escenarios guionados representan algunas formas posibles de ayuda no permitida, no todas. Un buen desempeño frente a ellos no implica detectar otras, y un patrón atípico tampoco equivale a una conducta indebida (Sección~\ref{sec:senal_a_insight}).
+    \item \textbf{Circularidad de los perfiles de regla.} Tres perfiles sintéticos y tres escenarios de la prueba interna se diseñaron conociendo los umbrales; su detección verifica la implementación, no la capacidad de las reglas frente a conductas reales.
+    \item \textbf{Validez interna: automatización del navegador.} La prueba interna introduce latencias propias de la herramienta de automatización y simula el cambio de visibilidad de la pestaña; puede diferir de la interacción de una persona.
+    \item \textbf{Validez de conclusión estadística.} La evaluación sintética usa 80 sesiones de prueba por repetición y la prueba interna, doce sesiones por escenario. Se informan desvíos e intervalos entre repeticiones, pero las cifras de la prueba interna solo permiten conclusiones de funcionamiento, no de tasas \parencite{Varoquaux2018}.
+    \item \textbf{Validez de las mediciones de rendimiento y de usabilidad.} Las mediciones de rendimiento se hicieron en una sola máquina, con sesiones sintéticas y sin red real; la evaluación de usabilidad la hicieron el mismo equipo y una automatización, sin participantes. Ninguna de las dos se traslada directamente a la operación con usuarios en la infraestructura de producción.
+    \item \textbf{Comparabilidad con antecedentes.} Las cifras de trabajos previos provienen de otros modelos, tareas y objetivos, en algunos casos de preprints; no se comparan directamente con las de ImprontIA \parencite{Killourhy2009, Campos2016}.
+\end{itemize}
+
+\section{Niveles de validación alcanzados}
+\label{sec:eval_niveles}
+
+Los resultados de este capítulo deben leerse según el nivel al que corresponden. La Tabla~\ref{tab:eval_niveles} distingue tres niveles: el MVP implementado, la validación técnica realizada y el uso institucional, que todavía no está habilitado. Ningún resultado de un nivel se traslada al siguiente: que el MVP funcione no implica que sus indicadores distingan conductas reales, y los resultados con datos sintéticos no anticipan los de un piloto, que no se realizó.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{6.2cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{2.6cm}}
+    \caption{Niveles de validación de ImprontIA}
+    \label{tab:eval_niveles} \\
+    \toprule
+    \tblhead \textbf{Nivel} & \textbf{Qué comprende} & \textbf{Estado} & \textbf{Evidencia} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Nivel} & \textbf{Qué comprende} & \textbf{Estado} & \textbf{Evidencia} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    MVP & Cadena completa de información previa y consentimiento, captura, métricas, indicadores por reglas, modelo poblacional al cierre, revisión docente, eliminación y conservación limitada de los datos. & Implementado & Capítulo~\ref{ch:implementacion} \\
+    Validación técnica & Pruebas automatizadas; evaluación con datos sintéticos generados por el equipo; pruebas de punta a punta con escenarios guionados; prueba de resiliencia; mediciones de rendimiento en una máquina; evaluación experta y automatizada de usabilidad. Verifica el procedimiento y el funcionamiento interno, no el desempeño frente a personas. & Realizada & Secciones~\ref{sec:eval_estrategia} a~\ref{sec:eval_usabilidad} \\
+    Uso institucional & Piloto con voluntarios; calibración de umbrales y de la tasa de revisión con datos reales; pruebas de usabilidad con docentes y estudiantes; evaluación de impacto en la protección de datos; procedimiento para el ejercicio de derechos; pruebas de carga en la infraestructura de producción; auditoría de seguridad. & No realizado; condición previa a cualquier uso con calificaciones en juego & Sección~\ref{sec:eval_piloto_futuro} y Capítulo~\ref{ch:viabilidad} \\
+\end{longtable}
+}
+
+\section{Trabajo futuro: piloto con voluntarios}
+\label{sec:eval_piloto_futuro}
+
+El paso siguiente a la validación técnica es aplicar el mismo procedimiento de medición a datos de interacción de personas. El piloto previsto en la Sección~\ref{sec:dataset_piloto} se plantea con el diseño metodológico que se resume a continuación, que reutiliza el código de evaluación reemplazando el generador sintético por las métricas de las sesiones recolectadas.
+
+\textbf{Cronograma previsto.} El piloto no llegó a realizarse antes de esta entrega final: requiere aprobar el protocolo de consentimiento informado y de tratamiento de datos con la universidad, convocar a los voluntarios y contar con una cohorte en un período sin exámenes con calificación. Se prevé en cuatro etapas: (1) simulaciones del propio equipo con las herramientas del Incremento~15 (Sección~\ref{sec:impl_simulacion}), para ensayar el procedimiento de punta a punta con datos de interacción reales, en diciembre de 2026; (2) presentación del protocolo ante la universidad y convocatoria de voluntarios, entre febrero y marzo de 2027; (3) sesiones del piloto durante las primeras semanas del primer cuatrimestre de 2027, antes del primer período de parciales, y (4) análisis con el código de evaluación existente y revisión ciega por docentes, entre abril y mayo de 2027. Hasta completar esas etapas, rige el nivel de validación de la Tabla~\ref{tab:eval_niveles}.
+
+\textbf{Participantes.} Un mínimo de 30 voluntarios de la misma carrera, en sesiones sin calificación en juego. Con 30 voluntarios y dos o tres sesiones por persona se obtendrían entre 60 y 90 sesiones, un volumen exploratorio fijado por factibilidad (Sección~\ref{sec:dataset_piloto}). Es un tamaño del mismo orden que el de trabajos recientes que estudian la deshonestidad académica a partir de la dinámica de tecleo, con 40 y 34 estudiantes respectivamente \parencite{Kundu2024, Mehta2025}, aunque esos trabajos son preprints y usan modelos supervisados, por lo que sirven como referencia de escala y no de desempeño esperado.
+
+\textbf{Diseño intrasujeto con conductas indicadas por consigna.} Cada participante rinde una sesión en condiciones normales y al menos una con una conducta anómala \textbf{indicada explícitamente por consigna}, como en los antecedentes citados, que simulan la deshonestidad pidiendo usar recursos externos o transcribir o parafrasear un texto provisto \parencite{Kundu2024, Mehta2025}. Así se obtienen etiquetas conocidas sin observar conductas indebidas reales. El diseño intrasujeto permite comparar a cada participante consigo mismo, a cambio de controlar los efectos del orden de las condiciones \parencite{Charness2012}: por eso el orden se contrabalancea, para que el aprendizaje de la consigna o la fatiga no se confundan con el efecto de la condición. La Tabla~\ref{tab:piloto_condiciones} propone las condiciones.
+
+\begin{table}[h!]
+    \caption{Condiciones de sesión propuestas para el piloto}
+    \label{tab:piloto_condiciones}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.6cm}}
+        \toprule
+        \tblhead \textbf{Condición} & \textbf{Consigna para el participante} & \textbf{Señales que se espera alterar} \\
+        \midrule
+        Normal (N) & Responder con recursos propios, sin ayuda externa. & Ninguna; define la línea base. \\
+        Pegado (A1) & Incorporar a la respuesta un fragmento provisto, copiándolo y pegándolo. & Volumen de pegado. \\
+        Transcripción (A2) & Escribir a mano una respuesta provista en otra ventana, sin pegarla. & Ritmo de tecleo; cambios de foco. \\
+        Consulta externa (A3) & Consultar fuentes externas o un asistente de IA fuera de la pestaña del examen y elaborar la respuesta. & Cambios de foco y tiempo fuera; pausas. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Análisis.} La partición entre entrenamiento y evaluación se hace por participante y nunca por sesión; el modelo se entrena solo con sesiones normales del subconjunto de entrenamiento; los umbrales y la proporción esperada de atípicos no se ajustan con las etiquetas de evaluación \parencite{Goldstein2016}; cada métrica se informa con un intervalo por remuestreo (\textit{bootstrap}) por participante \parencite{Varoquaux2018}; se repite el entrenamiento con distintas semillas; se verifica si las métricas con mayor desviación que acompañan cada marca del modelo corresponden a lo esperable según la condición, como dato descriptivo (RNF06); y una muestra de sesiones marcadas y no marcadas se presenta a docentes que no conocen la condición, para contrastar su lectura de la evidencia con la etiqueta. Al finalizar cada sesión, un cuestionario breve sobre la comprensión de la información previa y la interferencia percibida permitiría evaluar además RF01, RNF02 y RNF07 con personas.
+
+\endgroup

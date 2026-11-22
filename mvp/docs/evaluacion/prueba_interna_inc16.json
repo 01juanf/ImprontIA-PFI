@@ -1,0 +1,579 @@
+{
+  "meta": {
+    "fecha_utc": "2026-10-21 22:33",
+    "repeticiones": 3,
+    "escenarios": [
+      "normal",
+      "pegado_masivo",
+      "cambios_foco",
+      "transcripcion"
+    ],
+    "semilla": 18,
+    "normales_linea_base": 24,
+    "semilla_linea_base": 7,
+    "chromium": "141.0.7390.37",
+    "python": "3.12.3",
+    "plataforma": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "duracion_total_min": 10.237909964720409,
+    "esperados": {
+      "normal": [],
+      "pegado_masivo": [
+        "paste_volume_alto"
+      ],
+      "cambios_foco": [
+        "cambios_pestana_frecuentes"
+      ],
+      "transcripcion": [
+        "ritmo_tecleo_atipico"
+      ]
+    },
+    "descripcion": {
+      "normal": "Mouse + tecleo con ritmo variable (pulsación 60–130 ms, entre teclas 70–220 ms) + 1 salida de pestaña de ~2 s.",
+      "pegado_masivo": "Tecleo de una frase corta y pegado de un bloque de ~450 caracteres.",
+      "cambios_foco": "Tecleo con ritmo variable intercalado con 7 salidas de pestaña de 1,5–3 s (simuladas, ver limitación).",
+      "transcripcion": "Tecleo a ritmo constante: pulsación fija de 80 ms y 110 ms entre teclas."
+    }
+  },
+  "sesiones": [
+    {
+      "escenario": "normal",
+      "repeticion": 1,
+      "participante": "PI-NORMAL-01",
+      "session_id": "059a91ad-153c-452c-9422-0a8bacaf5719",
+      "eventos": 301,
+      "requiere_revision": false,
+      "indicadores_regla": [],
+      "indicador_modelo": false,
+      "esperados": [],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.8451401473232801,
+        "std_dwell_time_ms": -0.5425653597691278,
+        "mean_flight_time_ms": 0.016270408393678736,
+        "mean_mouse_speed_px_ms": -0.3448030071426821,
+        "std_mouse_speed_px_ms": 0.08723063383316787
+      },
+      "z_max_metrica": "mean_dwell_time_ms",
+      "z_max": 0.85,
+      "duracion_s": 55.2,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 1.0,
+      "focus_loss_duration_total_ms": 1752.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 107.08527131782945,
+      "std_dwell_time_ms": 19.581683819463954,
+      "mean_flight_time_ms": 161.2578125,
+      "mean_mouse_speed_px_ms": 0.5516298493798999
+    },
+    {
+      "escenario": "pegado_masivo",
+      "repeticion": 1,
+      "participante": "PI-PEGADO_MASIVO-01",
+      "session_id": "f180a170-803a-403c-9761-ba64060f26ad",
+      "eventos": 122,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "paste_volume_alto"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "paste_volume_alto"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.4286020487212804,
+        "std_dwell_time_ms": 0.3293924636222577,
+        "mean_flight_time_ms": -0.44825128468735587,
+        "mean_mouse_speed_px_ms": -0.6760330080524826,
+        "std_mouse_speed_px_ms": -0.3146055239095168
+      },
+      "z_max_metrica": "mean_mouse_speed_px_ms",
+      "z_max": -0.68,
+      "duracion_s": 30.0,
+      "paste_chars_total": 461.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 41.0,
+      "mean_dwell_time_ms": 101.70731707317073,
+      "std_dwell_time_ms": 23.416946024078086,
+      "mean_flight_time_ms": 144.65,
+      "mean_mouse_speed_px_ms": 0.5002589986101773
+    },
+    {
+      "escenario": "cambios_foco",
+      "repeticion": 1,
+      "participante": "PI-CAMBIOS_FOCO-01",
+      "session_id": "02f36f6d-7396-4ae1-ac86-0ba62e5d668f",
+      "eventos": 325,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "cambios_pestana_frecuentes"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "cambios_pestana_frecuentes"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.46808266726406567,
+        "std_dwell_time_ms": -0.5627783684477964,
+        "mean_flight_time_ms": 3.182351324308211,
+        "mean_mouse_speed_px_ms": -0.41553715910482114,
+        "std_mouse_speed_px_ms": -0.4469547645701896
+      },
+      "z_max_metrica": "mean_flight_time_ms",
+      "z_max": 3.18,
+      "duracion_s": 69.7,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 7.0,
+      "focus_loss_duration_total_ms": 15092.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 102.21705426356588,
+      "std_dwell_time_ms": 19.49277792728981,
+      "mean_flight_time_ms": 274.453125,
+      "mean_mouse_speed_px_ms": 0.5406596064828519
+    },
+    {
+      "escenario": "transcripcion",
+      "repeticion": 1,
+      "participante": "PI-TRANSCRIPCION-01",
+      "session_id": "ed1f643e-fa9a-4a46-9111-850cc269c8f2",
+      "eventos": 297,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "ritmo_tecleo_atipico"
+      ],
+      "indicador_modelo": true,
+      "esperados": [
+        "ritmo_tecleo_atipico"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "con_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": {
+        "model": "isolation_forest_poblacional",
+        "anomaly_score": -0.0053512659131502716,
+        "population_percentile": 0.12,
+        "population_size": 25,
+        "percentile_high_cut": 0.05,
+        "top_features": [
+          {
+            "metric": "std_dwell_time_ms",
+            "value": 2.4644823913195184,
+            "population_mean": 21.187984096351357,
+            "z_score": -3.2505117044407044
+          },
+          {
+            "metric": "mean_flight_time_ms",
+            "value": 115.46875,
+            "population_mean": 158.86781051248317,
+            "z_score": -1.201093799679011
+          }
+        ]
+      },
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": -0.5604196628974533,
+        "std_dwell_time_ms": -4.434210025388124,
+        "mean_flight_time_ms": -1.264452916071438,
+        "mean_mouse_speed_px_ms": -0.02465733430354843,
+        "std_mouse_speed_px_ms": -0.007602068981825684
+      },
+      "z_max_metrica": "std_dwell_time_ms",
+      "z_max": -4.43,
+      "duracion_s": 46.0,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 88.93798449612403,
+      "std_dwell_time_ms": 2.4644823913195184,
+      "mean_flight_time_ms": 115.46875,
+      "mean_mouse_speed_px_ms": 0.6012816186605157
+    },
+    {
+      "escenario": "normal",
+      "repeticion": 2,
+      "participante": "PI-NORMAL-02",
+      "session_id": "85dfa2ca-ef40-4727-9c92-b63dca665b0c",
+      "eventos": 301,
+      "requiere_revision": false,
+      "indicadores_regla": [],
+      "indicador_modelo": false,
+      "esperados": [],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.5605458072785874,
+        "std_dwell_time_ms": -0.8378903243226702,
+        "mean_flight_time_ms": 0.22757555337879523,
+        "mean_mouse_speed_px_ms": -0.16930514575799982,
+        "std_mouse_speed_px_ms": 0.37351290971617956
+      },
+      "z_max_metrica": "std_dwell_time_ms",
+      "z_max": -0.84,
+      "duracion_s": 55.5,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 1.0,
+      "focus_loss_duration_total_ms": 2491.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 103.4108527131783,
+      "std_dwell_time_ms": 18.282711960680814,
+      "mean_flight_time_ms": 168.8125,
+      "mean_mouse_speed_px_ms": 0.5788480193006041
+    },
+    {
+      "escenario": "pegado_masivo",
+      "repeticion": 2,
+      "participante": "PI-PEGADO_MASIVO-02",
+      "session_id": "b575ee18-720b-49ee-a629-a831e1c7c7e4",
+      "eventos": 122,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "paste_volume_alto"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "paste_volume_alto"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.29069812260206246,
+        "std_dwell_time_ms": -0.898042691917845,
+        "mean_flight_time_ms": -0.2133026891465106,
+        "mean_mouse_speed_px_ms": 0.035794749183272356,
+        "std_mouse_speed_px_ms": -0.09748047185718683
+      },
+      "z_max_metrica": "std_dwell_time_ms",
+      "z_max": -0.9,
+      "duracion_s": 30.2,
+      "paste_chars_total": 461.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 41.0,
+      "mean_dwell_time_ms": 99.92682926829268,
+      "std_dwell_time_ms": 18.01813482659588,
+      "mean_flight_time_ms": 153.05,
+      "mean_mouse_speed_px_ms": 0.6106572034535307
+    },
+    {
+      "escenario": "cambios_foco",
+      "repeticion": 2,
+      "participante": "PI-CAMBIOS_FOCO-02",
+      "session_id": "12edceb9-a566-46e1-a684-9992a04aa53e",
+      "eventos": 325,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "cambios_pestana_frecuentes"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "cambios_pestana_frecuentes"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.4638797972634066,
+        "std_dwell_time_ms": -0.5978323296420023,
+        "mean_flight_time_ms": 2.936957655416499,
+        "mean_mouse_speed_px_ms": -0.06756444389115338,
+        "std_mouse_speed_px_ms": 0.5426455446519041
+      },
+      "z_max_metrica": "mean_flight_time_ms",
+      "z_max": 2.94,
+      "duracion_s": 67.7,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 7.0,
+      "focus_loss_duration_total_ms": 14906.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 102.16279069767442,
+      "std_dwell_time_ms": 19.338594859160146,
+      "mean_flight_time_ms": 265.6796875,
+      "mean_mouse_speed_px_ms": 0.5946271045237204
+    },
+    {
+      "escenario": "transcripcion",
+      "repeticion": 2,
+      "participante": "PI-TRANSCRIPCION-02",
+      "session_id": "64d7ab70-b6f7-4f0b-95e9-e223dd0cd659",
+      "eventos": 297,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "ritmo_tecleo_atipico"
+      ],
+      "indicador_modelo": true,
+      "esperados": [
+        "ritmo_tecleo_atipico"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "con_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": {
+        "model": "isolation_forest_poblacional",
+        "anomaly_score": -0.01756508713852456,
+        "population_percentile": 0.08,
+        "population_size": 25,
+        "percentile_high_cut": 0.05,
+        "top_features": [
+          {
+            "metric": "std_dwell_time_ms",
+            "value": 2.773200964793273,
+            "population_mean": 21.200332839290308,
+            "z_score": -3.221408362379651
+          },
+          {
+            "metric": "mean_flight_time_ms",
+            "value": 115.3984375,
+            "population_mean": 158.86499801248317,
+            "z_score": -1.2028493639451194
+          }
+        ]
+      },
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": -0.5970446729032055,
+        "std_dwell_time_ms": -4.364021975391748,
+        "mean_flight_time_ms": -1.2664195616814338,
+        "mean_mouse_speed_px_ms": -0.31128920051240483,
+        "std_mouse_speed_px_ms": 1.116586695234242
+      },
+      "z_max_metrica": "std_dwell_time_ms",
+      "z_max": -4.36,
+      "duracion_s": 45.9,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 88.46511627906976,
+      "std_dwell_time_ms": 2.773200964793273,
+      "mean_flight_time_ms": 115.3984375,
+      "mean_mouse_speed_px_ms": 0.5568275451031147
+    },
+    {
+      "escenario": "normal",
+      "repeticion": 3,
+      "participante": "PI-NORMAL-03",
+      "session_id": "cf5bc552-03fa-40eb-89c8-320bd6794c85",
+      "eventos": 301,
+      "requiere_revision": false,
+      "indicadores_regla": [],
+      "indicador_modelo": false,
+      "esperados": [],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.6488060772924479,
+        "std_dwell_time_ms": -0.15852885882210874,
+        "mean_flight_time_ms": 0.08554003710131258,
+        "mean_mouse_speed_px_ms": 0.12031178162982545,
+        "std_mouse_speed_px_ms": -0.13746062409302381
+      },
+      "z_max_metrica": "mean_dwell_time_ms",
+      "z_max": 0.65,
+      "duracion_s": 51.4,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 1.0,
+      "focus_loss_duration_total_ms": 1681.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 104.55038759689923,
+      "std_dwell_time_ms": 21.270848865940344,
+      "mean_flight_time_ms": 163.734375,
+      "mean_mouse_speed_px_ms": 0.6237650495103074
+    },
+    {
+      "escenario": "pegado_masivo",
+      "repeticion": 3,
+      "participante": "PI-PEGADO_MASIVO-03",
+      "session_id": "3bc546cf-c960-41d5-99e9-b521a6274ec7",
+      "eventos": 122,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "paste_volume_alto"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "paste_volume_alto"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.6212897263125161,
+        "std_dwell_time_ms": -0.4076480264134521,
+        "mean_flight_time_ms": -0.467131082543317,
+        "mean_mouse_speed_px_ms": -0.49557778348157433,
+        "std_mouse_speed_px_ms": 0.0999426248940369
+      },
+      "z_max_metrica": "mean_dwell_time_ms",
+      "z_max": 0.62,
+      "duracion_s": 29.0,
+      "paste_chars_total": 461.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 41.0,
+      "mean_dwell_time_ms": 104.1951219512195,
+      "std_dwell_time_ms": 20.175110858576705,
+      "mean_flight_time_ms": 143.975,
+      "mean_mouse_speed_px_ms": 0.5282460118233111
+    },
+    {
+      "escenario": "cambios_foco",
+      "repeticion": 3,
+      "participante": "PI-CAMBIOS_FOCO-03",
+      "session_id": "6ad6a669-2650-4b5c-9b1b-f5ceb9dc23ce",
+      "eventos": 325,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "cambios_pestana_frecuentes"
+      ],
+      "indicador_modelo": false,
+      "esperados": [
+        "cambios_pestana_frecuentes"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "sin_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": null,
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": 0.23092071722682095,
+        "std_dwell_time_ms": -0.2455243611472965,
+        "mean_flight_time_ms": 2.993771861927492,
+        "mean_mouse_speed_px_ms": -0.14357075370936448,
+        "std_mouse_speed_px_ms": 0.7465866677647316
+      },
+      "z_max_metrica": "mean_flight_time_ms",
+      "z_max": 2.99,
+      "duracion_s": 64.2,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 7.0,
+      "focus_loss_duration_total_ms": 16138.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 99.15503875968992,
+      "std_dwell_time_ms": 20.888203566949258,
+      "mean_flight_time_ms": 267.7109375,
+      "mean_mouse_speed_px_ms": 0.5828391964583157
+    },
+    {
+      "escenario": "transcripcion",
+      "repeticion": 3,
+      "participante": "PI-TRANSCRIPCION-03",
+      "session_id": "ca08e1b3-7d6e-4764-90fc-0e10b7ab44ea",
+      "eventos": 297,
+      "requiere_revision": true,
+      "indicadores_regla": [
+        "ritmo_tecleo_atipico"
+      ],
+      "indicador_modelo": true,
+      "esperados": [
+        "ritmo_tecleo_atipico"
+      ],
+      "conforme": true,
+      "ui_coincide": true,
+      "sin_texto_en_eventos": true,
+      "problemas_privacidad": [],
+      "estado_modelo": "con_marca",
+      "respuesta_guardada": true,
+      "procesada": true,
+      "explicacion_modelo": {
+        "model": "isolation_forest_poblacional",
+        "anomaly_score": -0.005453970619089921,
+        "population_percentile": 0.12,
+        "population_size": 25,
+        "percentile_high_cut": 0.05,
+        "top_features": [
+          {
+            "metric": "std_dwell_time_ms",
+            "value": 2.780364158572683,
+            "population_mean": 21.200619367041483,
+            "z_score": -3.220725838951139
+          },
+          {
+            "metric": "mean_flight_time_ms",
+            "value": 117.5078125,
+            "population_mean": 158.9493730124832,
+            "z_score": -1.1499704210305883
+          }
+        ]
+      },
+      "z_vs_linea_base": {
+        "mean_dwell_time_ms": -0.4067147028733147,
+        "std_dwell_time_ms": -4.362393402813604,
+        "mean_flight_time_ms": -1.2074201933815563,
+        "mean_mouse_speed_px_ms": -0.44259982121812863,
+        "std_mouse_speed_px_ms": -0.2478258519897816
+      },
+      "z_max_metrica": "std_dwell_time_ms",
+      "z_max": -4.36,
+      "duracion_s": 44.8,
+      "paste_chars_total": 0.0,
+      "tab_switch_count": 0.0,
+      "focus_loss_duration_total_ms": 0.0,
+      "keydown_count": 129.0,
+      "mean_dwell_time_ms": 90.92248062015504,
+      "std_dwell_time_ms": 2.780364158572683,
+      "mean_flight_time_ms": 117.5078125,
+      "mean_mouse_speed_px_ms": 0.5364624263571521
+    }
+  ]
+}

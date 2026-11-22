@@ -1,0 +1,157 @@
+\chapter{Paquete de reproducibilidad}
+\label{apx:reproducibilidad}
+\begingroup\sloppy
+\let\ApxOrigUnderscore\_
+\renewcommand{\_}{\ApxOrigUnderscore\allowbreak}
+
+Este apéndice reúne lo necesario para reproducir los resultados del MVP informados en los Capítulos~\ref{ch:implementacion} y~\ref{ch:evaluacion}: dónde está el código, qué versión se evaluó, qué requisitos tiene el entorno, con qué comandos se obtiene cada resultado y en qué archivo queda. Todos los resultados provienen de datos sintéticos o de guiones automatizados; reproducirlos no requiere datos de personas.
+
+\section{Repositorio y versión evaluada}
+
+\begin{itemize}
+    \item \textbf{Repositorio:} \repomvp. El MVP se encuentra en la carpeta \texttt{mvp/}, con el \textit{backend} en \texttt{mvp/backend/}, el \textit{dashboard} en \texttt{mvp/dashboard/}, los guiones de evaluación en \texttt{mvp/scripts/} y \texttt{mvp/backend/scripts/}, y los resultados generados en \texttt{mvp/docs/evaluacion/}.
+    \item \textbf{Plataforma en línea:} \url{https://improntia-dashboard.vercel.app}, con la cuenta de demostración de la Sección~\ref{sec:impl_acceso}.
+    \item \textbf{Versión evaluada:} etiqueta \texttt{\versionmvp}.
+    \item \textbf{Registro de construcción:} \texttt{mvp/docs/bitacora.md} documenta cada incremento, las pruebas ejecutadas y las decisiones tomadas.
+\end{itemize}
+
+Para obtener exactamente la versión evaluada:
+
+\begin{quote}\footnotesize\ttfamily
+git clone https://github.com/01juanf/ImprontIA-PFI\\
+cd ImprontIA-PFI\\
+git checkout \versionmvp
+\end{quote}
+
+\section{Enlaces al \textit{dataset} sintético y a su generador}
+\label{sec:repro_enlaces}
+
+El \textit{dataset} utilizado en la evaluación no proviene de personas: es sintético y lo produce un generador incluido en el repositorio (Sección~\ref{sec:eval_dataset}). Ambos se publican junto con el código, en la versión evaluada:
+
+\begin{itemize}
+    \item \textbf{Generador del \textit{dataset}:} \url{https://github.com/01juanf/ImprontIA-PFI/blob/v1.0/mvp/backend/app/evaluation/synthetic.py}, invocado por \texttt{mvp/backend/scripts/evaluar.py} y \texttt{mvp/backend/scripts/aporte\_modelo.py}.
+    \item \textbf{\textit{Dataset} sintético y resultados:} \url{https://github.com/01juanf/ImprontIA-PFI/tree/v1.0/mvp/docs/evaluacion}, que contiene las sesiones generadas (\texttt{sesiones\_sinteticas\_inc16.csv}) y los resultados de cada análisis (\texttt{resultados\_sinteticos\_inc16.md} y \texttt{.json}, \texttt{aporte\_modelo.csv}, \texttt{barrido\_dificultad.csv}).
+    \item \textbf{Paquete reproducible:} el repositorio completo en la etiqueta \texttt{\versionmvp}; el guion \texttt{mvp/scripts/reproducir.sh} regenera el \textit{dataset} con las mismas semillas y vuelve a calcular todos los resultados (Sección~\ref{sec:repro_entrada}).
+\end{itemize}
+
+\section{Requisitos del entorno}
+
+\begin{itemize}
+    \item \textbf{Python 3.12} (también admite 3.11; las dependencias fijadas no admiten 3.13), con las dependencias de \texttt{mvp/backend/requirements.txt}, entre ellas FastAPI, SQLAlchemy, Alembic y scikit-learn~1.5.2.
+    \item \textbf{Node.js} con \texttt{npm}, en una versión que admita la opción \verb|--experimental-strip-types| con la que se ejecutan las pruebas del \textit{frontend} (Node.js~22 o posterior).
+    \item \textbf{Docker} con Docker Compose (opcional), solo para el camino alternativo con contenedores de la Sección~\ref{sec:repro_docker}.
+    \item \textbf{Playwright para Python con Chromium}, para los guiones que usan un navegador (prueba interna, prueba de resiliencia, mediciones de rendimiento y evaluación de usabilidad): \texttt{pip install playwright} y \texttt{playwright install chromium}. La evaluación de usabilidad requiere además axe-core~4.10.2, instalado fuera del repositorio.
+    \item \textbf{PostgreSQL~16} (opcional), para ejecutar la suite y las mediciones sobre esa base; sin él, se usa SQLite.
+\end{itemize}
+
+Preparación, desde la raíz del repositorio:
+
+\begin{footnotesize}
+\begin{verbatim}
+cd mvp/backend
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+pip install playwright && playwright install chromium
+cd ../dashboard && npm install
+\end{verbatim}
+\end{footnotesize}
+
+\section{Punto de entrada único}
+\label{sec:repro_entrada}
+
+El guion \texttt{mvp/scripts/reproducir.sh} encadena los pasos de este apéndice y es el punto de entrada recomendado para reproducir el conjunto de los resultados. Con el entorno preparado, desde \texttt{mvp/}:
+
+\begin{footnotesize}
+\begin{verbatim}
+bash scripts/reproducir.sh --python backend/.venv/bin/python
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Se invoca con \texttt{bash} para que funcione igual desde un clon del repositorio o desde el archivo ZIP que descarga GitHub, aunque este no conserve el permiso de ejecución. La corrida completa demora unos 15 minutos; la opción \verb|--rapido| hace una verificación más corta. Los comandos que siguen permiten, además, ejecutar cada paso por separado. Salvo indicación, se ejecutan desde \texttt{mvp/} con el entorno virtual del \textit{backend} activado.
+
+\section{Comandos y resultados}
+
+\subsection{Pruebas automatizadas}
+
+\begin{footnotesize}
+\begin{verbatim}
+cd backend && pytest                       # 142 aprobadas, 1 omitida
+TEST_DATABASE_URL=postgresql://usuario:clave@localhost/base pytest
+                                           # misma suite sobre PostgreSQL
+cd ../dashboard && npm test                # 36 pruebas del frontend
+npm run lint && npm run build              # análisis estático y compilación
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultado: el informe de cada herramienta en la consola. En la versión \texttt{\commitpruebas}, la corrida sobre SQLite aprueba 142 pruebas del \textit{backend} y omite una, que solo se ejecuta sobre PostgreSQL; con las 36 del \textit{frontend}, se aprueban 178 pruebas en total (Sección~\ref{sec:impl_pruebas}).
+
+\subsection{Verificación del despliegue y camino alternativo con Docker Compose}
+\label{sec:repro_docker}
+
+El camino validado para reproducir los resultados es el descripto en el resto de este apéndice: Python y Node.js instalados localmente, con la suite de pruebas sobre SQLite y sobre PostgreSQL~16. Con ese mismo entorno se verificó también el \textit{backend} en modo producción contra PostgreSQL, con el \textit{script} de verificación del despliegue (14 de 14 comprobaciones). El repositorio incluye además los descriptores de contenedores (\texttt{Dockerfile} y \texttt{docker-compose.yml}); su configuración se comprobó con \texttt{docker compose config}, pero el sistema completo no se levantó con Docker de punta a punta, porque el entorno de trabajo no tenía acceso al registro de imágenes. Los comandos siguientes corresponden, por lo tanto, a un camino previsto y no validado:
+
+\begin{footnotesize}
+\begin{verbatim}
+docker compose up --build -d
+docker compose exec backend python -m scripts.seed_teacher docente@uade.edu.ar clave
+python scripts/verificar_despliegue.py --api http://localhost:8010 \
+    --email docente@uade.edu.ar --clave clave --origen http://localhost:5173
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultado esperado: el sistema con PostgreSQL, \textit{backend} y \textit{dashboard} en ejecución (guía en \texttt{mvp/docs/despliegue.md}). El \textit{script} de verificación, que no depende de Docker y puede apuntarse a un \textit{backend} levantado localmente, recorre por HTTP el flujo completo, informa cada comprobación en la consola, sale con código~0 si todas pasan y deja en la base una evaluación de verificación identificable.
+
+\subsection{Evaluación con datos sintéticos}
+
+\begin{footnotesize}
+\begin{verbatim}
+cd backend
+python -m scripts.evaluar                  # 20 repeticiones, barrido y sensibilidad
+python -m scripts.aporte_modelo            # 30 semillas, cohortes de 40 y 100
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultados, en \texttt{mvp/docs/evaluacion/}: \texttt{scripts.evaluar} produce \texttt{resultados\_sinteticos.md} y \texttt{.json}, \texttt{sesiones\_sinteticas.csv}, \texttt{roc\_modelo.csv} y \texttt{barrido\_dificultad.csv} (Sección~\ref{sec:eval_sintetica}); \texttt{scripts.aporte\_modelo} produce \texttt{aporte\_modelo.md} y \texttt{aporte\_modelo.csv} (Sección~\ref{sec:eval_aporte_modelo}).
+
+\subsection{Prueba interna de punta a punta y prueba de resiliencia}
+
+\begin{footnotesize}
+\begin{verbatim}
+python scripts/prueba_interna.py --backend-python backend/.venv/bin/python \
+    --sufijo _inc16
+python scripts/prueba_red.py --backend-python backend/.venv/bin/python
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultados: \texttt{prueba\_interna\_inc16.csv}, \texttt{prueba\_interna\_inc16.json} y \texttt{prueba\_interna\_inc16\_resultados.md} (sin la opción \verb|--sufijo|, los mismos nombres sin sufijo), con la interpretación en \texttt{prueba\_interna.md} (Sección~\ref{sec:eval_prueba_interna}); \texttt{prueba\_red\_resultados.md}, con la interpretación en \texttt{prueba\_red.md} (Sección~\ref{sec:eval_prueba_red}). Ambos guiones levantan su propio \textit{backend} y \textit{dashboard} con una base temporal.
+
+\subsection{Mediciones de rendimiento}
+
+\begin{footnotesize}
+\begin{verbatim}
+python scripts/medir_rnf.py --etiqueta sqlite
+python scripts/medir_rnf.py --etiqueta postgres \
+    --db-url postgresql://usuario:clave@localhost/base --pruebas rnf11,rnf09
+python scripts/medir_rnf.py --informe docs/evaluacion/rnf_mediciones_sqlite.json \
+    docs/evaluacion/rnf_mediciones_postgres.json
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultados: \texttt{rnf\_mediciones\_sqlite.json} y \texttt{rnf\_mediciones\_postgres.json}, con las muestras crudas, y \texttt{rnf\_mediciones.md}, con las tablas (Sección~\ref{sec:eval_rnf}). Con \verb|--db-url|, la base indicada se vacía al empezar, por lo que debe usarse una base dedicada.
+
+\subsection{Evaluación experta y automatizada de usabilidad}
+
+\begin{footnotesize}
+\begin{verbatim}
+mkdir -p /tmp/axe && (cd /tmp/axe && npm install axe-core@4.10.2)
+python scripts/evaluar_usabilidad.py --backend-python backend/.venv/bin/python \
+    --axe /tmp/axe/node_modules/axe-core/axe.min.js
+\end{verbatim}
+\end{footnotesize}
+
+\noindent Resultados: \texttt{mvp/docs/evaluacion/usabilidad/}, con \texttt{metricas.json} y las capturas de cada pantalla y de cada hallazgo; la interpretación de la corrida inicial está en \texttt{usabilidad\_resultados.md} (Sección~\ref{sec:eval_usabilidad}).
+
+\section{Consideraciones}
+
+Los resultados con semillas fijas (evaluación sintética y aporte del modelo) deben reproducirse exactamente con las versiones de las bibliotecas indicadas. Los tiempos de las mediciones de rendimiento y de los recorridos automatizados dependen de la máquina y de su carga, por lo que se espera reproducir el orden de magnitud y el cumplimiento de las cotas, no los valores exactos. Los guiones que usan un navegador ocupan puertos locales fijos (por ejemplo, 8010 y 5173 en la prueba interna, y 8100 y 5180 en la evaluación de usabilidad), que deben estar libres.
+\endgroup

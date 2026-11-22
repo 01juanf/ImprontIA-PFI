@@ -1,0 +1,552 @@
+\chapter{Desarrollo del MVP}
+\label{ch:implementacion}
+\begingroup\sloppy
+% Dentro de este capítulo, permitir cortes de línea después de \_ en nombres de código largos.
+\let\ImplOrigUnderscore\_
+\renewcommand{\_}{\ImplOrigUnderscore\allowbreak}
+% Capturas del MVP: se generan con mvp/scripts/capturas_demo.py y se copian a
+% ./figures/capturas/. Si el archivo no está, se muestra un recuadro con su nombre
+% para que la compilación no se interrumpa.
+\providecommand{\capturaMVP}[4][]{%
+\begin{figure}[h!]
+    \centering
+    \IfFileExists{./figures/capturas/#2.png}%
+        {\fbox{\includegraphics[width=0.86\textwidth,height=0.40\textheight,keepaspectratio]{./figures/capturas/#2}}}%
+        {\fbox{\parbox[c][3cm][c]{0.8\textwidth}{\centering\small Captura \texttt{\detokenize{#2}.png}}}}
+    \if\relax\detokenize{#1}\relax\caption{#3 Fuente: captura del MVP, elaboración propia.}\else\caption[#1]{#3 Fuente: captura del MVP, elaboración propia.}\fi
+    \label{#4}
+\end{figure}}
+
+\begin{chapterabstract}
+Este capítulo documenta lo efectivamente construido del MVP de ImprontIA a partir de la arquitectura y el \textit{stack} definidos en el Capítulo~\ref{ch:tecnologias}. Se presentan la metodología de desarrollo (un ciclo de vida \textbf{iterativo e incremental}), la arquitectura implementada (un \textit{frontend} React que aloja tanto la vista de rendición del estudiante como el panel docente, y un \textit{backend} FastAPI organizado como monolito modular) con sus diagramas de componentes, de flujo de información y de clases, la secuencia de incrementos con la que se construyó, la elección de la \textbf{captura embebida en la propia plataforma} frente a una extensión de navegador, la correspondencia entre el modelo de datos implementado y el modelo entidad-relación, el \textit{pipeline} métricas $\to$ indicadores por reglas al finalizar cada sesión $\to$ \textit{Isolation Forest} sobre la cohorte al cerrar la evaluación, la eliminación y la conservación limitada de los datos, la trazabilidad de cada requerimiento a un componente concreto, las pruebas automatizadas y el recorrido funcional con capturas del sistema. Cierra con la verificación de conformidad del código con la especificación y con los límites del alcance del MVP.
+\end{chapterabstract}
+
+\section{Alcance del MVP}
+\label{sec:impl_alcance}
+
+El objetivo del MVP es demostrar de punta a punta la cadena de evidencia que propone ImprontIA: un estudiante es informado y consiente, rinde en una superficie instrumentada, sus señales de interacción se registran limitadas a lo informado, el \textit{backend} calcula métricas y genera indicadores trazables, y un docente revisa esa evidencia y deja constancia de su revisión sin que el sistema emita veredictos. Se trata de un artefacto funcional que permite validar técnicamente las decisiones del Capítulo~\ref{ch:tecnologias}, evaluar su funcionamiento (Capítulo~\ref{ch:evaluacion}) y que servirá más adelante como instrumento de recolección para un piloto con voluntarios.
+
+\subsection{Acceso a la plataforma en línea}
+\label{sec:impl_acceso}
+
+El MVP está publicado y se puede probar desde el navegador, sin instalar nada. La cuenta docente de demostración contiene seis evaluaciones con sesiones sintéticas, generadas como las de la Sección~\ref{sec:eval_dataset}; los estudiantes no necesitan cuenta.
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Plataforma & \url{https://improntia-dashboard.vercel.app} \\
+Ingreso de estudiantes & \url{https://improntia-dashboard.vercel.app/rendir} \\
+Cuenta docente de demostración & \texttt{docente@improntia.com}, clave \texttt{demo} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La primera carga puede demorar unos segundos mientras se activa el servidor.
+
+\section{Metodología de desarrollo}
+\label{sec:impl_metodologia}
+
+\subsection{Ciclo de vida adoptado}
+
+El MVP se construyó con un ciclo de vida \textbf{iterativo e incremental}. En este modelo el sistema se entrega en una secuencia de incrementos: cada uno agrega funcionalidad sobre el anterior, se construye en una iteración corta que incluye análisis, diseño, implementación y prueba, y produce una versión ejecutable que se evalúa antes de planificar la siguiente~\parencite{Sommerville2016}. A diferencia del modelo en cascada, que completa cada fase para todo el sistema antes de pasar a la siguiente, el enfoque incremental admite que los requisitos se refinen a medida que el producto se construye y permite detectar errores de concepción cuando todavía son baratos de corregir. No se trata de una práctica reciente: sus antecedentes se remontan a proyectos de la década de 1950 y el enfoque precede a los métodos ágiles, que lo adoptaron como base~\parencite{LarmanBasili2003}; el modelo en espiral, por su parte, incorporó la idea de ordenar las iteraciones según el riesgo que cada una permite reducir~\parencite{Boehm1988}.
+
+\subsection{Justificación}
+
+La elección responde a las condiciones concretas del proyecto:
+
+\begin{itemize}
+    \item \textbf{Requisitos estables en su intención pero no en su detalle.} Los requerimientos funcionales y no funcionales del Capítulo~\ref{ch:requerimientos} fijaban qué debía hacer la plataforma, pero el Capítulo~\ref{ch:tecnologias} se siguió refinando durante la construcción: el componente de IA pasó a ser un requisito del MVP y el modelo de datos se detalló con entidades versionadas y relaciones N:M explícitas. Un ciclo en cascada habría obligado a rehacer fases completas; el incremental absorbió esos cambios en un incremento dedicado (el~5).
+    \item \textbf{Riesgo técnico concentrado en pocos puntos.} La captura en el navegador, el procesamiento y el comportamiento del modelo con poblaciones chicas eran las incógnitas principales. Ordenar los incrementos para atacarlas temprano, como propone el enfoque guiado por riesgos~\parencite{Boehm1988}, permitió descubrir, por ejemplo, el mínimo de sesiones que necesita el modelo (Sección~\ref{sec:impl_isolation_forest}) antes de diseñar la evaluación.
+    \item \textbf{Equipo de dos personas.} Un marco ágil con roles y ceremonias formales, como Scrum, supone un equipo y un responsable de producto que el proyecto no tiene. Se adoptaron sus prácticas de fondo (entregas funcionales frecuentes, verificación continua y ajuste del plan según lo aprendido) sin su estructura organizativa.
+    \item \textbf{Comparación temprana de alternativas.} Los Incrementos~2 y~2b probaron dos formas de captura (extensión de navegador y captura embebida) contra el mismo \textit{backend}; la comparación permitió elegir con evidencia y con un costo acotado, sin cambios en el \textit{backend} (Sección~\ref{sec:impl_captura_embebida}). En un ciclo secuencial esa elección se habría validado recién al integrar.
+    \end{itemize}
+
+\subsection{Aplicación}
+
+Cada incremento se condujo con el mismo procedimiento:
+
+\begin{enumerate}
+    \item \textbf{Objetivo acotado}, vinculado a los requerimientos y a las secciones del Capítulo~\ref{ch:tecnologias} que lo originan.
+    \item \textbf{Construcción} de la funcionalidad mínima que cumple ese objetivo.
+    \item \textbf{Verificación} con pruebas automatizadas nuevas, más un recorrido manual o automatizado del flujo completo cuando el incremento tocaba la interfaz. El criterio de terminado fue explícito: nada se registra como hecho sin haberlo ejecutado.
+    \item \textbf{Registro} en una bitácora de desarrollo (\texttt{mvp/docs/bitacora.md} en el repositorio del proyecto) con el objetivo, lo construido, los hallazgos de la verificación y su resolución, y los insumos para el incremento siguiente.
+    \item \textbf{Revisión del plan}: los hallazgos de cada incremento alimentan la selección del siguiente.
+\end{enumerate}
+
+Esa bitácora es la fuente principal de este capítulo; cuando el texto menciona un hallazgo durante la construcción, se trata de un resultado observado y registrado allí. El código se versiona en un repositorio Git, las pruebas del \textit{backend} se ejecutan con \texttt{pytest} y el \textit{frontend} se verifica con su compilación y con recorridos automatizados en un navegador.
+
+\section{Arquitectura implementada}
+\label{sec:impl_arquitectura}
+
+La implementación respeta la arquitectura cliente-servidor y el monolito modular definidos en el Capítulo~\ref{ch:tecnologias} y representados en la Figura~\ref{fig:arquitectura_red}. Un único \textit{frontend} React con TypeScript sirve dos experiencias diferenciadas: la del estudiante, pública y sin cuenta, accesible mediante un código de examen (ruta \texttt{/exam/:joinCode}); y la del docente, protegida por autenticación JWT. Ambas consumen la misma API REST de un \textit{backend} FastAPI, que concentra la gestión de sesiones, la recepción de eventos, el procesamiento y la revisión, y que es el único componente con acceso a la base de datos. La Figura~\ref{fig:diag_componentes} muestra los componentes con el nombre del módulo que los implementa y la Tabla~\ref{tab:impl_componentes} resume la responsabilidad de cada uno.
+
+\begin{figure}[p]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/diagramas/componentes}}
+    \caption[Diagrama de componentes del MVP]{Diagrama de componentes del MVP. Cada caja corresponde a un módulo del código; las flechas indican dependencia o intercambio de datos, con el protocolo y la credencial de cada canal. Los módulos de \texttt{processing/} son funciones puras sin acceso a la base: \texttt{routers/sessions.py} lee los eventos y persiste las métricas y los indicadores de regla al finalizar cada sesión, y \texttt{routers/exams.py} lee las métricas de la cohorte y persiste los indicadores del modelo al cerrar la evaluación. El componente de evaluación (en línea discontinua) se ejecuta fuera de línea y reutiliza la misma función de decisión que la API. Fuente: elaboración propia.}
+    \label{fig:diag_componentes}
+\end{figure}
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{10.1cm}}
+    \caption{Componentes implementados del MVP y su responsabilidad}
+    \label{tab:impl_componentes} \\
+    \toprule
+    \tblhead \textbf{Componente (archivo)} & \textbf{Responsabilidad} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Componente (archivo)} & \textbf{Responsabilidad} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+        \multicolumn{2}{l}{\textit{Frontend (React + TypeScript, Vite)}} \\
+        \texttt{TakeExam.tsx} & Vista pública del estudiante: verificación del código, información previa y reglas, lista de señales habilitadas, consentimiento, consigna, superficie de respuesta, confirmación de la entrega y cierre de sesión, que solo se da por confirmado cuando el servidor terminó el procesamiento. \\
+        \texttt{JoinExam.tsx}, \texttt{examDraft.ts} & Ingreso del estudiante con solo el código del examen (rutas \texttt{/rendir} y \texttt{/exam}); sesión en curso y borrador de la respuesta guardados en el almacenamiento de la pestaña, para retomar la misma sesión si la página se recarga (Incremento~16). \\
+        \texttt{syncQueue.ts} & Cola de sincronización: envío por lotes numerados, reintentos con espera exponencial, \textit{buffer} acotado y registro de eventos propios ante un \textit{buffer} agotado o una falla persistente de conexión. \\
+        \texttt{api.ts}, \texttt{format.ts} & Cliente HTTP compartido por la vista del estudiante (\textit{token} de sesión) y el panel docente (JWT); formato de fechas, nombres legibles de indicadores y descripción de cada señal que se muestra al estudiante antes del consentimiento. \\
+        \texttt{capture.ts}, \texttt{keyPairing.ts} & Módulo de captura: registra \textit{listeners} nativos del DOM, filtra por categoría de señal habilitada y entrega eventos con marca temporal relativa al inicio de la sesión; la duración de cada pulsación se calcula en el navegador emparejando la liberación con la pulsación de la misma tecla, sin enviar la tecla (Incremento~16). \\
+        \texttt{Login.tsx}, \texttt{ExamsList.tsx}, \texttt{PolicyCard.tsx} & Acceso docente, creación de evaluaciones (nombre, información previa, reglas, consigna y señales habilitadas) y versionado de la política de captura; muestra el código de acceso a compartir. \\
+        \texttt{SessionsList.tsx}, \texttt{SessionDetail.tsx}, \texttt{PendingValidations.tsx} & Listado de sesiones con filtro ``solo las que requieren revisión'' y estado de revisión; detalle con contexto, indicadores, métricas de origen, acciones e historial de revisión; vista de validaciones adicionales pendientes. \\
+        \texttt{PanoramaView.tsx} & Pestaña ``Panorama'' del detalle de la evaluación: tarjetas, tabla de medianas y barras con el resumen agregado de las sesiones finalizadas (Incremento~12). \\
+        \midrule
+        \multicolumn{2}{l}{\textit{Backend (Python + FastAPI, SQLAlchemy)}} \\
+        \texttt{routers/auth.py}, \texttt{auth.py} & Emisión y validación de JWT para docentes. \\
+        \texttt{routers/exams.py} & Alta y consulta de evaluaciones; información pública previa al consentimiento; versionado de la política de captura; cierre de la evaluación con el análisis poblacional de la cohorte (Incremento~16). \\
+        \texttt{routers/sessions.py} & Ciclo de vida de la sesión (inicio, recepción y validación de lotes, fin idempotente con la respuesta entregada), disparo del procesamiento por reglas y persistencia de sus resultados, consulta docente con filtro por estado de revisión, registro de revisiones y eliminación de sesiones. \\
+        \texttt{processing/event\_schema.py} & Validación de cada lote en el servidor contra la política de la sesión: tipos, categorías, campos y formatos admitidos (Incremento~16). \\
+        \texttt{processing/features.py} & Cálculo determinístico de métricas a partir de los eventos crudos (como el resto de \texttt{processing/}, funciones puras sin acceso a la base). \\
+        \texttt{processing/indicators.py} & Reglas por umbral que convierten métricas en indicadores con su explicación. \\
+        \texttt{processing/anomaly.py}, \texttt{processing/cohort.py} & \textit{Isolation Forest} y su aplicación única sobre la cohorte completa de sesiones finalizadas al cerrar la evaluación (Incremento~16). \\
+        \texttt{processing/pipeline.py} & Decisión única métricas $\to$ reglas y modelo $\to$ indicadores, compartida por la API y por la evaluación. \\
+        \texttt{retention.py} & Eliminación de una sesión, de una evaluación y de la cuenta de un docente con todos sus datos (RF17), y purga de las sesiones cuyo plazo de conservación venció (RNF10, Incremento~16). \\
+        \texttt{processing/rules.py}, \texttt{processing/panorama.py} & Interpretación de los indicadores según las reglas del examen y cálculo del panorama agregado de una evaluación (Incremento~12, Sección~\ref{sec:impl_panorama}). \\
+        \texttt{evaluation/} & Generador de sesiones sintéticas, métricas de evaluación y protocolo de repeticiones (Capítulo~\ref{ch:evaluacion}). \\
+        \texttt{models.py}, \texttt{migrations/} & Modelo de datos (Sección~\ref{sec:impl_modelo}) y sus migraciones versionadas con Alembic, que \texttt{db\_migrations.py} aplica al arrancar (Incremento~14). \\
+        \texttt{config.py} & Configuración por entorno: modo producción con secreto JWT obligatorio, URL de la base, orígenes CORS permitidos y alta inicial de docentes (Incremento~13). \\
+        \texttt{simulacion.py}, \texttt{evaluation/reales.py} & Condiciones de simulación admitidas y análisis fuera de línea de sesiones de simulación etiquetadas (Incremento~15). \\
+        \end{longtable}
+}
+
+La API expone los siguientes \textit{endpoints}: \texttt{POST /auth/login} y \texttt{DELETE /auth/me} (eliminación de la cuenta, con confirmación por contraseña); \texttt{GET /health} y \texttt{GET /version} (versión y \textit{commit} de la compilación); \texttt{POST /exams}, \texttt{GET /exams}, \texttt{GET /exams/\{id\}} y \texttt{DELETE /exams/\{id\}} (eliminación de la evaluación con todos sus datos); \texttt{GET /exams/\{join\_code\}/info} (público, sin autenticación); \texttt{POST /exams/\{id\}/policy}; \texttt{GET /exams/\{id\}/panorama} (Incremento~12); \texttt{POST /exams/\{id\}/cerrar} (Incremento~16); \texttt{POST /sessions/start}; \texttt{POST /sessions/\{id\}/events}; \texttt{POST /sessions/\{id\}/end}; \texttt{GET /sessions} (filtrable por evaluación y por estado de revisión), \texttt{GET /sessions/\{id\}} y \texttt{DELETE /sessions/\{id\}}; y \texttt{POST /sessions/\{id\}/reviews}. El estudiante no tiene cuenta: al iniciar la sesión recibe un \texttt{session\_token} opaco que solo le permite escribir eventos en esa sesión y finalizarla. Esta decisión simplifica el MVP sin debilitar la confidencialidad exigida por RNF03, ya que ningún otro cliente puede escribir en una sesión ajena, y del lado docente cada consulta filtra por el docente propietario de la evaluación.
+
+\subsection{Flujo de información}
+\label{sec:impl_flujo}
+
+Las Figuras~\ref{fig:diag_flujo} y~\ref{fig:diag_flujo_b} describen, como diagrama de secuencia en dos partes, el recorrido de la información desde que el estudiante abre el enlace del examen hasta que el docente registra su revisión. Se distinguen seis fases: información previa y consentimiento, que ocurren antes de que exista una sesión; inicio de la sesión, en el que el servidor fija la versión de la política y entrega el \textit{token}; captura y envío por lotes durante la rendición; fin de la sesión, que guarda la respuesta entregada y dispara el procesamiento por reglas; cierre de la evaluación, en el que el modelo poblacional se aplica una sola vez sobre la cohorte completa (Incremento~16, Sección~\ref{sec:impl_isolation_forest}); y consulta y revisión docente. El diagrama deja a la vista dos propiedades del diseño: el estudiante nunca recibe indicadores ni métricas, y el único actor que escribe una revisión es el docente.
+
+\begin{figure}[tp]
+    \centering
+    \input{figures/diagramas/flujo_informacion}
+    \caption[Diagrama de secuencia del flujo de información del MVP, parte~1]{Diagrama de secuencia del flujo de información del MVP, parte~1: información previa y consentimiento, inicio de la sesión y captura durante la rendición (fases 1 a 3). Se indican los \textit{endpoints} y las tablas reales que intervienen en cada paso. Continúa en la Figura~\ref{fig:diag_flujo_b}. Fuente: elaboración propia.}
+    \label{fig:diag_flujo}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \input{figures/diagramas/flujo_informacion_b}
+    \caption[Diagrama de secuencia del flujo de información del MVP, parte~2]{Diagrama de secuencia del flujo de información del MVP, parte~2: fin de la sesión y procesamiento por reglas, cierre de la evaluación con el modelo poblacional y revisión docente (fases 4 a 6). La API persiste las métricas y los indicadores que calcula el procesamiento. Fuente: elaboración propia.}
+    \label{fig:diag_flujo_b}
+\end{figure}
+
+\section{Evolución por incrementos}
+\label{sec:impl_incrementos}
+
+La Tabla~\ref{tab:impl_incrementos} resume los incrementos en el orden en que se construyeron. Los Incrementos~2 y~2b evaluaron dos alternativas de captura; la Sección~\ref{sec:impl_captura_embebida} explica la elección.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{1.1cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{8.9cm}}
+    \caption{Incrementos de construcción del MVP}
+    \label{tab:impl_incrementos} \\
+    \toprule
+    \tblhead \textbf{Inc.} & \textbf{Objetivo} & \textbf{Resultado verificado} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Inc.} & \textbf{Objetivo} & \textbf{Resultado verificado} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    1 & \textit{Backend}: modelo de datos y API de sesiones. & Flujo completo probado por línea de comandos (\textit{login}, examen, sesión, eventos con una acción de pegado de 500 caracteres, fin y detalle con indicadores) y primeras pruebas automatizadas de extracción de métricas, indicadores e integración de la API. \\
+    2 & Evaluar la captura mediante una extensión de navegador conectada al \textit{backend}. & Prototipo funcionando contra el \textit{backend} real mediante un arnés de prueba en Node, con conversión de marcas temporales a milisegundos relativos al inicio de la sesión. La comparación con el Incremento~2b llevó a adoptar la captura embebida (Sección~\ref{sec:impl_captura_embebida}). \\
+    2b & Evaluar y adoptar la captura embebida en la plataforma. & Vista \texttt{/exam/:joinCode} con consentimiento, consigna y captura en la misma página; flujo completo probado en un navegador real hasta ver el indicador en el panel docente. \\
+    3 & Procesamiento determinístico (construido junto con el Incremento~1). & Métricas de teclado, mouse, atención y portapapeles; indicadores por umbral con métrica y umbral de origen. \\
+    4 & Panel docente. & \textit{Login}, creación de evaluaciones, listado filtrable, detalle con evidencia y registro de revisión persistido en la base. \\
+    5 & Rediseño del esquema según el modelo ER e \textit{Isolation Forest} poblacional. & Política de captura versionada, un registro por evento, relaciones N:M reales indicador--métrica y revisión--indicador, y detección de atipicidad acompañada de los desvíos de cada métrica respecto de la población. \\
+    6 & Evaluación reproducible con datos sintéticos. & Decisión del \textit{pipeline} extraída a una función única que usan la API y la evaluación; generador de sesiones sintéticas formadas por eventos; cálculo de falsas alarmas, anomalías no detectadas, AUC-ROC, EER y precisión promedio con 20 repeticiones (Sección~\ref{sec:eval_sintetica}). \\
+    7 & Capturas automatizadas del recorrido. & Guion que levanta \textit{backend} y \textit{dashboard} y genera 15 capturas del flujo docente y estudiante; su revisión completó la presentación de las horas en la zona horaria local y los nombres legibles de los indicadores. \\
+    8 & Seguimiento de validaciones adicionales (RF11/HU08) y versionado de política desde la interfaz. & Estado de revisión derivado de la última revisión, vista de validaciones pendientes con contador, historial de revisiones y edición de la política que crea una versión nueva. \\
+    9 & Prueba interna de punta a punta y ajustes de minimización. & Guion automatizado con cuatro escenarios sobre el sistema real y verificación en la API, el \textit{dashboard} y la base de datos (Sección~\ref{sec:eval_prueba_interna}); eventos de teclado sin identificación de la tecla, política sin señales equivalente a no capturar y código de participante seudónimo en la vista del estudiante. \\
+    10 & Completar la especificación del indicador del modelo, de la sincronización y de la información al estudiante. & Nivel del indicador del modelo por percentiles de la línea base; sincronización con espera exponencial, \textit{buffer} acotado y eventos de estado de la captura; lista de señales habilitadas descripta al estudiante antes del consentimiento; lectura del portapapeles solo si esa señal está habilitada; prueba de resiliencia ante fallas de red sobre el sistema real (Sección~\ref{sec:eval_prueba_red}). \\
+    11 & Auditoría interna del código frente a la especificación y consolidación. & Prueba interna repetida sobre el código de ese incremento, con 12 de 12 sesiones conformes (Sección~\ref{sec:eval_prueba_interna}); generador sintético sin código de tecla, con resultados de la evaluación idénticos; diagramas de componentes y de flujo ajustados a qué módulo persiste cada dato; generación de fechas sin la API deprecada de Python; \textit{scripts} de prueba que aceptan rutas relativas. \\
+    12 & Panorama de la evaluación, reglas del examen y reencuadre del indicador del modelo. & \textit{Endpoint} y pestaña de panorama agregado calculados sobre las métricas e indicadores ya guardados; reglas ``permite pegado'' y ``permite otras pestañas'' en la política, sin cambio de esquema; indicador del modelo presentado como proceso de interacción distinto al de la cohorte (Sección~\ref{sec:impl_panorama}). Con las reglas por defecto, el protocolo sintético produjo archivos de resultados idénticos byte a byte a los anteriores (falsas alarmas 11,7\,\%, anomalías no detectadas 3,6\,\%, AUC-ROC 0,669). \\
+    13 & Preparación para el despliegue en producción. & Modo producción que no arranca sin un secreto JWT propio; base PostgreSQL configurable por URL, CORS configurable y alta inicial de docentes; contenedores Docker y descriptor de despliegue para un servicio en la nube; guía de despliegue y \textit{script} de verificación por HTTP. La suite completa pasó también sobre PostgreSQL~16 y el \textit{script} de verificación dio 14 de 14 comprobaciones con el \textit{backend} en modo producción. \\
+    14 & Migraciones versionadas y campos complementarios del modelo de datos. & Migraciones con Alembic aplicadas al arrancar, incluida la adopción de bases creadas antes; plazo de conservación en la política de captura (1 a 365 días), rango de eventos de origen de cada métrica y estado del indicador. Las migraciones se probaron en ambos sentidos sobre SQLite y PostgreSQL. \\
+    15 & Herramientas para simulaciones controladas. & Etiqueta de condición de la sesión, solo disponible con un enlace de simulación y oculta para el docente y para el procesamiento; exportación de sesiones sin datos personales y análisis fuera de línea con las mismas métricas de la evaluación sintética, con partición por participante e intervalos de confianza por remuestreo; protocolo de simulación (Sección~\ref{sec:impl_simulacion}). \\
+    16 & Análisis poblacional al cierre, eliminación y retención de datos, robustez y usabilidad. & Modelo poblacional aplicado una sola vez al cerrar la evaluación, sobre la cohorte completa, con un protocolo único e independiente del orden de entrega; procesamiento por reglas al finalizar cada sesión; cierre de sesión idempotente que guarda la respuesta entregada; validación de los eventos en el servidor; duración de las pulsaciones calculada en el navegador sin enviar la tecla; eliminación de sesiones, evaluaciones y cuentas (RF17) y purga automática por vencimiento del plazo de conservación (RNF10); control de concurrencia y dimensionamiento del \textit{pool} de conexiones; mejoras de usabilidad surgidas de una evaluación experta y automatizada (Sección~\ref{sec:eval_usabilidad}); medición de RNF07, RNF09 y RNF11 (Sección~\ref{sec:eval_rnf}). Suite de 120 pruebas del \textit{backend} en verde sobre SQLite y PostgreSQL~16, y 36 del \textit{frontend}. \\
+\end{longtable}
+}
+
+La verificación al cierre de cada incremento permitió resolver temprano problemas de integración que no se manifestaban como errores visibles: la conversión de las marcas temporales absolutas del cliente a los milisegundos relativos que espera el procesamiento (Incremento~2); el tipo booleano de NumPy que devuelve la predicción de scikit-learn, que debía convertirse a un booleano nativo para que el indicador de atipicidad se generara (Incremento~5); y la ubicación de las anomalías del generador sintético en la periferia de la distribución, controlada mediante la AUC resultante (Incremento~6). Cada caso quedó cubierto por pruebas automatizadas.
+
+\subsection{Decisión: captura embebida frente a extensión de navegador}
+\label{sec:impl_captura_embebida}
+
+Para la captura de señales se evaluaron dos alternativas: una extensión de navegador que registra la interacción del estudiante y la envía al \textit{backend}, y un módulo de captura embebido en la propia plataforma, que usa las APIs y los eventos nativos de la web dentro de la vista de rendición. El Incremento~2 probó la primera con un prototipo de extensión de Chrome conectado al \textit{backend} real, y el Incremento~2b, la segunda. Ambas registraban las mismas señales sin almacenar contenido, y la API de sesiones resultó agnóstica al tipo de cliente. Se adoptó la captura embebida (\texttt{capture.ts}), por las razones que resume la Tabla~\ref{tab:impl_extension_vs_embebida}: no requiere instalación, solo actúa donde el estudiante consintió, funciona en cualquier navegador moderno y es la arquitectura especificada en el Capítulo~\ref{ch:tecnologias}, que ubica la captura en el código cliente de la plataforma.
+
+\begin{table}[h!]
+    \caption{Extensión de navegador frente a captura embebida en la plataforma}
+    \label{tab:impl_extension_vs_embebida}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Criterio} & \textbf{Extensión de Chrome} & \textbf{Captura embebida (adoptada)} \\
+        \midrule
+        Instalación & Cada estudiante instala y habilita la extensión. & Nada que instalar: basta abrir el enlace del examen. \\
+        Permisos & Requiere acceso a cualquier sitio para inyectar la captura, difícil de justificar ante el estudiante y ante la tienda de extensiones. & Solo actúa dentro de la pestaña de ImprontIA, donde el estudiante ya consintió. \\
+        Navegadores & Solo navegadores basados en Chromium. & Cualquier navegador moderno. \\
+        Alcance de la observación & Puede observar la interacción en la plataforma donde vive el examen. & Solo observa lo que ocurre dentro de la propia plataforma; por eso ImprontIA debe alojar la superficie de respuesta. \\
+        Arquitectura & Agrega un componente que se distribuye y actualiza por fuera de la plataforma. & La captura forma parte del cliente web de la plataforma (Capítulo~\ref{ch:tecnologias}). \\
+        Impacto en el \textit{backend} & --- & Ninguno: la API de sesiones resultó agnóstica al tipo de cliente. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{keyfinding}{Consecuencia de diseño}
+Como la captura embebida solo observa la pestaña de ImprontIA, la plataforma tiene que alojar la consigna y el campo de respuesta para que la escritura real del examen ocurra donde puede registrarse. Por eso se agregó a la evaluación un campo de consigna, que no se revela en la información pública previa al consentimiento sino recién al iniciar la sesión. Esto no convierte a ImprontIA en un editor de evaluaciones, algo que el Capítulo~\ref{ch:requerimientos} excluye expresamente: la superficie es un campo de texto simple. La asociación con un examen que vive en otra plataforma (por ejemplo, un LMS) queda fuera del alcance del MVP, como establece ese capítulo.
+\end{keyfinding}
+
+Que el \textit{backend} no haya necesitado cambios al pasar de un cliente a otro confirma, en la práctica, la separación de responsabilidades propuesta en el Capítulo~\ref{ch:tecnologias}.
+
+\section{Modelo de datos implementado}
+\label{sec:impl_modelo}
+
+El Incremento~1 partió de un esquema simplificado (lotes de eventos guardados como un único JSON y configuración de captura dentro de la evaluación). En el Incremento~5 se lo rediseñó para seguir el modelo entidad-relación de la Sección~\ref{sec:modelo_datos}. La Figura~\ref{fig:diag_clases} presenta el diagrama de clases del dominio tal como está implementado, con los mismos nombres de clase y atributo que el código, y la Tabla~\ref{tab:impl_modelo_er} muestra la correspondencia entre las entidades del modelo conceptual y esas clases, junto con las particularidades de la implementación.
+
+\begin{figure}[h!]
+    \centering
+    \input{figures/diagramas/clases_dominio}
+    \caption[Diagrama de clases del dominio implementado]{Diagrama de clases del dominio implementado (UML simplificado). Las clases de unión materializan las relaciones N:M indicador--métrica y revisión--indicador; las propiedades derivadas se indican entre comillas angulares. Fuente: elaboración propia.}
+    \label{fig:diag_clases}
+\end{figure}
+
+\begin{table}[h!]
+    \caption{Correspondencia entre el modelo entidad-relación y el modelo implementado}
+    \label{tab:impl_modelo_er}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Entidad (cap.~\ref{ch:tecnologias})} & \textbf{Clase (tabla)} & \textbf{Estado y diferencias} \\
+        \midrule
+        \texttt{usuario} & \texttt{User} (\texttt{users}) & Solo docentes; el estudiante no tiene cuenta y se identifica con un \texttt{participant\_id} seudónimo por sesión. \\
+        \texttt{evaluacion} & \texttt{Exam} (\texttt{exams}) & Identidad estable: nombre, código de acceso y consigna; fecha de cierre, a partir de la cual no se admiten sesiones nuevas (Incremento~16). \\
+        \texttt{politica\_captura} & \texttt{PolicyCapture} (\texttt{policy\_captures}) & Versionada e inmutable: editar la política crea una fila nueva. Incluye el plazo de conservación \texttt{retencion\_dias} (1 a 365 días). \\
+        \texttt{sesion} & \texttt{Session} (\texttt{sessions}) & Fija la versión de política al iniciar (RNF04); guarda contexto, consentimiento, tipo de sesión, marca de revisión pendiente, momento del procesamiento, estado del análisis poblacional, respuesta entregada y, solo en simulaciones, la condición simulada. El momento en que se informó al estudiante se aproxima por el inicio de sesión. \\
+        \texttt{evento} & \texttt{Event} (\texttt{events}) & Una fila por evento, secuencia monotónica asignada por el servidor, doble marca temporal (cliente y servidor), \texttt{item\_ref} opcional; solo inserción. \\
+        \texttt{metrica} & \texttt{Metric} (\texttt{metrics}) & Valor por sesión completa y, si hay \texttt{item\_ref}, por ítem, con el rango \texttt{evento\_desde}/\texttt{evento\_hasta} de los eventos de origen. \\
+        \texttt{indicador} & \texttt{Indicator} (\texttt{indicators}) & Tipo, nivel, descripción, explicación y \texttt{estado} (pendiente o atendido, según si una revisión lo cita); sin columna de veredicto. \\
+        \texttt{indicador\_metrica} & \texttt{IndicatorMetric} & Relación N:M real (RNF05). \\
+        \texttt{revision} & \texttt{Review} (\texttt{reviews}) & Acción (``marcada como revisada'' o ``requiere validación adicional''), docente y notas; solo inserción. El estado de revisión de la sesión se deriva de la última revisión, sin editar las anteriores. \\
+        \texttt{revision\_indicador} & \texttt{ReviewIndicator} & Relación N:M real; una revisión puede no referir a ningún indicador. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Para el entorno de desarrollo se usa SQLite y, para el despliegue, PostgreSQL; el código no depende del motor, ya que las columnas JSON se declaran como JSONB con una variante JSON para SQLite, y la suite de pruebas se ejecuta sobre ambos. El esquema se gestiona con migraciones versionadas de Alembic, que el \textit{backend} aplica al arrancar; una base existente se adopta sin perder datos.
+
+El servidor también garantiza la idempotencia de la recepción: cada lote que envía el cliente lleva un número de secuencia, y si un lote ya aplicado se reenvía (por ejemplo, porque la confirmación no llegó a tiempo en una conexión inestable), el \textit{backend} lo reconoce y no duplica los eventos. Esto contribuye a la integridad de los registros (RNF04) y permite que el cliente reintente sin riesgo de duplicar evidencia.
+
+\subsection{Validación en el servidor, entrega idempotente y concurrencia}
+\label{sec:impl_robustez}
+
+El Incremento~16 incorporó del lado del servidor garantías que complementan las del cliente y vuelven el resultado independiente del orden de los pedidos:
+
+\begin{itemize}
+    \item \textbf{Validación de los eventos.} La captura del navegador filtra por la política de la sesión, y el servidor aplica el mismo control para que la minimización (RF04, RNF01) quede garantizada en ambos extremos: rechaza completo cualquier lote que traiga un tipo de evento desconocido, una categoría que la política de la sesión no habilita, un campo que no corresponde al tipo ---en particular, los campos que identificarían la tecla pulsada--- o un valor fuera de formato, incluidos los números no finitos.
+    \item \textbf{Duración de las pulsaciones en el navegador.} El emparejamiento de pulsación y liberación por orden de llegada, que el servidor aplicaba desde el Incremento~9, distorsiona la medida cuando dos teclas se superponen. Por eso la duración se calcula en el navegador, emparejando cada liberación con la pulsación de la misma tecla; el código de la tecla se usa solo en memoria y el evento enviado contiene únicamente la duración. La repetición automática de una tecla mantenida no genera pulsaciones nuevas y, al perder el foco, se descartan las pulsaciones abiertas.
+    \item \textbf{Entrega idempotente.} El cierre de la sesión puede repetirse sin riesgo: si la sesión estaba activa, se finaliza y se guarda la respuesta entregada; si ya estaba finalizada pero su procesamiento no terminó, se reintenta; si ya estaba procesada, se devuelve el mismo resultado. La respuesta se guarda solo en la transición de activa a finalizada, y la vista del estudiante confirma la entrega únicamente cuando el servidor informa que el procesamiento terminó. La respuesta entregada queda fuera de las señales de interacción: el procesamiento no la lee y solo la ve el docente de la evaluación.
+    \item \textbf{Concurrencia.} Dos procesamientos simultáneos de la misma sesión, por un doble clic en la entrega o por una entrega en curso mientras el docente cierra la evaluación, podrían duplicar métricas e indicadores; para evitarlo, la fila de la sesión se bloquea durante el procesamiento y una sesión ya procesada no se reprocesa. El cierre de la evaluación se reclama con una actualización condicional que se confirma antes del análisis, de modo que dos cierres simultáneos no analizan dos veces la cohorte; si el análisis falla, la evaluación se reabre para que el docente pueda reintentar. Por último, el \textit{pool} de conexiones a la base se dimensionó según la cantidad de hilos que atienden pedidos y se limitó la cantidad de pedidos en curso, ya que la medición con 200 entregas simultáneas mostró que, sin ese límite, los pedidos que esperaban una conexión fallaban (Sección~\ref{sec:eval_rnf}).
+\end{itemize}
+
+\subsection{Eliminación y conservación limitada de los datos}
+\label{sec:impl_retencion}
+
+El Incremento~16 implementó RF17 y RNF10. El docente puede eliminar una sesión desde su detalle, por ejemplo a pedido del estudiante identificado por su código de participante; la operación borra sus eventos, métricas, indicadores, revisiones y vínculos, y la respuesta entregada, y conserva la evaluación y las versiones de su política, que no contienen datos de estudiantes. El docente también puede eliminar una evaluación completa, con todas sus sesiones y versiones de política, y su propia cuenta; ambas operaciones están disponibles en la interfaz con confirmación, y la de la cuenta exige la contraseña. La eliminación de la cuenta borra sus evaluaciones con todas sus sesiones y versiones de política, y luego el usuario. La purga automática elimina las sesiones cuyo plazo de conservación venció: el que declara la política de captura o, si no declara ninguno, el tope de doce meses de RNF10, contado desde la finalización de la sesión o, si nunca se finalizó, desde su inicio. Se ejecuta al arrancar el \textit{backend} y con un \textit{script} pensado para correr como tarea periódica del servidor. El procedimiento institucional para que los estudiantes ejerzan sus derechos de acceso, rectificación y supresión corresponde a la institución que adopte la plataforma (Capítulo~\ref{ch:viabilidad}).
+
+\subsection{Sincronización del cliente}
+\label{sec:impl_sincronizacion}
+
+Del lado del cliente, la sincronización quedó concentrada en un módulo propio (\texttt{syncQueue.ts}, Incremento~10), separado de la interfaz para poder probarlo de forma aislada. Sin fallas, envía un lote cada 5\,s; ante un envío fallido, espera un intervalo que se duplica con cada falla consecutiva hasta un tope de 60\,s, con una variación aleatoria de $\pm 20$\,\%. Esa variación evita que muchos estudiantes que pierden la conexión a la vez reintenten en forma sincronizada y saturen el servidor al reconectarse, que es la práctica recomendada para reintentos con espera exponencial~\parencite{Brooker2026Backoff}. Si el navegador informa que la conexión volvió, el envío se reintenta de inmediato. Los eventos pendientes se acumulan en un \textit{buffer} acotado a 20\,000 eventos; si se llena, se conservan los más antiguos y los descartados se cuentan con su rango temporal. Tanto el agotamiento del \textit{buffer} como una falla persistente (tres intentos consecutivos fallidos) se registran como eventos propios de la sesión, de modo que el desborde del \textit{buffer} y las fallas prolongadas quedan registrados cuando la conexión se recupera durante la sesión, como pide la Sección ``Captura de señales'' del Capítulo~\ref{ch:tecnologias}. La pérdida de lo pendiente si se cierra la pestaña sin conexión es una limitación conocida (Sección~\ref{sec:impl_limitaciones}).
+
+\section{\textit{Pipeline} de procesamiento}
+\label{sec:impl_pipeline}
+
+El procesamiento se organiza en tres niveles, que corresponden a los tres niveles conceptuales de la Sección~\ref{sec:procesamiento_ia} y viven en módulos separados. Los dos primeros (métricas e indicadores por umbral) se ejecutan al finalizar cada sesión; el tercero (modelo poblacional), una sola vez al cerrar la evaluación. La decisión que combina los tres niveles está concentrada en una única función, que usan tanto la API como la evaluación del Capítulo~\ref{ch:evaluacion}; así, lo que se evalúa es exactamente lo que corre en la plataforma.
+
+\subsection{Métricas determinísticas}
+
+El primer nivel calcula estadísticas descriptivas sobre los eventos de la sesión, sin bibliotecas de aprendizaje automático. Son funciones puras y, por lo tanto, fáciles de probar de forma aislada. La Tabla~\ref{tab:impl_metricas} enumera las métricas implementadas.
+
+\begin{table}[!htbp]
+    \caption{Métricas calculadas por el procesamiento determinístico}
+    \label{tab:impl_metricas}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{5.2cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Categoría} & \textbf{Métrica} & \textbf{Definición} \\
+        \midrule
+        Teclado & \texttt{keydown\_count} & Cantidad de pulsaciones. \\
+         & \texttt{mean\_dwell\_time\_ms}, \texttt{std\_dwell\_time\_ms} & Media y desvío del tiempo entre pulsar y soltar una tecla; desde el Incremento~16 la duración llega calculada desde el navegador, que empareja cada liberación con la pulsación de la misma tecla sin enviarla; para eventos sin duración, como los de sesiones anteriores, se empareja por orden de llegada. \\
+         & \texttt{mean\_flight\_time\_ms} & Media del tiempo entre soltar una tecla y pulsar la siguiente. \\
+        Mouse & \texttt{mean\_mouse\_speed\_px\_ms}, \texttt{std\_mouse\_speed\_px\_ms} & Media y desvío de la velocidad entre movimientos consecutivos (muestreados cada 100\,ms como máximo). \\
+         & \texttt{click\_count} & Cantidad de clics. \\
+        Atención & \texttt{tab\_switch\_count} & Cantidad de veces que la pestaña pasó a oculta. \\
+         & \texttt{focus\_loss\_duration\_total\_ms} & Tiempo total con la pestaña oculta. \\
+        Portapapeles & \texttt{paste\_event\_count}, \texttt{paste\_chars\_total} & Cantidad de acciones de pegado y caracteres pegados (solo la longitud). \\
+         & \texttt{copy\_cut\_count} & Cantidad de acciones de copiar o cortar. \\
+        Sesión & \texttt{session\_duration\_ms}, \texttt{idle\_ratio} & Duración entre el primer y el último evento; fracción de ese tiempo en intervalos sin eventos mayores a 2\,s. \\
+        Integridad de la captura & \texttt{capture\_dropped\_events}, \texttt{sync\_failure\_count} & Eventos descartados por \textit{buffer} agotado y fallas persistentes de sincronización; los eventos de estado de la captura no cuentan para la duración ni para la inactividad. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Respecto de la Tabla~\ref{tab:senales_insights}, el MVP cubre las \textit{features} de \textit{dwell} y \textit{flight time}, velocidad de mouse, clics, pérdidas de foco, pegado e inactividad. Quedan para una iteración posterior la tasa de corrección, la velocidad de tipeo y las ráfagas, la aceleración y las pausas del mouse, y las métricas de \textit{scroll} y de tiempo por pregunta. Los eventos de mouse, de pulsación y de \textit{scroll} ya se capturan, por lo que la velocidad de tipeo, las ráfagas, las pausas y el \textit{scroll} solo requieren nuevas funciones de cálculo; la tasa de corrección, en cambio, requeriría registrar al menos la categoría de las teclas de edición, decisión que debe evaluarse frente a RNF01 porque desde el Incremento~9 la captura no identifica la tecla, y el tiempo por pregunta requiere que la vista de rendición genere \texttt{item\_ref}.
+
+\subsection{Indicadores por umbral}
+
+El segundo nivel aplica reglas explícitas sobre métricas de eventos discretos o contables, que el Capítulo~\ref{ch:tecnologias} describe como marcas cuya sola ocurrencia ya es relevante para la revisión. Cada indicador generado guarda en su explicación la métrica, el valor observado y el umbral que lo originó, y se vincula además a la fila concreta de la métrica mediante la relación N:M (RF09, RNF05). La Tabla~\ref{tab:impl_umbrales} lista las reglas vigentes.
+
+\begin{table}[!htbp]
+    \caption{Reglas de indicadores por umbral implementadas (valores provisorios)}
+    \label{tab:impl_umbrales}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{1.4cm}}
+        \toprule
+        \tblhead \textbf{Indicador} & \textbf{Condición} & \textbf{Nivel} \\
+        \midrule
+        \texttt{paste\_volume\_alto} & Caracteres pegados en la sesión $> 200$. & Medio \\
+        \texttt{cambios\_pestana\_frecuentes} & Cambios a pestaña oculta $> 5$. & Medio \\
+        \texttt{perdida\_foco\_prolongada} & Tiempo total con la pestaña oculta $> 60$\,s. & Alto \\
+        \texttt{ritmo\_tecleo\_atipico} & Desvío del \textit{dwell time} $< 5$\,ms, con al menos 30 pulsaciones (tecleo inusualmente uniforme). & Medio \\
+        \texttt{captura\_incompleta} & Al menos un evento descartado por \textit{buffer} agotado o una falla persistente de sincronización. Es informativo: no marca la sesión como pendiente de revisión. & Bajo \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Estos umbrales son valores provisorios explícitos: el código los concentra en un único lugar para calibrarlos con datos reales, como prevé el protocolo del piloto (Sección~\ref{sec:eval_piloto_futuro}). El nivel asignado a cada indicador sirve para priorizar la revisión (RNF08). El indicador de captura incompleta responde a otra lógica: informa sobre la calidad de la evidencia y no sobre la conducta del estudiante, por lo que advierte al docente que las métricas se calcularon sobre evidencia parcial sin priorizar la sesión; si esta tiene además otro indicador, queda marcada por ese otro.
+
+\subsection{Detección de atipicidad con línea base poblacional}
+\label{sec:impl_isolation_forest}
+
+El tercer nivel implementa el componente de IA definido en la Sección~\ref{sec:procesamiento_ia} con el algoritmo \textit{Isolation Forest}~\parencite{Liu2008, Liu2012} de la biblioteca scikit-learn~\parencite{Pedregosa2011}, cuyo fundamento y cuya elección frente a otros algoritmos no supervisados se exponen en las Secciones~\ref{sec:deteccion_anomalias} y~\ref{sec:justificacion_if}.
+
+En el MVP, el modelo trabaja solo con las cinco métricas continuas (media y desvío del \textit{dwell time}, media del \textit{flight time}, media y desvío de la velocidad del mouse), mientras que los eventos discretos quedan cubiertos por las reglas del nivel anterior. La población de comparación es la cohorte de sesiones finalizadas \textbf{de la misma evaluación}, según el criterio de línea base poblacional de la Sección~\ref{sec:procesamiento_ia}. Antes de entrenar se descartan las métricas sin variación en la población (por ejemplo, si nadie usó el mouse), porque no aportan información y diluyen las particiones aleatorias.
+
+\textbf{Análisis al cierre de la evaluación (Incremento~16).} Entre los Incrementos~5 y~15, el modelo se aplicaba de forma incremental, al finalizar cada sesión, contra las sesiones finalizadas antes que ella, de modo que la referencia de cada sesión dependía del orden de entrega y las primeras 20 quedaban sin análisis. El Incremento~16 completa el diseño con un análisis único, que se ejecuta cuando el docente cierra la evaluación: se entrena un único modelo con las métricas de todas las sesiones finalizadas, ordenadas por identificador, y cada sesión se puntúa contra ese mismo modelo. Todas las sesiones reciben así el mismo protocolo, y el resultado no depende del orden de llegada: al permutar el orden en que se entregan las sesiones, marcas y \textit{scores} resultaron idénticos en 60 de 60 cohortes sintéticas (Sección~\ref{sec:eval_aporte_modelo}). Se trata de una detección transductiva: cada sesión forma parte de la población con la que se ajusta el modelo. Si la cohorte tiene menos de 20 sesiones, ninguna se evalúa y cada sesión informa ese estado; después del cierre no se admiten sesiones nuevas, porque quedarían fuera de la cohorte analizada. Hasta el cierre, el detalle de cada sesión muestra el análisis poblacional como pendiente y solo operan las reglas.
+
+El modelo se entrena con los hiperparámetros de la Sección~\ref{sec:metricas_eval_ia}: 200 árboles, una proporción esperada de atípicos (\texttt{contamination}) de 0{,}1 y una semilla fija. Una sesión se considera atípica si la predicción del modelo la ubica del lado anómalo de la frontera, y en ese caso se genera el indicador \texttt{atipico\_modelo\_poblacional}. Su nivel se decide por percentiles de la línea base, como prevé la Sección~\ref{sec:procesamiento_ia}: el modelo conserva los \textit{scores} de su población de entrenamiento y ubica cada sesión respecto de ellos; si cae dentro del 5\,\% más atípico de la cohorte, el indicador recibe nivel alto, y en el resto de las sesiones marcadas, nivel medio. Las sesiones no marcadas equivalen a una atipicidad baja y no generan indicador. Así, el nivel alto tiene un significado explícito (``entre el 5\,\% más atípico de esta evaluación'') que no depende de la escala del \textit{score}, variable de una población a otra; el corte del 5\,\% es provisorio, como los umbrales de las reglas. Con \texttt{contamination} igual a 0{,}1, el umbral se fija de modo que alrededor del 10\,\% de las sesiones de la población de entrenamiento queden del lado atípico~\parencite{ScikitLearnIF}; ese parámetro fija aproximadamente la \textbf{proporción de la cohorte que marca el modelo}; cuántas de esas sesiones son normales depende de la composición de la cohorte y de la separación que logra el modelo (Sección~\ref{sec:eval_aporte_modelo}).
+
+\begin{keyfinding}{Hallazgo durante la construcción: mínimo de 20 sesiones}
+El primer intento activaba el modelo con una población de 9 sesiones y no lograba marcar ni siquiera una sesión diez veces fuera de rango en todas las dimensiones a la vez. Al aislar el problema se comprobó la causa: la implementación limita la altura de cada árbol a $\lceil \log_2 n \rceil$, donde $n$ es la cantidad de muestras~\parencite{ScikitLearnIF}; con 9 muestras esa altura es tan baja que cualquier valor por encima del máximo observado cae en la misma hoja que el propio máximo, sin importar cuán lejos esté. Se probaron valores crecientes y todos obtuvieron exactamente el mismo \textit{score}. A partir de unas 20 sesiones el modelo separa los casos de forma consistente, por lo que el mínimo se fijó en 20. Es un mínimo técnico para que el algoritmo funcione, no una calibración estadística: si una evaluación cierra con menos sesiones, el MVP no produce indicador de IA para ninguna de ellas.
+\end{keyfinding}
+
+\textit{Isolation Forest} no ofrece una atribución nativa de qué variable determina cada resultado. Para que el docente pueda contrastar la marca con los datos (RNF06), el indicador se acompaña de un cálculo descriptivo complementario: para cada métrica activa se obtiene la desviación de la sesión respecto de la media de la cohorte, expresada en desvíos estándar ($z$-\textit{score}), y se listan las dos métricas más desviadas junto con su valor y la media de la cohorte. Esas desviaciones son univariadas y se calculan aparte del modelo, por lo que describen en qué métricas la sesión se aleja más de la cohorte y no qué particiones del bosque la aislaron (Sección~\ref{sec:procesamiento_ia}). En las cohortes sintéticas del Capítulo~\ref{ch:evaluacion}, el 17,4\,\% de las marcas del modelo tenía su mayor desviación por debajo de 2 desvíos estándar, es decir, sin ninguna métrica individual extrema (Sección~\ref{sec:eval_aporte_modelo}); por eso la interfaz las presenta como ``variables con mayor desviación respecto de la cohorte'', con la aclaración de que son un dato descriptivo. El indicador queda además vinculado a esas métricas mediante la relación N:M, de modo que el docente puede consultar los datos de la sesión que acompañan la marca.
+
+La interfaz docente muestra el indicador con su nivel, su descripción, la posición relativa de la sesión en la cohorte expresada en palabras (por ejemplo, ``dentro del 5\,\% más atípico de las 24 sesiones de esta evaluación'') y las métricas con mayor desviación, con su valor, la media de la cohorte y la cantidad de desvíos de diferencia; el valor crudo del \textit{score} queda reservado para uso interno, como establece la Sección~\ref{sec:procesamiento_ia}. Esta presentación y el nivel por percentiles se incorporaron en el Incremento~10, en reemplazo del corte fijo sobre el \textit{score} de la primera versión del modelo, sin alterar qué sesiones marca, por lo que los resultados del Capítulo~\ref{ch:evaluacion} son los mismos con ambas versiones.
+
+\subsection{Panorama de la evaluación y reglas del examen}
+\label{sec:impl_panorama}
+
+El Incremento~12 amplió lo que el MVP ofrece al docente a partir de los resultados del Capítulo~\ref{ch:evaluacion}: una marca de atipicidad estadística indica dónde mirar (Sección~\ref{sec:eval_decisiones}), y la información sobre el proceso resulta útil también cuando ninguna sesión requiere revisión. Se incorporaron tres cambios, sin modificar la arquitectura, el esquema de datos, el cálculo de métricas ni el modelo.
+
+\begin{itemize}
+    \item \textbf{Panorama de la evaluación (RF15).} El \textit{endpoint} \texttt{GET /exams/\{id\}/panorama}, restringido al docente propietario, resume las sesiones finalizadas de una evaluación: cantidad de sesiones y de sesiones que requieren revisión; mediana y rango entre los percentiles 25 y 75 de la duración, la fracción de inactividad, los caracteres pegados, los cambios de pestaña y el tiempo fuera de la pestaña; sesiones por tipo de indicador, con cuántas correspondieron a eventos permitidos por las reglas; y proporción de sesiones marcadas por el modelo, con las métricas que aparecen con más frecuencia entre las desviaciones que acompañan sus marcas. El cálculo es una función pura (\texttt{processing/panorama.py}) que lee solo las métricas e indicadores ya guardados y no recalcula nada. El \textit{dashboard} lo presenta en una pestaña ``Panorama'' del detalle de la evaluación.
+    \item \textbf{Eventos según las reglas del examen (RF16).} Al crear la evaluación o editar su política, el docente puede declarar que el examen permite pegar contenido o consultar otras pestañas. Ambas reglas valen ``no'' por defecto y se guardan como entradas reservadas dentro de la lista de señales de la política versionada, por lo que no requieren migración y no llegan al cliente de captura. Con una regla activa, los indicadores de volumen pegado, de cambios de pestaña frecuentes y de pérdida de foco prolongada se siguen generando para conservar la trazabilidad, pero con nivel bajo, con la aclaración ``permitido por las reglas de esta evaluación'' y sin marcar la sesión como pendiente de revisión. El modelo poblacional no cambia y puede marcar la sesión por su cuenta.
+    \item \textbf{Reencuadre del indicador del modelo.} En la interfaz, el indicador \texttt{atipico\_modelo\_poblacional} se presenta como ``Proceso de interacción distinto al de la cohorte'', con la aclaración ``Indica dónde mirar, no una conducta indebida''. Su cálculo, su tipo y la descripción que guarda el \textit{backend} no cambian.
+\end{itemize}
+
+Sin reglas declaradas, el resultado de la decisión es el mismo que antes del incremento: las 56 pruebas existentes en ese momento siguieron en verde sin cambios y el protocolo sintético por defecto produjo archivos de resultados idénticos byte a byte, con los mismos valores del Capítulo~\ref{ch:evaluacion}. La evaluación de la utilidad del panorama con docentes forma parte del trabajo futuro (Sección~\ref{sec:concl_trabajo_futuro}).
+
+La Figura~\ref{fig:cap_panorama} muestra la pestaña de panorama de una evaluación de demostración con sesiones sintéticas.
+
+\capturaMVP[Pestaña ``Panorama'' de una evaluación con datos de demostración]{16_panorama_evaluacion}{Pestaña ``Panorama'' de una evaluación con datos de demostración (sesiones sintéticas cargadas por la API; sus valores no provienen de personas y las duraciones pueden ser artificiales): sesiones finalizadas y que requieren revisión, valores típicos de las métricas principales, sesiones por tipo de indicador y métricas que aparecen con más frecuencia entre las desviaciones que acompañan las marcas del modelo poblacional (RF15).}{fig:cap_panorama}
+
+\subsection{Herramientas para simulaciones controladas}
+\label{sec:impl_simulacion}
+
+El Incremento~15 prepara el MVP para recolectar datos de interacción en condiciones conocidas, como paso previo al piloto con voluntarios descripto en la Sección~\ref{sec:eval_piloto_futuro}. Cuando el enlace de rendición incluye un parámetro de simulación, la vista del estudiante solicita la condición que se está simulando (resolución normal, pegado, transcripción, consulta externa o suplantación). Esa etiqueta se guarda en la sesión, pero no forma parte de ninguna respuesta de la API al docente ni la lee el procesamiento, de modo que no puede influir en los indicadores; sin el parámetro, la condición no se solicita ni se envía.
+
+Un \textit{script} exporta las sesiones etiquetadas a un archivo sin datos personales (con alias en lugar de códigos y sin fechas, contexto ni eventos crudos), y otro aplica sobre ellas las mismas métricas de la evaluación sintética: las tasas de error de la marca de ``requiere revisión'' que el sistema guardó en cada sesión y, fuera de línea, el área bajo la curva ROC, la precisión promedio y la tasa de error igual del modelo entrenado solo con sesiones normales, con partición por participante e intervalos de confianza por remuestreo de participantes. Un protocolo fija la preparación, el volumen mínimo, el orden contrabalanceado de las condiciones y el registro de campo. La ejecución de las simulaciones corresponde a la etapa siguiente, por lo que este documento no informa resultados de ellas.
+
+\section{Trazabilidad de requerimientos a componentes}
+\label{sec:impl_trazabilidad}
+
+La Tabla~\ref{tab:impl_trazabilidad} vincula cada requerimiento del Capítulo~\ref{ch:requerimientos} con el componente que lo implementa y su estado en el MVP. La historia de usuario de origen de cada requerimiento funcional figura en la Tabla~\ref{tab:matriz_hu_rf}.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{8.2cm} >{\raggedright\arraybackslash}p{2.4cm}}
+    \caption{Trazabilidad de requerimientos a componentes del MVP}
+    \label{tab:impl_trazabilidad} \\
+    \toprule
+    \tblhead \textbf{Requisito} & \textbf{Dónde se implementa} & \textbf{Estado} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Requisito} & \textbf{Dónde se implementa} & \textbf{Estado} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    RF01, RF02 (HU01, HU02) & Información y reglas de la política vigente, expuestas sin autenticación y mostradas antes del consentimiento junto con la lista de señales habilitadas, generada a partir de la misma configuración que limita la captura; la consigna se oculta hasta iniciar la sesión. & Implementado \\
+    RF03, RF04 (HU03) & Señales habilitadas en la política; el cliente descarta los eventos de categorías no habilitadas antes de guardarlos en su memoria local, y una política sin señales no captura nada. & Implementado \\
+    RF05 (HU04) & Contexto de la sesión como atributo JSON libre. & Parcial: carga desde la vista del estudiante fuera del alcance \\
+    RF06, RF07 (HU05) & Marca de revisión pendiente calculada al finalizar; filtro en el listado de sesiones. & Implementado \\
+    RF08, RF09 (HU06) & Detalle de sesión con contexto, métricas e indicadores; cada indicador vinculado a sus métricas mediante la relación N:M. & Implementado \\
+    RF10 (HU07) & Ningún \textit{endpoint} emite un veredicto; los indicadores no tienen columna de veredicto; la revisión solo la registra un docente y nunca se edita. & Implementado \\
+    RF11 (HU08) & Acción ``requiere validación adicional'', opcionalmente asociada a indicadores puntuales; estado de revisión derivado y vista de validaciones pendientes. & Implementado \\
+    RF12 (HU09) & Creación de evaluaciones con información previa, reglas, consigna y señales habilitadas; edición de la política que crea una versión nueva sin alterar las sesiones iniciadas. & Implementado \\
+    RF13 (HU10) & Acceso del estudiante por código de examen, sin cuenta, con el enlace completo o ingresando solo el código (\texttt{JoinExam.tsx}); código de participante seudónimo y \textit{token} opaco por sesión. & Implementado \\
+    RF14 (HU05, HU06) & Inicio de sesión docente con JWT; cada consulta y cada revisión se filtran por el docente propietario de la evaluación. & Implementado \\
+    RF15 (HU11) & \texttt{GET /exams/\{id\}/panorama}, calculado por \texttt{processing/panorama.py} sobre métricas e indicadores ya guardados; pestaña ``Panorama'' (\texttt{PanoramaView.tsx}). & Implementado; sin evaluación con docentes \\
+    RF16 (HU09, HU05) & Reglas ``permite pegado'' y ``permite otras pestañas'' en la política versionada (\texttt{processing/rules.py}); casillas en la creación de la evaluación y en la edición de la política (\texttt{ExamsList.tsx}, \texttt{PolicyCard.tsx}). & Implementado \\
+    RF17 (HU12) & \texttt{DELETE /sessions/\{id\}} desde el detalle de la sesión; \texttt{DELETE /auth/me}, que elimina la cuenta con sus evaluaciones y todos sus datos; purga automática por vencimiento del plazo (\texttt{retention.py}). & Implementado (Incremento~16) \\
+    RNF01 & Filtro por señales habilitadas en el cliente y validación de cada lote en el servidor (\texttt{event\_schema.py}); los eventos de teclado no identifican la tecla; la captura no lee el texto de la respuesta, que solo se envía al entregar, y el portapapeles se lee solo si esa señal está habilitada, para conservar únicamente la longitud de lo pegado. & Implementado (ver Sección~\ref{sec:impl_limitaciones}) \\
+    RNF02 & La información mostrada al estudiante, la descripción de cada señal habilitada y el filtro de la captura provienen de la misma versión de la política. & Implementado \\
+    RNF03 & JWT por docente; contraseñas guardadas solo como \textit{hash} \textit{bcrypt} (\texttt{auth.py}); consultas filtradas por propietario; \textit{token} opaco por sesión; código de participante seudónimo. Modo producción con secreto JWT obligatorio fuera del código (Incremento~13). HTTPS y cifrado en reposo los provee el servicio en que se despliega. & Parcial: cifrado en reposo no verificado \\
+    RNF04 & Eventos de solo inserción con secuencia monotónica; política inmutable fijada en la sesión; recepción idempotente; \textit{buffer} acotado con registro de eventos descartados y de fallas persistentes de sincronización; revisiones de solo inserción. & Implementado \\
+    RNF05, RNF06 & Relación N:M indicador--métrica; explicación con métrica, valor y umbral en las reglas; en el modelo, desviaciones descriptivas respecto de la cohorte, calculadas aparte del \textit{Isolation Forest}. & Implementado; comprensión por docentes sin evaluar \\
+    RNF07 & Captura asíncrona con \textit{listeners} nativos; envío por lotes cada 5\,s con espera exponencial ante fallas de red; muestreo de mouse y \textit{scroll} limitado a uno cada 100\,ms. & Implementado; cota medida y cumplida (Sección~\ref{sec:eval_rnf}) \\
+    RNF08 & Filtro de sesiones pendientes; nivel del indicador para priorizar; indicadores antes que métricas crudas. & Implementado; sin evaluación con docentes \\
+    RNF09 & \textit{Endpoints} síncronos con \textit{pool} de conexiones dimensionado y límite de pedidos en curso (Incremento~16). & Medido: cumple con PostgreSQL y no con SQLite; la entrega simultánea de 200 sesiones supera los 5\,s (Sección~\ref{sec:eval_rnf}) \\
+    RNF10 & Plazo de conservación en la política de captura, limitado a 365 días (Incremento~14), con un tope de doce meses para las políticas sin plazo; purga de las sesiones vencidas al arrancar y como tarea periódica (\texttt{retention.py}, Incremento~16). & Implementado \\
+    RNF11 & Procesamiento por reglas al finalizar cada sesión y modelo poblacional al cerrar la evaluación; consultas docentes sobre métricas e indicadores ya guardados. & Medido: cumple en procesamiento y consultas; 200 entregas simultáneas superan la cota de 5\,s (Sección~\ref{sec:eval_rnf}) \\
+\end{longtable}
+}
+
+\section{Pruebas automatizadas}
+\label{sec:impl_pruebas}
+
+En línea con la Sección ``Calidad, pruebas y despliegue'' del Capítulo~\ref{ch:tecnologias}, el \textit{backend} cuenta con pruebas automatizadas en \texttt{pytest}, que combinan pruebas unitarias del procesamiento con pruebas de integración de la API sobre una base de datos de prueba. La Tabla~\ref{tab:impl_pruebas} resume su cobertura en la versión \texttt{\commitpruebas} del repositorio: sobre SQLite se aprueban 142 pruebas del \textit{backend}, y una prueba adicional, específica de PostgreSQL, se omite en esa corrida. El \textit{dashboard} compila sin errores, pasa el análisis estático de código y aprueba sus 36 pruebas unitarias, con lo que se aprueban 178 pruebas en total. Al cierre del Incremento~16, la suite del \textit{backend} tenía 120 pruebas, que se ejecutaron en verde tanto sobre SQLite como sobre PostgreSQL~16.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{1cm} >{\raggedright\arraybackslash}p{9.2cm}}
+    \caption{Pruebas automatizadas del \textit{backend}}
+    \label{tab:impl_pruebas} \\
+    \toprule
+    \tblhead \textbf{Archivo} & \textbf{Casos} & \textbf{Qué verifican} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Archivo} & \textbf{Casos} & \textbf{Qué verifican} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+        \texttt{test\_features.py} & 8 & \textit{Dwell} y \textit{flight time}, velocidad de mouse, cambios de pestaña y tiempo fuera, que del portapapeles se guarde la longitud y no el contenido, tiempo de inactividad, y que las métricas de teclado no cambien cuando los eventos no identifican la tecla. \\
+        \texttt{test\_indicators.py} & 4 & Ausencia de indicadores bajo los umbrales, explicación trazable, muestra mínima para el indicador de ritmo y combinación de varios indicadores. \\
+        \texttt{test\_anomaly.py} & 3 & Sin modelo con población insuficiente; detección de un atípico claro; una sesión típica no se marca. \\
+        \texttt{test\_api\_flow.py} & 9 & Información visible antes del consentimiento y consigna oculta hasta iniciar, ciclo de vida completo, idempotencia ante reenvío de un lote, consentimiento obligatorio, rechazo de \textit{token} inválido, aislamiento entre docentes, fechas con zona horaria explícita y generación de la hora UTC sin la API deprecada de Python. \\
+        \texttt{test\_policy\_and\_traceability.py} & 7 & La política no se reinterpreta retroactivamente, métricas por ítem, indicador rastreable hasta su métrica, revisión dirigida a indicadores puntuales, detección de un atípico con una población de 21 sesiones sintéticas, número de versión de la política y versionado restringido al dueño de la evaluación. \\
+        \texttt{test\_review\_status.py} & 4 & El estado de revisión sigue a la última revisión y conserva el historial; la vista de pendientes cruza evaluaciones y excluye las cerradas; filtro inválido rechazado; aislamiento entre docentes. \\
+        \texttt{test\_evaluation.py} & 16 & Convención de falsas alarmas y anomalías no detectadas; EER en casos calculados a mano; reproducibilidad y formato sin contenido del generador sintético; que cada perfil cruce el umbral para el que fue diseñado; equivalencia entre la evaluación y el camino de la API. \\
+        \texttt{test\_incremento10.py} & 6 & Percentil de la sesión en la línea base; nivel del indicador por banda de percentil y no por el valor absoluto del \textit{score}; métricas de integridad de la captura que no cuentan como actividad; aviso de captura incompleta que no prioriza la sesión; flujo completo por la API desde una falla persistente hasta el indicador vinculado a su métrica. \\
+        \texttt{test\_incremento12.py} & 7 & Reglas guardadas en la política sin cambio de esquema; resultado idéntico al anterior sin reglas; evento permitido con nivel bajo y sin priorizar la sesión; protocolo sintético sin reglas igual al anterior; reglas por la API; cálculo puro del panorama; \textit{endpoint} del panorama. \\
+        \texttt{test\_despliegue.py} & 21\textsuperscript{a} & Normalización de la URL de la base y parámetros SSL de los proveedores; conexiones cortadas por el proveedor y \textit{pool} configurable; secreto JWT obligatorio y válido en producción; CORS; alta inicial de docentes idempotente y sin cambiar claves; el \textit{backend} no arranca en producción sin secreto; paso de \textit{build} de Vercel que migra y da de alta docentes una sola vez por despliegue. \\
+        \texttt{test\_migraciones.py} & 6 & Esquema de las migraciones idéntico al modelo; migraciones en ambos sentidos; adopción de una base previa sin pérdida de datos; plazo de conservación fuera de rango rechazado; rango de eventos de cada métrica; estado del indicador al ser citado por una revisión. \\
+        \texttt{test\_simulaciones.py} & 7 & Condición guardada pero ausente de toda respuesta al docente; mismo resultado del procesamiento con y sin etiqueta; exportación sin identificadores; análisis reproducible con partición por participante. \\
+        \texttt{test\_incremento16.py} & 10 & Validación de lotes y rechazo por la API de eventos fuera de la política; duración de pulsaciones superpuestas emparejadas en el cliente; análisis de la cohorte independiente del orden de llegada; cierre que analiza la cohorte completa y cohorte chica marcada como no evaluada; entrega idempotente que guarda la respuesta y recupera un procesamiento fallido; eliminación de sesión y de cuenta; purga solo de las sesiones vencidas; migración en ambos sentidos. \\
+        \texttt{test\_incremento16\_revision.py} & 13 & Cierre reclamado una sola vez y reabierto si el análisis falla; procesamiento no repetido de una sesión ya procesada; respuesta guardada solo en la entrega; tope de doce meses para políticas sin plazo y sesiones abandonadas; rechazo de números no finitos; texto del indicador del modelo; estado cerrado en la información pública; \textit{pool} de conexiones y límite de pedidos en curso; cantidad de consultas del listado que no crece con las sesiones, entre otras. \\
+        \texttt{test\_eliminar\_evaluacion.py} & 3 & Eliminación de una evaluación con todas sus sesiones y datos derivados; solo por su docente; las demás evaluaciones no se ven afectadas. \\
+        \texttt{test\_ejercicios\_pdf.py} & 4 & Evaluaciones con varios ejercicios y respuesta por ejercicio; identificadores de ejercicio repetidos rechazados; enunciado en PDF y límite de 4\,MB por el tamaño máximo de pedido del despliegue. \\
+        \texttt{test\_seed\_presentacion.py} & 9 & Carga de los datos de demostración: versión liviana con la misma historia que la completa, reintentos solo en operaciones idempotentes, fechado sobre la base correcta y borrado limitado a las evaluaciones de la demostración, con confirmación. \\
+        \texttt{test\_version.py} & 5 & Versión y \textit{commit} informados por \texttt{/health} y \texttt{/version}, con valor por omisión cuando no se declaran. \\
+        \midrule
+        \textbf{Total} & \textbf{142} & Aprobadas sobre SQLite en la versión \texttt{\commitpruebas}. \\
+        \end{longtable}
+\vspace{-6pt}
+\noindent\textsuperscript{a}\,Más una prueba que solo se ejecuta sobre PostgreSQL y se omite en la corrida sobre SQLite.
+}
+
+A las pruebas automatizadas se suman la evaluación con datos sintéticos y la prueba interna de punta a punta, que se presentan con sus resultados en el Capítulo~\ref{ch:evaluacion}, y las verificaciones registradas en la bitácora: recorridos completos en un navegador real y comprobaciones directas en la base de datos de que la revisión, la política versionada y los vínculos indicador--métrica quedaron persistidos. El \textit{frontend} cuenta con 36 pruebas unitarias: 10 de la cola de sincronización (espera exponencial y su tope, orden y numeración de lotes, \textit{buffer} agotado, distinción entre una falla breve y una persistente, admisión de los eventos de estado con el \textit{buffer} lleno, descarte de un lote rechazado por el servidor y continuidad de la numeración al retomar una sesión); 4 de los textos y formatos del Incremento~12 (nombre y aclaración del indicador del modelo, opciones de reglas, valores y barras del panorama); 3 del modo de simulación del Incremento~15 (condiciones admitidas, activación solo con el enlace de simulación y ausencia de la condición fuera de ese modo); y 19 del Incremento~16 y del paquete de reproducibilidad: 4 de la versión y el \textit{commit} mostrados en la interfaz, 4 del emparejamiento de pulsaciones en el navegador (teclas superpuestas, repetición automática, pérdida de foco y ausencia de la identidad de la tecla en el evento), 4 de los estados y textos del análisis poblacional y del panorama, y 7 de las correcciones de usabilidad (borrador de la respuesta, código y enlace del examen, orden de las sesiones, redirección segura después del inicio de sesión y vocabulario para el docente). El resto de la interfaz se verifica mediante su compilación y los recorridos automatizados.
+
+\section{Recorrido funcional del MVP}
+\label{sec:impl_recorrido}
+
+El recorrido de demostración sigue los dos flujos de los \textit{mockups} de la Sección~\ref{sec:mockups}, ahora sobre el sistema implementado. Las capturas de esta sección se generan de forma automática con un guion que levanta el \textit{backend} y el \textit{dashboard}, carga una población de sesiones sintéticas a través de la API (sus identificadores llevan el prefijo \texttt{SINT} para distinguirlas de personas) y recorre el flujo en un navegador.
+
+\begin{enumerate}
+    \item El docente inicia sesión, crea una evaluación con su información previa, reglas, consigna y señales habilitadas, y obtiene el código de acceso y el enlace para compartir, que puede copiar con un botón (Figura~\ref{fig:cap_crear}).
+    \item El estudiante abre el enlace o ingresa el código en la pantalla de ingreso, lee qué se registra y con qué reglas se rinde, ingresa su código de participante seudónimo y consiente, sin ver todavía la consigna (Figura~\ref{fig:cap_consentimiento}).
+    \item Recién entonces ve la consigna y responde en la misma página, mientras la captura registra las señales habilitadas y las sincroniza por lotes (Figura~\ref{fig:cap_rindiendo}).
+    \item Al entregar, el estudiante confirma la acción y la vista informa que la entrega quedó registrada recién cuando el servidor terminó de procesarla (Figura~\ref{fig:cap_entrega}); el \textit{backend} calcula las métricas y genera los indicadores por reglas. Si la página se recarga durante el examen, se retoma la misma sesión con el borrador de la respuesta.
+    \item Cuando todas las sesiones finalizaron, el docente cierra la evaluación después de una confirmación (Figura~\ref{fig:cap_cierre}); en ese momento el modelo poblacional analiza la cohorte completa, si tiene al menos 20 sesiones, y la vista informa cuántas de las sesiones evaluadas marcó.
+    \item El docente filtra las sesiones que requieren revisión (Figura~\ref{fig:cap_filtro}), abre el detalle, consulta cada indicador junto con la métrica y el umbral que lo originaron (Figura~\ref{fig:cap_detalle}) o, en el caso del modelo, las métricas con mayor desviación respecto de la cohorte (Figura~\ref{fig:cap_atipico}), y registra su revisión. Las sesiones con validación adicional pendiente quedan reunidas en una vista propia (Figura~\ref{fig:cap_validaciones}).
+\end{enumerate}
+
+\capturaMVP[Panel docente: creación de una evaluación]{02_crear_evaluacion}{Panel docente: creación de una evaluación con información previa, reglas, consigna, señales habilitadas y conductas permitidas por las reglas (RF01, RF02, RF04, RF16).}{fig:cap_crear}
+
+\capturaMVP[Vista del estudiante antes de comenzar]{04_estudiante_info_y_consentimiento}{Vista del estudiante antes de comenzar: qué se registra, con la descripción de cada señal habilitada, reglas, código de participante y consentimiento, sin la consigna (RF01, RF02, RNF02, HU01, HU02).}{fig:cap_consentimiento}
+
+\capturaMVP[Vista del estudiante durante la sesión]{05_estudiante_rindiendo}{Vista del estudiante durante la sesión: consigna, respuesta en curso y estado de sincronización (RF03, RNF07).}{fig:cap_rindiendo}
+
+% La captura 06 es una pantalla casi vacía (fondo oscuro con una tarjeta central): se recorta
+% en la compilación (adjustbox, recorte relativo) para que la tarjeta sea legible, sin
+% modificar el PNG, que se regenera con mvp/scripts/capturas_demo.py.
+\begin{figure}[h!]
+    \centering
+    \IfFileExists{./figures/capturas/06_entrega_confirmada.png}%
+        {\fbox{\adjustimage{trim={0.35\width} {0.385\height} {0.35\width} {0.36\height},clip,width=0.62\textwidth}{./figures/capturas/06_entrega_confirmada}}}%
+        {\fbox{\parbox[c][3cm][c]{0.8\textwidth}{\centering\small Captura \texttt{06\_entrega\_confirmada.png}}}}
+    \caption[Vista del estudiante después de entregar]{Vista del estudiante después de entregar: confirmación de que el servidor registró y procesó la entrega (Incremento~16). Recorte de la región central de la pantalla; el resto de la vista es fondo vacío. Fuente: captura del MVP, elaboración propia.}
+    \label{fig:cap_entrega}
+\end{figure}
+
+\capturaMVP[Panel docente después del cierre de la evaluación]{17_cierre_evaluacion}{Panel docente después del cierre de la evaluación: fecha del cierre, aclaración de que el modelo analizó juntas todas las sesiones finalizadas con el mismo protocolo y resumen de las sesiones marcadas, con acceso al panorama (datos de demostración).}{fig:cap_cierre}
+
+\capturaMVP[Listado de sesiones de una evaluación filtrado por ``requiere revisión'']{08_sesiones_filtro_requiere_revision}{Listado de sesiones de una evaluación filtrado por ``requiere revisión'' (RF07, RNF08).}{fig:cap_filtro}
+
+\capturaMVP[Detalle de una sesión]{09_detalle_sesion_indicadores}{Detalle de una sesión: indicadores con su métrica y umbral de origen, y métricas calculadas (RF08, RF09, RF10, RNF05, RNF06).}{fig:cap_detalle}
+
+\capturaMVP[Sesión sintética marcada por el modelo poblacional]{11_detalle_atipico_modelo_poblacional}{Sesión sintética marcada por el modelo poblacional como ``proceso de interacción distinto al de la cohorte'', con su posición relativa en la cohorte y las métricas con mayor desviación respecto de ella, presentadas como dato descriptivo (RNF06).}{fig:cap_atipico}
+
+\capturaMVP[Vista de sesiones con validación adicional pendiente]{12_validaciones_pendientes}{Vista de sesiones con validación adicional pendiente (RF11, HU08).}{fig:cap_validaciones}
+
+\FloatBarrier
+
+\section{Conformidad con la especificación y límites del alcance}
+\label{sec:impl_limitaciones}
+
+Los Incrementos~9, 10 y~16 incluyeron una verificación sistemática del código frente a lo especificado en los Capítulos~\ref{ch:requerimientos} y~\ref{ch:tecnologias}, y completaron la implementación en los puntos que esa verificación señaló. El recuadro siguiente resume las garantías resultantes; a continuación se definen los límites del alcance del MVP.
+
+\begin{keyfinding}{Garantías completadas en la verificación de conformidad}
+\begin{itemize}
+    \item \textbf{Minimización de la captura (Incrementos~9 y~16).} Los eventos de teclado no identifican la tecla física, cuyo código permitiría reconstruir aproximadamente lo tecleado (Sección~\ref{sec:modelo_datos}, RNF01): la duración de cada pulsación se calcula en el navegador y el servidor rechaza los eventos que identifiquen la tecla (Sección~\ref{sec:impl_robustez}). Una política sin señales habilitadas equivale a no capturar nada (RF04), y la vista del estudiante solicita un código de participante seudónimo. Una prueba automatizada verifica que las métricas de teclado se mantienen, y las corridas segunda y tercera de la prueba interna confirmaron que la tecla no se almacena (Sección~\ref{sec:eval_resultados_prueba}).
+    \item \textbf{Transparencia sobre el portapapeles (Incremento~10).} Para medir la longitud de lo pegado, el cliente lee un instante el texto del portapapeles y conserva solo la cantidad de caracteres; el texto no se almacena ni se transmite, como verificó la prueba interna. Esa lectura ocurre solo si la evaluación habilita la señal, y la vista del estudiante la describe, junto con las demás señales habilitadas, antes del consentimiento.
+    \item \textbf{Presentación del indicador del modelo (Incrementos~10 y~16).} Nivel por percentiles de la línea base, posición relativa de la sesión en la cohorte en lugar del valor crudo del \textit{score} y métricas más desviadas presentadas como desviaciones descriptivas respecto de la cohorte (Sección~\ref{sec:impl_isolation_forest}).
+    \item \textbf{Sincronización (Incremento~10).} Espera exponencial, \textit{buffer} acotado y registro como eventos propios del agotamiento del \textit{buffer} y de las fallas persistentes (Sección~\ref{sec:impl_sincronizacion}), verificados sobre el sistema real por la prueba de resiliencia (Sección~\ref{sec:eval_prueba_red}).
+    \item \textbf{Protocolo poblacional y garantías del servidor (Incremento~16).} Análisis único de la cohorte completa al cerrar la evaluación, validación de cada lote contra la política de la sesión, eliminación de datos (RF17) y purga por vencimiento del plazo de conservación, con el tope de doce meses de RNF10 para las políticas sin plazo declarado (Secciones~\ref{sec:impl_robustez} y~\ref{sec:impl_retencion}).
+\end{itemize}
+Los ajustes del Incremento~10 mantienen qué sesiones marcan las reglas y el modelo: el protocolo sintético, ejecutado con el código de ese incremento, produjo exactamente los mismos resultados.
+\end{keyfinding}
+
+\begin{opendecision}{Límites del alcance del MVP}
+\begin{itemize}
+    \item \textbf{Calibración.} Los umbrales de la Tabla~\ref{tab:impl_umbrales}, la proporción de sesiones que marca el modelo poblacional, el corte del 5\,\% para el nivel alto, la capacidad del \textit{buffer} y el criterio de falla persistente son valores provisorios, cuya calibración requiere datos de personas y corresponde al piloto (Sección~\ref{sec:eval_piloto_futuro}). La evaluación del Capítulo~\ref{ch:evaluacion} identificó mejoras concretas para la regla de ritmo uniforme y para el tiempo entre teclas, previstas para esa etapa (Sección~\ref{sec:eval_decisiones}).
+    \item \textbf{Métricas derivadas.} El MVP implementa las métricas de la Tabla~\ref{tab:impl_metricas}; las demás variables de la Tabla~\ref{tab:senales_insights} se incorporan en una iteración posterior (Sección~\ref{sec:impl_pipeline}). La vista de rendición admite varios ejercicios, cada uno con su campo de respuesta, y cada evento lleva el ejercicio en el que ocurrió (\texttt{item\_ref}); el \textit{backend} calcula las métricas por ejercicio y el detalle de la sesión las agrupa de esa forma.
+    \item \textbf{Respuesta del estudiante.} La respuesta entregada se guarda con la sesión y la ve solo el docente de la evaluación. Su exportación a la plataforma de la cátedra depende de la integración con esa plataforma, que excede el alcance del MVP.
+    \item \textbf{Contexto de la sesión (RF05).} El modelo de datos guarda el contexto como un atributo libre de la sesión; su carga desde la vista del estudiante queda fuera del alcance del MVP, por lo que el requerimiento figura como parcial en la Tabla~\ref{tab:impl_trazabilidad}.
+    \item \textbf{Interfaz docente.} El alta de docentes se realiza con un \textit{script}; el registro autónomo y la recuperación de contraseña quedan fuera del alcance.
+    \item \textbf{Infraestructura.} La suite y el modo producción del \textit{backend} se verificaron sobre PostgreSQL~16 en un entorno local. Con Docker solo se verificó la configuración de los descriptores; el sistema no se levantó con contenedores de punta a punta (Sección~\ref{sec:repro_docker}). La demostración funciona en la nube (Vercel y Neon, en planes gratuitos y con datos sintéticos; Sección~\ref{sec:impl_acceso}); el despliegue institucional y la integración continua quedan fuera del alcance. Las mediciones de rendimiento se hicieron en una sola máquina: la entrega simultánea de 200 sesiones supera la cota de 5\,s y el cierre de una evaluación de 500 sesiones demora entre 8 y 10\,s (Sección~\ref{sec:eval_rnf}); las pruebas de carga en la infraestructura de producción corresponden a la etapa de adopción. Las dependencias fijadas en el \textit{backend} requieren Python 3.11 o 3.12.
+    \item \textbf{\textit{Buffer} en memoria.} Los eventos pendientes de envío viven en la memoria de la pestaña: si el estudiante la cierra o la recarga sin conexión, se pierden. El almacenamiento de la pestaña conserva la sesión en curso y el borrador de la respuesta.
+\end{itemize}
+\end{opendecision}
+
+En síntesis, el MVP demuestra la cadena completa que propone ImprontIA: información previa y consentimiento, captura acotada a lo informado, métricas e indicadores trazables, detección de atipicidad sin etiquetas y revisión exclusivamente humana, con la minimización verificada en el código y en la prueba interna. El paso siguiente es calibrar el sistema con datos de personas en un piloto con voluntarios (Sección~\ref{sec:eval_piloto_futuro}).
+\endgroup

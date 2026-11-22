@@ -1,0 +1,54 @@
+# Blueprint de Render — BASE EXTERNA (Neon o Supabase) + API y dashboard en Render
+# (ver mvp/docs/despliegue.md, camino B2).
+#
+# Cómo usarlo: Render lee `render.yaml` por defecto. Para este camino, al crear el Blueprint
+# (New > Blueprint) escribir `render.externo.yaml` en el campo "Blueprint Path" (verificado en
+# https://render.com/docs/infrastructure-as-code el 30/10/2026).
+#
+# No hay bloque `databases`: la base la da el proveedor externo y su URL se pega a mano en
+# DATABASE_URL (Render la pide al crear el Blueprint). Formato aceptado, tal cual lo copia Neon:
+#   postgresql://usuario:clave@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+# Usar la conexión DIRECTA de Neon (host sin `-pooler`): es la probada y la que sirve para pg_dump.
+# (el backend acepta postgres:// y postgresql://, y respeta ?sslmode=require / channel_binding).
+#
+# Región: la base externa tiene que estar cerca de la API. Con `region: virginia` en Render,
+# crear la base en AWS US East (N. Virginia) — en Neon, `aws-us-east-1`.
+#
+# Nombres de plan verificados en https://render.com/docs/blueprint-spec el 30/10/2026.
+# VARIANTE 100 % GRATIS: improntia-api > plan: free (la API se duerme tras 15 min sin tráfico y
+# tarda ~1 min en despertar; la base externa no se pierde).
+
+services:
+  - type: web
+    name: improntia-api
+    runtime: docker
+    plan: 0.5c-512mb          # web service pago más chico: no se duerme. Gratis: free
+    region: virginia          # cerca de la base (Neon aws-us-east-1); no se puede cambiar después
+    rootDir: mvp/backend      # dockerfilePath queda relativo a rootDir
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: IMPRONTIA_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false           # se pega a mano: la connection string del proveedor (es una contraseña)
+      - key: JWT_SECRET
+        generateValue: true   # Render genera un secreto aleatorio y lo guarda
+      - key: CORS_ORIGINS
+        sync: false           # URL del dashboard, p. ej. https://improntia-dashboard.onrender.com
+      - key: SEED_TEACHERS
+        sync: false           # mail:clave,mail:clave
+
+  - type: web
+    name: improntia-dashboard
+    runtime: static           # sin plan: gratis y no se duerme
+    rootDir: mvp/dashboard
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite        # SPA: todas las rutas sirven index.html (React Router)
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false           # URL de la API, p. ej. https://improntia-api.onrender.com

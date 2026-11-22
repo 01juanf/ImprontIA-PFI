@@ -1,0 +1,26 @@
+\chapter{Planilla del modelo económico-financiero}
+\label{apx:modelo_financiero}
+
+La evaluación del Capítulo~\ref{ch:negocio} se calcula con un modelo reproducible y se entrega también como planilla de cálculo, como pide la guía de la cátedra para el capítulo económico-financiero~\parencite{UADE2026ModeloNegocio}. Los archivos están en el repositorio del proyecto (Apéndice~\ref{apx:reproducibilidad}), en la carpeta \texttt{latex/anexos/}:
+
+\begin{itemize}
+    \item \texttt{Modelo\_Financiero\_ImprontIA.xlsx}: la planilla anexa. La hoja \textit{Supuestos} reúne cada supuesto con su valor y su fuente (los datos ingresados, en azul; los parámetros de escenario, con fondo amarillo); las hojas \textit{Flujo\_pesimista}, \textit{Flujo\_base} y \textit{Flujo\_optimista} presentan el flujo de fondos libre de los años~0 a~5 con la estructura de las Tablas~\ref{tab:neg_flujo_pes} a~\ref{tab:neg_flujo_opt}, y calculan con fórmulas el EBITDA, el resultado antes de impuestos, el flujo de fondos libre, el flujo acumulado, el VAN, la TIR y la necesidad máxima de financiamiento a partir de la tasa de la hoja de supuestos; la hoja \textit{Indicadores} resume los tres escenarios.
+    \item \texttt{modelo\_financiero.py}: el modelo que genera las proyecciones (cartera de instituciones con bajas y convención de medio año, equipo por escalones, impuesto a las ganancias con quebrantos, amortización de la inversión, capital de trabajo y valor residual).
+    \item \texttt{gen\_bloque.py} y \texttt{gen\_planilla.py}: generan las tablas y los gráficos del capítulo y la planilla a partir del modelo, de modo que ninguna cifra se transcribe a mano.
+\end{itemize}
+
+Enlaces directos a la versión evaluada:
+
+\begin{itemize}
+    \item \textbf{Planilla:} \url{https://github.com/01juanf/ImprontIA-PFI/blob/v1.0/latex/anexos/Modelo_Financiero_ImprontIA.xlsx}
+    \item \textbf{Carpeta con los \textit{scripts}:} \url{https://github.com/01juanf/ImprontIA-PFI/tree/v1.0/latex/anexos}
+\end{itemize}
+
+Para reproducir las cifras, desde la carpeta \texttt{latex/anexos/} y con Python~3 y las bibliotecas \texttt{numpy-financial} y \texttt{openpyxl}:
+
+\begin{verbatim}
+python3 modelo_financiero.py   # flujos e indicadores por escenario
+python3 gen_planilla.py        # regenera Modelo_Financiero_ImprontIA.xlsx
+\end{verbatim}
+
+Si se modifica un supuesto en el modelo, se regeneran la planilla y el capítulo sin tocar fórmulas. Al abrir la planilla, las fórmulas de VAN, TIR y flujo acumulado se recalculan con la tasa de la hoja de supuestos, lo que permite probar otras tasas de descuento; los flujos de cada año, en cambio, provienen del modelo, porque dependen de reglas que no se expresan bien en una celda (incorporación de personal por escalones y compensación de quebrantos con vencimiento).

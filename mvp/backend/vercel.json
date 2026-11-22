@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python -m scripts.vercel_build",
+  "functions": {
+    "app/main.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{tests/**,**/__pycache__/**,*.db,.venv*/**,.pytest_cache/**}"
+    }
+  }
+}

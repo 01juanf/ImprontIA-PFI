@@ -1,0 +1,95 @@
+\chapter{Introducción}
+\label{ch:introduccion}
+
+El presente Proyecto Final de Ingeniería (PFI) desarrolla ImprontIA, una plataforma de trazabilidad del proceso de resolución de evaluaciones digitales. Esta introducción presenta el contexto que motiva el proyecto, el problema que aborda, sus objetivos, su alcance y la organización del documento.
+
+\section{Contexto y motivación}
+\label{sec:intro_contexto}
+
+La expansión de las evaluaciones digitales y el uso creciente de herramientas de inteligencia artificial generativa modifican las condiciones bajo las cuales las instituciones educativas analizan la autoría, la integridad y la validez de las entregas académicas. La integridad académica suele definirse a partir de valores como honestidad, confianza, justicia, respeto, responsabilidad y coraje; por lo tanto, no se limita a la ausencia de plagio o fraude, sino que refiere a un marco institucional para sostener evaluaciones justas y confiables~\parencite{ICAI2021}.
+
+En entornos mediados por plataformas, los mecanismos tradicionales de observación directa se complementan con estrategias técnicas, pedagógicas y normativas. Las revisiones sobre deshonestidad en exámenes en línea identifican conductas como consulta de recursos no autorizados, colaboración indebida, comunicación con terceros, suplantación de identidad y delegación parcial o total de tareas evaluativas~\parencite{Noorbehbahani2022, Newton2024}. Los sistemas de supervisión remota incorporaron mecanismos de autenticación, monitoreo de actividad y análisis automatizado, aunque la literatura advierte preocupaciones sobre privacidad, transparencia, equidad y revisión humana~\parencite{Nigam2021, Mutimukwe2023}.
+
+En este marco, ImprontIA se fundamenta en el concepto de trazabilidad de autoría: la posibilidad de registrar y analizar señales del proceso de producción de una respuesta académica dentro de una plataforma de evaluación. Su objetivo es aportar información procesual, explicable y revisable sobre cómo se produjo una respuesta digital. Más que un detector, ImprontIA se concibe como una plataforma de trazabilidad e inteligencia del proceso de evaluación: interpreta lo registrado según las reglas de cada examen, ofrece al docente un panorama agregado de la evaluación y le indica dónde conviene mirar.
+
+\section{Definición del problema}
+\label{ch:problema}
+Las evaluaciones digitales y remotas reducen la visibilidad institucional sobre el proceso mediante el cual se produce una respuesta académica. En muchos casos, la revisión se concentra en el resultado final, mientras que el proceso de escritura, navegación e interacción queda escasamente documentado. Esta situación dificulta el análisis de eventos atípicos, asistencia externa, suplantación o uso no autorizado de herramientas, especialmente cuando las señales disponibles son múltiples, contextuales y ambiguas, y los mecanismos de análisis dependen exclusivamente del contenido final.
+
+El problema abordado por ImprontIA consiste en conciliar la necesidad de aportar trazabilidad sobre el proceso de autoría en evaluaciones digitales con los riesgos de privacidad y de falsos positivos que implica analizar señales de interacción, lo que exige reglas transparentes, interpretación contextual y revisión humana. La propuesta consiste en ofrecer indicadores que apoyen una revisión académica informada, dentro del alcance que se fija en la Sección~\ref{sec:alcance}.
+
+\section{Objetivos}
+\label{sec:objetivos}
+
+\subsection{Objetivo general}
+
+El objetivo general del proyecto es diseñar y desarrollar una plataforma de apoyo a la integridad académica en evaluaciones digitales, basada en la captura y análisis de señales de interacción para generar trazabilidad de autoría y alertas revisables.
+
+\subsection{Objetivos específicos}
+
+Para alcanzar el objetivo general se plantean los siguientes objetivos específicos, cada uno asociado a un resultado verificable:
+
+\begin{enumerate}
+\item Relevar y sistematizar los antecedentes académicos, técnicos y comerciales sobre integridad académica, biometría conductual y detección de anomalías, y sintetizarlos en una comparación de enfoques y soluciones.
+\item Determinar las señales de interacción que se registrarán (teclado, mouse, navegación, cambios de foco, pausas y tiempos de edición) y definir las métricas que se derivan de cada una.
+\item Implementar un producto mínimo viable (MVP) que registre esas señales, calcule sus métricas y señale las sesiones atípicas mediante reglas de umbral y un modelo de detección de anomalías, y verificarlo con pruebas automatizadas y datos sintéticos.
+\item Presentar al docente indicadores explicables, en los que cada alerta se vincule con la métrica, el valor y el criterio que la originaron.
+\item Incorporar a la plataforma, desde el diseño, información previa al estudiante, consentimiento obligatorio y una política de captura que limite el registro a las señales habilitadas para cada evaluación.
+\end{enumerate}
+
+\section{Alcance}
+\label{sec:alcance}
+
+El alcance del proyecto se limita al análisis de señales generadas dentro de la plataforma de evaluación o durante la interacción controlada con ella. Comprende el relevamiento del problema y de sus antecedentes, la especificación de requerimientos, el diseño de la arquitectura y del modelo de datos, la construcción de un producto mínimo viable (MVP) que implementa la cadena completa ---información previa y consentimiento, captura de señales, cálculo de métricas, generación de indicadores y revisión docente---, su verificación con pruebas automatizadas, datos sintéticos y escenarios guionados, y el análisis de su viabilidad legal, técnica y económica.
+
+Lo que el sistema mide es la atipicidad de la interacción de cada sesión respecto de la cohorte de la misma evaluación, y lo presenta como evidencia procesual complementaria, interpretable y sujeta a revisión humana: una atipicidad estadística indica dónde mirar. En consecuencia, ImprontIA no prueba la autoría de una respuesta, no verifica la identidad de quien la escribe, no determina si una respuesta fue producida por inteligencia artificial y no constituye un sistema de detección automática de fraude; tampoco sanciona estudiantes, bloquea evaluaciones ni reemplaza al docente, que conserva siempre la decisión.
+
+La validación con personas, es decir, la medición del desempeño de los indicadores frente a conductas reales mediante un piloto con voluntarios, y la integración con plataformas institucionales de gestión del aprendizaje se definen como trabajo futuro y no forman parte del alcance.
+
+El trabajo distingue, por lo tanto, tres niveles. El primero es el MVP implementado. El segundo es su validación técnica, realizada con datos sintéticos generados por el equipo y pruebas automatizadas sobre el sistema real, que verifica el procedimiento y el funcionamiento interno. El tercero es el uso institucional, que requiere un piloto con voluntarios, la calibración con datos reales y requisitos legales y técnicos adicionales, y que corresponde al trabajo futuro (Sección~\ref{sec:eval_niveles}).
+
+\section{Estructura del documento}
+\label{sec:intro_estructura}
+
+Como Proyecto Final de Ingeniería, el documento presenta el proyecto completo: desde la definición del problema y su fundamentación teórica hasta la construcción de un producto mínimo viable (MVP), su evaluación, el análisis de su viabilidad y el modelo de negocio que permitiría sostenerlo. La propuesta se apoya en una premisa que recorre todos los capítulos: los indicadores que produce la plataforma son evidencia para la revisión docente, y la decisión es siempre humana.
+
+El trabajo se organiza en cuatro bloques. El primero define y fundamenta el problema:
+
+\begin{itemize}
+    \item Este capítulo plantea el problema (Sección~\ref{ch:problema}), el objetivo general y los objetivos específicos (Sección~\ref{sec:objetivos}) y el alcance del proyecto, que fija qué mide el sistema (Sección~\ref{sec:alcance}).
+    \item El Capítulo~\ref{ch:antecedentes}, de antecedentes, reúne dos partes. El marco teórico (Sección~\ref{ch:marco_teorico}) desarrolla los conceptos que sustentan la propuesta: integridad académica en evaluaciones digitales, límites de la detección textual de IA, trazabilidad de autoría, biometría conductual, dinámica de tipeo, señales de interacción, detección de anomalías, protección de datos personales y la construcción y factibilidad del conjunto de datos propio. El estado del arte (Sección~\ref{ch:estado_arte}) releva la investigación académica, las soluciones comerciales y el contexto regional, presenta el análisis competitivo (matriz ERIC, estrategia del océano azul y curva de valor, Sección~\ref{ch:competencias}) e identifica la brecha que justifica el proyecto.
+\end{itemize}
+
+El segundo bloque traduce ese análisis en una especificación:
+
+\begin{itemize}
+    \item El Capítulo~\ref{ch:user_research} presenta la investigación con usuarios (encuesta a estudiantes y entrevistas a perfiles de docencia, investigación y gestión académica) y las condiciones de aceptabilidad que se derivan de ella.
+    \item El Capítulo~\ref{ch:requerimientos} formula las historias de usuario y los requerimientos funcionales y no funcionales, y presenta los mockups.
+    \item El Capítulo~\ref{ch:tecnologias} define la arquitectura, el modelo de datos, el componente de IA y las tecnologías elegidas, con su justificación.
+\end{itemize}
+
+El tercer bloque documenta la construcción y la verificación:
+
+\begin{itemize}
+    \item El Capítulo~\ref{ch:implementacion} describe la metodología de desarrollo, el MVP construido, sus diagramas funcionales, la trazabilidad de cada requerimiento y las pruebas automatizadas.
+    \item El Capítulo~\ref{ch:evaluacion} presenta la validación técnica: la evaluación con datos sintéticos, las pruebas de punta a punta sobre el sistema real, las mediciones de rendimiento y la evaluación experta y automatizada de usabilidad, las decisiones tomadas a partir de sus resultados y las consideraciones éticas, y deja planteado el piloto con voluntarios como trabajo futuro.
+\end{itemize}
+
+El cuarto bloque analiza el paso de MVP a producto y cierra el trabajo:
+
+\begin{itemize}
+    \item El Capítulo~\ref{ch:viabilidad} evalúa la viabilidad legal, con un descargo de responsabilidad de uso, y la viabilidad técnica.
+    \item El \refnegocio\ desarrolla el modelo de negocio, la evaluación económico-financiera en distintos escenarios y la identidad de marca.
+    \item El Capítulo~\ref{ch:conclusiones} contrasta lo realizado con los objetivos y el alcance, y ordena el trabajo futuro.
+\end{itemize}
+
+Por último, los apéndices amplían material que el cuerpo del documento sintetiza:
+
+\begin{itemize}
+    \item el Apéndice~\ref{apx:personas} reproduce los tres perfiles de usuario completos;
+    \item el Apéndice~\ref{apx:encuesta} contiene el instrumento de la encuesta y su diccionario de variables;
+    \item el Apéndice~\ref{apx:entrevistas} transcribe íntegramente las tres entrevistas;
+    \item el Apéndice~\ref{apx:cualitativo} presenta los códigos y temas del análisis cualitativo;
+    \item el Apéndice~\ref{apx:triangulacion} reúne la matriz de triangulación entre la encuesta y las entrevistas;
+    \item el Apéndice~\ref{apx:reproducibilidad} describe el paquete de reproducibilidad: repositorio, versión evaluada, requisitos y comandos para obtener cada resultado.
+\end{itemize}

@@ -1,0 +1,7238 @@
+{
+ "tipo": "Evaluación experta y automatizada de usabilidad y navegabilidad (inspección heurística + recorridos instrumentados). No es una prueba con usuarios: no hay participantes ni SUS; los tiempos son de la automatización.",
+ "fecha": "2026-10-22 22:42",
+ "entorno": {
+  "navegador": "Chromium (Playwright)",
+  "escritorio": {
+   "width": 1366,
+   "height": 768
+  },
+  "movil": {
+   "width": 375,
+   "height": 667
+  },
+  "backend": "FastAPI + SQLite temporal",
+  "dashboard": "vite preview (build de producción)",
+  "axe_tags": [
+   "wcag2a",
+   "wcag2aa",
+   "wcag21a",
+   "wcag21aa"
+  ]
+ },
+ "tareas": [
+  {
+   "id": "T1",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Iniciar sesión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/login"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.6,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": []
+  },
+  {
+   "id": "T2",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Crear evaluación con política (señales + reglas)",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 8,
+   "acciones_minimas": 8,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 3.96,
+   "errores_o_bloqueos": [],
+   "observaciones": [
+    "Muestra URL completa"
+   ],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "confirmacion": "Evaluación Parcial 1 — Bases de Datos (usabilidad) creada. Compartí con los estudiantes el enlace http://localhost:5180/exam/BC7043 o el código BC7043 (lo ingresan en /rendir). \nCopiar enlace\n✕ Ocultar",
+   "boton_copiar_presente": true,
+   "enlace_absoluto_presente": true
+  },
+  {
+   "id": "T3",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Encontrar el código/enlace de la evaluación para compartir",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 0,
+   "acciones_minimas": 0,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.37,
+   "errores_o_bloqueos": [],
+   "observaciones": [
+    "La fila ofrece «Copiar enlace» (URL absoluta) con la confirmación «Copiado»"
+   ],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "codigo_visible_sin_clics": true,
+   "codigo_en_primer_viewport": true,
+   "enlace_para_estudiantes_visible": true,
+   "boton_copiar": true,
+   "boton_copiar_url": "http://localhost:5180/exam/BC7043",
+   "boton_copiar_feedback": "Copiado"
+  },
+  {
+   "id": "E1",
+   "actor": "estudiante",
+   "modo": "mouse",
+   "descripcion": "Ingresar a la evaluación con el código",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/login",
+    "/rendir",
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 3,
+   "tiempo_automatizacion_s": 2.62,
+   "errores_o_bloqueos": [],
+   "observaciones": [
+    "Con solo el código: raíz → «¿Sos estudiante?» → código → consentimiento (3 acciones). Con el enlace completo basta 1."
+   ],
+   "errores_consola": [
+    {
+     "page": "estudiante1",
+     "kind": "console_error",
+     "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+   ],
+   "red_fallida": [
+    {
+     "page": "estudiante1",
+     "kind": "http_error",
+     "url": "/exams/NOEXISTE/info",
+     "method": "GET",
+     "status": 404
+    }
+   ],
+   "red_fallida_esperada": [],
+   "raiz_lleva_a": "/login",
+   "hay_campo_para_codigo": true,
+   "enlace_para_estudiantes_en_raiz": true,
+   "solo_con_codigo_llega_al_consentimiento": true,
+   "codigo_inexistente_mensaje": "Código no encontrado\n\nRevisá el código de examen con tu docente.\n\nIngresar otro código"
+  },
+  {
+   "id": "E2",
+   "actor": "estudiante",
+   "modo": "mouse",
+   "descripcion": "Leer la información y dar el consentimiento",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.38,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "checkbox_consentimiento_px": [
+    18,
+    18
+   ],
+   "altura_pagina_vs_viewport": 1.08
+  },
+  {
+   "id": "E3",
+   "actor": "estudiante",
+   "modo": "mouse",
+   "descripcion": "Escribir la respuesta y entregar",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 13.3,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "estado_sincronizacion": "sincronizado (129 eventos enviados)",
+   "contador_tiempo_o_palabras": false,
+   "guardado_borrador_respuesta": true,
+   "pide_confirmacion_antes_de_entregar": true,
+   "foco_en_confirmacion": "Sí, entregar",
+   "mensaje_final": "Listo\n\nEl servidor confirmó tu entrega. Ya podés cerrar esta pestaña."
+  },
+  {
+   "id": "E4",
+   "actor": "estudiante",
+   "modo": "mouse",
+   "descripcion": "Entregar con corte de red (sin conexión → reintento)",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 4,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 21.23,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [
+    {
+     "page": "estudiante2",
+     "kind": "console_error",
+     "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "console_error",
+     "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "console_error",
+     "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "console_error",
+     "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "console_error",
+     "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    }
+   ],
+   "red_fallida": [
+    {
+     "page": "estudiante2",
+     "kind": "request_failed",
+     "url": "/sessions/:id/events",
+     "method": "POST",
+     "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "request_failed",
+     "url": "/sessions/:id/events",
+     "method": "POST",
+     "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "request_failed",
+     "url": "/sessions/:id/events",
+     "method": "POST",
+     "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "request_failed",
+     "url": "/sessions/:id/events",
+     "method": "POST",
+     "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+     "page": "estudiante2",
+     "kind": "request_failed",
+     "url": "/sessions/:id/events",
+     "method": "POST",
+     "error": "net::ERR_INTERNET_DISCONNECTED"
+    }
+   ],
+   "red_fallida_esperada": [
+    "POST /sessions/:id/events y /end fallan a propósito mientras el contexto está offline"
+   ],
+   "mensaje_sin_conexion": "sin conexión — 1 lote(s) pendientes, reintentando en 10 s. Podés seguir escribiendo: los registros se guardan en este navegador hasta reconectar.",
+   "aviso_conexion_destacado": true,
+   "mensajes_durante_entrega_offline": [
+    "Enviando los últimos registros…",
+    "No se pudieron enviar 91 registro(s) de interacción. Revisá la conexión y reintentá."
+   ],
+   "ofrece_reintentar": true,
+   "ofrece_entregar_sin_registros": true,
+   "mensaje_de_error_con_aria_live": true,
+   "mensaje_final": "Listo\n\nEl servidor confirmó tu entrega. Ya podés cerrar esta pestaña."
+  },
+  {
+   "id": "T4",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Localizar las sesiones que requieren revisión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams",
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 3.29,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "sesiones_en_lista": 27,
+   "posiciones_marcadas_sin_filtro": [
+    1
+   ],
+   "y_primera_fila_px": 346,
+   "tabla_debajo_del_primer_viewport": false,
+   "ordenable_por_columna": false,
+   "sesiones_filtradas": 1
+  },
+  {
+   "id": "T5",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Abrir el detalle de una sesión y entender los indicadores",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams/:id/sessions",
+    "/sessions/:id"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 0.21,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "indicadores": [
+    "Volumen de texto pegado alto · nivel medio"
+   ],
+   "evidencia_muestra_nombre_tecnico": false,
+   "textos_evidencia": [
+    "Caracteres pegados: 264 · umbral de referencia: 200"
+   ],
+   "contexto_claves_crudas": [],
+   "subtitulo": "Examen · finalizada · 22/10/26, 19:39:26 – 22/10/26, 19:39:39",
+   "enlace_volver_a_la_evaluacion": true,
+   "altura_pagina_en_viewports": 1.97
+  },
+  {
+   "id": "T6",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Registrar una decisión de revisión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/sessions/:id"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 1.14,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "y_boton_decision_px": 731,
+   "confirmacion": "Se marcó que esta sesión requiere validación adicional.",
+   "contador_nav_antes": 0,
+   "contador_nav_despues_sin_navegar": 1,
+   "confirmacion_visible_sin_scroll": true
+  },
+  {
+   "id": "T7",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Cerrar la evaluación y ver el análisis poblacional",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/sessions/:id",
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 1.04,
+   "errores_o_bloqueos": [],
+   "observaciones": [
+    "«Cerrar la evaluación y analizar…» queda en y=2077 px, debajo del primer viewport (1366×768)"
+   ],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "y_boton_cierre_px": 2077,
+   "aviso_sesiones_en_curso": false,
+   "sesiones_con_marca_en_tabla": 3,
+   "resumen_resultado_en_tarjeta_cierre": "Análisis poblacional\n\nEvaluación cerrada el 22/10/26, 19:40:16. El modelo analizó juntas todas las sesiones finalizadas, con el mismo protocolo para cada una.\n\nEl modelo marcó 3 de 27 sesiones evaluadas. Ver panorama",
+   "estado_cerrada_en_lista_de_evaluaciones": true,
+   "resultado_visible_en_tarjeta_cierre": true
+  },
+  {
+   "id": "T8",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Leer el panorama de la evaluación",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.21,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "tarjetas": [
+    "27\nsesiones finalizadas",
+    "3\nrequieren revisión (11 %)",
+    "11 %\ncon proceso distinto al de la cohorte (3)"
+   ],
+   "cobertura": "Cobertura del modelo: 27 de 27 sesiones evaluadas. Las métricas resumen solo las sesiones con datos de cada señal (columna «Sesiones»).",
+   "url_refleja_pestana": true,
+   "barras_con_texto_alternativo": true
+  },
+  {
+   "id": "T9",
+   "actor": "docente",
+   "modo": "mouse",
+   "descripcion": "Eliminar una sesión (RF17)",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 0,
+   "rutas_visitadas": [
+    "/exams/:id/sessions",
+    "/sessions/:id",
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 2.14,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [
+    {
+     "page": "docente",
+     "kind": "request_failed",
+     "url": "/sessions/:id",
+     "method": "DELETE",
+     "error": "net::ERR_ABORTED"
+    }
+   ],
+   "red_fallida_esperada": [],
+   "y_boton_eliminar_px": 1230,
+   "clase_boton_confirmar": "btn btn-danger",
+   "clase_boton_validacion_adicional": "btn btn-warning",
+   "url_tras_eliminar": "/exams/:id/sessions",
+   "mensaje_tras_eliminar": [
+    "Sesión de SINT-017 eliminada, con todos sus datos.✕ Ocultar"
+   ],
+   "sesion_borrada_api_status": 404
+  },
+  {
+   "id": "T1",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Iniciar sesión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 1,
+   "rutas_visitadas": [
+    "/login"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.43,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": []
+  },
+  {
+   "id": "T2",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Crear evaluación con política (señales + reglas)",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 3,
+   "acciones_minimas": 3,
+   "pulsaciones_tab": 17,
+   "rutas_visitadas": [
+    "/exams"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 1.51,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "BODY",
+   "foco_visible_en_boton_crear": true
+  },
+  {
+   "id": "E2",
+   "actor": "estudiante",
+   "modo": "teclado",
+   "descripcion": "Leer la información y dar el consentimiento",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 2,
+   "rutas_visitadas": [
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.32,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_visible_checkbox": true
+  },
+  {
+   "id": "E3",
+   "actor": "estudiante",
+   "modo": "teclado",
+   "descripcion": "Escribir la respuesta y entregar",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 2,
+   "rutas_visitadas": [
+    "/exam/:joinCode"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 5.79,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "H1 Consigna",
+   "foco_en": {
+    "tag": "button",
+    "texto": "Finalizar y entregar",
+    "outline": "solid 2px",
+    "foco_visible": true,
+    "en_pantalla": true,
+    "key": "BUTTON|Finalizar y entregar|368,542"
+   },
+   "foco_en_confirmacion": "Sí, entregar",
+   "foco_tras_entrega": "H1"
+  },
+  {
+   "id": "T4",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Localizar las sesiones que requieren revisión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 11,
+   "rutas_visitadas": [
+    "/exams",
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 1.55,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "BODY"
+  },
+  {
+   "id": "T5",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Abrir el detalle de una sesión y entender los indicadores",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 11,
+   "rutas_visitadas": [
+    "/exams/:id/sessions",
+    "/sessions/:id"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 0.86,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "INPUT "
+  },
+  {
+   "id": "T6",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Registrar una decisión de revisión",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 10,
+   "rutas_visitadas": [
+    "/sessions/:id"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.8,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "H2 Sesión de EST-USAB-01",
+   "tabs_hasta_la_decision": 10,
+   "foco_visible": true
+  },
+  {
+   "id": "T8",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Leer el panorama de la evaluación",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 1,
+   "acciones_minimas": 1,
+   "pulsaciones_tab": 9,
+   "rutas_visitadas": [
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 0.89,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "BODY",
+   "flechas_entre_pestanas": true
+  },
+  {
+   "id": "T9",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Eliminar una sesión (RF17), desde el detalle",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 19,
+   "rutas_visitadas": [
+    "/sessions/:id",
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 2,
+   "tiempo_automatizacion_s": 3.11,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [
+    {
+     "page": "docente-teclado",
+     "kind": "request_failed",
+     "url": "/sessions/:id",
+     "method": "DELETE",
+     "error": "net::ERR_ABORTED"
+    }
+   ],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "BODY",
+   "foco_tras_abrir_confirmacion": "Confirmar la eliminación"
+  },
+  {
+   "id": "T7",
+   "actor": "docente",
+   "modo": "teclado",
+   "descripcion": "Cerrar la evaluación (desde la pantalla de la evaluación)",
+   "exito": true,
+   "estado": "éxito",
+   "acciones": 2,
+   "acciones_minimas": 2,
+   "pulsaciones_tab": 20,
+   "rutas_visitadas": [
+    "/exams/:id/sessions"
+   ],
+   "n_pantallas": 1,
+   "tiempo_automatizacion_s": 1.67,
+   "errores_o_bloqueos": [],
+   "observaciones": [],
+   "errores_consola": [],
+   "red_fallida": [],
+   "red_fallida_esperada": [],
+   "foco_al_llegar": "BODY",
+   "foco_tras_abrir_confirmacion": "Confirmar el cierre",
+   "aviso_sesiones_en_curso": "Hay 1 sesión(es) todavía en curso: si cerrás ahora, quedarán sin análisis del modelo."
+  }
+ ],
+ "navegabilidad": {
+  "rutas": [
+   {
+    "ruta": "/login",
+    "pantalla": "Login docente",
+    "auth": false
+   },
+   {
+    "ruta": "/rendir",
+    "pantalla": "Ingreso del estudiante con el código",
+    "auth": false
+   },
+   {
+    "ruta": "/exam",
+    "pantalla": "Ingreso del estudiante con el código (igual que /rendir)",
+    "auth": false
+   },
+   {
+    "ruta": "/exam/:joinCode",
+    "pantalla": "Examen del estudiante (información → consigna → entrega)",
+    "auth": false
+   },
+   {
+    "ruta": "/exams",
+    "pantalla": "Evaluaciones (inicio docente)",
+    "auth": true
+   },
+   {
+    "ruta": "/exams/:examId",
+    "pantalla": "Redirige a /exams/:examId/sessions",
+    "auth": true
+   },
+   {
+    "ruta": "/exams/:examId/sessions",
+    "pantalla": "Sesiones de una evaluación (pestañas Sesiones/Panorama, en la URL)",
+    "auth": true
+   },
+   {
+    "ruta": "/sessions/:sessionId",
+    "pantalla": "Detalle de sesión",
+    "auth": true
+   },
+   {
+    "ruta": "/validaciones",
+    "pantalla": "Validaciones pendientes",
+    "auth": true
+   },
+   {
+    "ruta": "/",
+    "pantalla": "Redirige a /exams",
+    "auth": true
+   },
+   {
+    "ruta": "*",
+    "pantalla": "Página «No encontrada» (NotFound.tsx)",
+    "auth": false
+   }
+  ],
+  "enlaces": [
+   {
+    "desde": "/login",
+    "pantalla": "login",
+    "texto": "¿Sos estudiante? Ingresá con el código",
+    "hacia": "/rendir"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_vacio",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_vacio",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_vacio",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "crear_evaluacion",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "crear_evaluacion",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "crear_evaluacion",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluacion_creada",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluacion_creada",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluacion_creada",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluacion_creada",
+    "texto": "Ver sesiones →",
+    "hacia": "/exams/:id/sessions"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_lista",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_lista",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_lista",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams",
+    "pantalla": "evaluaciones_lista",
+    "texto": "Ver sesiones →",
+    "hacia": "/exams/:id/sessions"
+   },
+   {
+    "desde": "/exam/:joinCode",
+    "pantalla": "estudiante_codigo_inexistente",
+    "texto": "Ingresar otro código",
+    "hacia": "/rendir"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "← Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_lista",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_filtro",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_filtro",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_filtro",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_filtro",
+    "texto": "← Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_filtro",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle",
+    "texto": "Validaciones pendientes",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle",
+    "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+    "hacia": "/exams/:id/sessions"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle_revisada",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle_revisada",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle_revisada",
+    "texto": "Validaciones pendientes1",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/sessions/:id",
+    "pantalla": "sesion_detalle_revisada",
+    "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+    "hacia": "/exams/:id/sessions"
+   },
+   {
+    "desde": "/validaciones",
+    "pantalla": "validaciones",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/validaciones",
+    "pantalla": "validaciones",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/validaciones",
+    "pantalla": "validaciones",
+    "texto": "Validaciones pendientes1",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/validaciones",
+    "pantalla": "validaciones",
+    "texto": "Parcial 1 — Bases de Datos (usabilidad)",
+    "hacia": "/exams/:id/sessions"
+   },
+   {
+    "desde": "/validaciones",
+    "pantalla": "validaciones",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Validaciones pendientes1",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "← Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "sesiones_cerrada",
+    "texto": "Ver detalle →",
+    "hacia": "/sessions/:id"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "panorama",
+    "texto": "ImprontIA",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "panorama",
+    "texto": "Evaluaciones",
+    "hacia": "/exams"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "panorama",
+    "texto": "Validaciones pendientes1",
+    "hacia": "/validaciones"
+   },
+   {
+    "desde": "/exams/:id/sessions",
+    "pantalla": "panorama",
+    "texto": "← Evaluaciones",
+    "hacia": "/exams"
+   }
+  ],
+  "atras": [
+   {
+    "caso": "Atrás inmediatamente después de iniciar sesión",
+    "url_final": "about:blank",
+    "muestra_form_login": false,
+    "captura": "docs/evaluacion/usabilidad/nav_atras_tras_login.png"
+   },
+   {
+    "caso": "Atrás después de cambiar a la pestaña Panorama",
+    "url_final": "/exams/:id/sessions",
+    "esperado": "/exams/:id/sessions (pestaña Sesiones)",
+    "sale_de_la_evaluacion": false
+   },
+   {
+    "caso": "Estudiante sale de la página en medio del examen y vuelve con Atrás",
+    "url_final": "/exam/:joinCode",
+    "vuelve_a_consentimiento": false,
+    "respuesta_conservada": true,
+    "advertencia_al_salir": true,
+    "sesiones_de_ese_codigo": 1
+   },
+   {
+    "caso": "Inicio → Sesiones (con filtro) → Detalle → Atrás → Atrás",
+    "primer_atras": "/exams/:id/sessions",
+    "conserva_filtro": true,
+    "segundo_atras": "/exams/:id/sessions"
+   }
+  ],
+  "deep_link": [
+   {
+    "ruta": "/exams/:id/sessions (pestaña Panorama)",
+    "accion": "recargar",
+    "mantiene_estado": true,
+    "pestana_tras_recargar": "Panorama"
+   },
+   {
+    "ruta": "/exam/:joinCode (examen en curso)",
+    "accion": "recargar",
+    "mantiene_estado": true,
+    "detalle": "conserva"
+   },
+   {
+    "ruta": "/exams",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/exams",
+    "observacion": ""
+   },
+   {
+    "ruta": "/",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/exams",
+    "observacion": ""
+   },
+   {
+    "ruta": "/exams/:id/sessions",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/exams/:id/sessions",
+    "observacion": ""
+   },
+   {
+    "ruta": "/sessions/:id",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/sessions/:id",
+    "observacion": ""
+   },
+   {
+    "ruta": "/validaciones",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/validaciones",
+    "observacion": ""
+   },
+   {
+    "ruta": "/login (con sesión iniciada)",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/login",
+    "observacion": ""
+   },
+   {
+    "ruta": "/exam/:joinCode",
+    "accion": "abrir enlace directo + recargar",
+    "carga": true,
+    "tras_recargar": true,
+    "url_final": "/exam/:joinCode",
+    "observacion": ""
+   }
+  ],
+  "desconocidas": [
+   {
+    "ruta": "/ruta-inexistente (con sesión)",
+    "url_final": "/ruta-inexistente",
+    "texto_visible": "Página no encontrada ·  · La dirección no corresponde a ninguna pantalla de ImprontIA. ·  · Ir a Evaluaciones · Ingresar a un examen",
+    "mensaje_explicito": true,
+    "captura": "docs/evaluacion/usabilidad/nav_404_ruta_inexistente_con_sesi_n.png"
+   },
+   {
+    "ruta": "/ruta-inexistente (sin sesión)",
+    "url_final": "/ruta-inexistente",
+    "texto_visible": "Página no encontrada ·  · La dirección no corresponde a ninguna pantalla de ImprontIA. ·  · Ingresar como docente · Ingresar a un examen",
+    "mensaje_explicito": true,
+    "captura": "docs/evaluacion/usabilidad/nav_404_ruta_inexistente_sin_sesi_n.png"
+   },
+   {
+    "ruta": "/exams/{inexistente}/sessions",
+    "url_final": "/exams/:id/sessions",
+    "texto_visible": "ImprontIA · Evaluaciones · Validaciones pendientes · Salir · Evaluación no encontrada · No se encontró esta evaluación. Puede que se haya eliminado o que el enlace sea incorrecto. · ← Volver a Evaluaciones · ImprontIA v1.0.0 · commit ",
+    "mensaje_explicito": true,
+    "captura": "docs/evaluacion/usabilidad/nav_404_exams_inexistente_sessions.png"
+   },
+   {
+    "ruta": "/sessions/{inexistente}",
+    "url_final": "/sessions/:id",
+    "texto_visible": "ImprontIA · Evaluaciones · Validaciones pendientes · Salir · Sesión no disponible · No se pudo cargar la sesión. · ← Volver a Evaluaciones · ImprontIA v1.0.0 · commit desconocido",
+    "mensaje_explicito": true,
+    "captura": "docs/evaluacion/usabilidad/nav_404_sessions_inexistente.png"
+   },
+   {
+    "ruta": "/exam/NOEXISTE (estudiante)",
+    "url_final": "/exam/:joinCode",
+    "texto_visible": "Código no encontrado ·  · Revisá el código de examen con tu docente. ·  · Ingresar otro código",
+    "mensaje_explicito": true,
+    "captura": "docs/evaluacion/usabilidad/nav_404_exam_noexiste_estudiante.png"
+   },
+   {
+    "ruta": "/exam (estudiante, sin código)",
+    "url_final": "/exam",
+    "texto_visible": "Ingresar a un examen ·  · Escribí el código que te compartió tu docente. ·  · Código de examen · Continuar ·  · ¿Sos docente? Ingresá al panel",
+    "mensaje_explicito": false,
+    "captura": "docs/evaluacion/usabilidad/nav_404_exam_estudiante_sin_c_digo.png"
+   }
+  ],
+  "sin_sesion": [
+   {
+    "caso": "Enlace directo a /sessions/:id sin sesión iniciada",
+    "redirige_a": "/login",
+    "tras_login_vuelve_al_enlace": true,
+    "url_tras_login": "/sessions/:id"
+   },
+   {
+    "caso": "Token inválido o vencido en /exams",
+    "url_final": "/login",
+    "mensaje": "¿Sos estudiante? Ingresá con el código",
+    "redirige_a_login": true,
+    "captura": "docs/evaluacion/usabilidad/nav_token_invalido.png"
+   }
+  ],
+  "estado_activo": {
+   "/exams": {
+    "nav": [
+     "Evaluaciones"
+    ],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "migas": 0,
+    "enlace_volver": 0
+   },
+   "/exams/:id/sessions": {
+    "nav": [
+     "Evaluaciones"
+    ],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "migas": 1,
+    "enlace_volver": 1
+   },
+   "/sessions/:id": {
+    "nav": [
+     "Evaluaciones"
+    ],
+    "titulo_documento": "Sesión de EST-USAB-01 · ImprontIA",
+    "migas": 1,
+    "enlace_volver": 1
+   },
+   "/validaciones": {
+    "nav": [
+     "Validaciones pendientes"
+    ],
+    "titulo_documento": "Validaciones pendientes · ImprontIA",
+    "migas": 0,
+    "enlace_volver": 0
+   }
+  }
+ },
+ "pantallas": {
+  "login": {
+   "pantalla": "Login docente",
+   "ruta": "/login",
+   "captura_desktop": "docs/evaluacion/usabilidad/01_login_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 768,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 4,
+     "14": 1,
+     "32": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 4,
+    "objetivos_menores_24px": [],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Ingreso docente · ImprontIA",
+    "encabezados": [
+     "H1: ImprontIA"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Ingresar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "¿Sos estudiante? Ingresá con el código",
+      "clase": "",
+      "tag": "a",
+      "href": "/rendir"
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/02_login_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 667,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 4,
+     "14": 1,
+     "32": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 4,
+    "objetivos_menores_24px": [],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Ingreso docente · ImprontIA",
+    "encabezados": [
+     "H1: ImprontIA"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Ingresar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "¿Sos estudiante? Ingresá con el código",
+      "clase": "",
+      "tag": "a",
+      "href": "/rendir"
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras": 0
+   },
+   "cls_en_estado": 0
+  },
+  "evaluaciones_vacio": {
+   "pantalla": "Evaluaciones (sin evaluaciones)",
+   "ruta": "/exams",
+   "captura_desktop": "docs/evaluacion/usabilidad/03_evaluaciones_vacio_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 888,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 5,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 6,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/04_evaluaciones_vacio_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 853,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 5,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 6,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 19,
+    "oraciones": 2,
+    "palabras_por_oracion": 9.5,
+    "silabas_por_palabra": 2.37,
+    "inflesz": 49.8,
+    "escala_inflesz": "algo difícil",
+    "bloque_mas_largo_palabras": 19,
+    "bloque_mas_largo_inicio": "Eliminar la cuenta borra todas tus evaluaciones, con sus sesiones, eventos, métricas, indi"
+   },
+   "cls_en_estado": 0
+  },
+  "crear_evaluacion": {
+   "pantalla": "Formulario Nueva evaluación",
+   "ruta": "/exams",
+   "captura_desktop": "docs/evaluacion/usabilidad/05_crear_evaluacion_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 1303,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 4,
+     "13": 23,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 18,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 11,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Cancelar",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Crear evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/06_crear_evaluacion_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 1422,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 4,
+     "13": 23,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 18,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     },
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 11,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Cancelar",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Crear evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 85,
+    "oraciones": 7,
+    "palabras_por_oracion": 12.1,
+    "silabas_por_palabra": 2.0,
+    "inflesz": 70.1,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 23,
+    "bloque_mas_largo_inicio": "Lo permitido se sigue registrando, pero se muestra como \"permitido por las reglas de esta "
+   },
+   "cls_en_estado": 0
+  },
+  "evaluacion_creada": {
+   "pantalla": "Evaluación creada (aviso con código)",
+   "ruta": "/exams",
+   "captura_desktop": "docs/evaluacion/usabilidad/07_evaluacion_creada_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 888,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 16,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 10,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "✕ Ocultar",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver sesiones →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/08_evaluacion_creada_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 853,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"NOMBRE CÓDIGO PARA ESTUDIANTES ESTADO CR\"",
+      "right": 705
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 16,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 10,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "✕ Ocultar",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver sesiones →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 44,
+    "oraciones": 4,
+    "palabras_por_oracion": 11.0,
+    "silabas_por_palabra": 2.34,
+    "inflesz": 50.0,
+    "escala_inflesz": "algo difícil",
+    "bloque_mas_largo_palabras": 28,
+    "bloque_mas_largo_inicio": "Evaluación Parcial 1 — Bases de Datos (usabilidad) creada. Compartí con los estudiantes el"
+   },
+   "cls_en_estado": 0
+  },
+  "evaluaciones_lista": {
+   "pantalla": "Evaluaciones (lista)",
+   "ruta": "/exams",
+   "captura_desktop": "docs/evaluacion/usabilidad/09_evaluaciones_lista_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 888,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 10,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 8,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver sesiones →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/10_evaluaciones_lista_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 853,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"NOMBRE CÓDIGO PARA ESTUDIANTES ESTADO CR\"",
+      "right": 764
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 10,
+     "14": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 8,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Evaluaciones · ImprontIA",
+    "encabezados": [
+     "H2: Evaluaciones"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "+ Nueva evaluación",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver sesiones →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Eliminar mi cuenta…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 19,
+    "oraciones": 2,
+    "palabras_por_oracion": 9.5,
+    "silabas_por_palabra": 2.37,
+    "inflesz": 49.8,
+    "escala_inflesz": "algo difícil",
+    "bloque_mas_largo_palabras": 19,
+    "bloque_mas_largo_inicio": "Eliminar la cuenta borra todas tus evaluaciones, con sus sesiones, eventos, métricas, indi"
+   },
+   "cls_en_estado": 0
+  },
+  "estudiante_codigo_inexistente": {
+   "pantalla": "Estudiante: código no encontrado",
+   "ruta": "/exam/:joinCode",
+   "captura_desktop": "docs/evaluacion/usabilidad/11_estudiante_codigo_inexistente_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 768,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 2,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 1,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Código no encontrado · ImprontIA",
+    "encabezados": [
+     "H1: Código no encontrado"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Ingresar otro código",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/rendir"
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/12_estudiante_codigo_inexistente_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 667,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 2,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 1,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Código no encontrado · ImprontIA",
+    "encabezados": [
+     "H1: Código no encontrado"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Ingresar otro código",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/rendir"
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 8,
+    "oraciones": 1,
+    "palabras_por_oracion": 8.0,
+    "silabas_por_palabra": 2.0,
+    "inflesz": 74.2,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 8,
+    "bloque_mas_largo_inicio": "Revisá el código de examen con tu docente."
+   },
+   "cls_en_estado": 0
+  },
+  "estudiante_consentimiento": {
+   "pantalla": "Estudiante: información y consentimiento",
+   "ruta": "/exam/:joinCode",
+   "captura_desktop": "docs/evaluacion/usabilidad/13_estudiante_consentimiento_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 781,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 7,
+     "16": 4,
+     "32": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 3,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H1: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Comenzar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/14_estudiante_consentimiento_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 932,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 7,
+     "16": 4,
+     "32": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 3,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H1: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Comenzar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 329,
+    "oraciones": 39,
+    "palabras_por_oracion": 8.4,
+    "silabas_por_palabra": 2.02,
+    "inflesz": 72.9,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 150,
+    "bloque_mas_largo_inicio": "Qué se registra Durante esta evaluación la plataforma registra metadatos de interacción: t"
+   },
+   "cls_en_estado": 0
+  },
+  "estudiante_rindiendo": {
+   "pantalla": "Estudiante: consigna y respuesta",
+   "ruta": "/exam/:joinCode",
+   "captura_desktop": "docs/evaluacion/usabilidad/15_estudiante_rindiendo_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 768,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 3,
+     "14": 1,
+     "16": 1,
+     "24": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 2,
+    "objetivos_menores_24px": [],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Rindiendo: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H1: Consigna"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Finalizar y entregar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/16_estudiante_rindiendo_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 667,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 1,
+     "13": 3,
+     "14": 1,
+     "16": 1,
+     "24": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 2,
+    "objetivos_menores_24px": [],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Rindiendo: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H1: Consigna"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Finalizar y entregar",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 30,
+    "oraciones": 3,
+    "palabras_por_oracion": 10.0,
+    "silabas_por_palabra": 1.97,
+    "inflesz": 74.3,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 15,
+    "bloque_mas_largo_inicio": "Explicá la diferencia entre clave primaria y clave foránea, con un ejemplo de cada una."
+   },
+   "cls_en_estado": 0
+  },
+  "estudiante_entregado": {
+   "pantalla": "Estudiante: entrega confirmada",
+   "ruta": "/exam/:joinCode",
+   "captura_desktop": "docs/evaluacion/usabilidad/17_estudiante_entregado_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 768,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 1,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 0,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Entrega confirmada · ImprontIA",
+    "encabezados": [
+     "H1: Listo"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/18_estudiante_entregado_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 667,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 1,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 0,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Entrega confirmada · ImprontIA",
+    "encabezados": [
+     "H1: Listo"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 10,
+    "oraciones": 2,
+    "palabras_por_oracion": 5.0,
+    "silabas_por_palabra": 2.1,
+    "inflesz": 71.0,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 10,
+    "bloque_mas_largo_inicio": "El servidor confirmó tu entrega. Ya podés cerrar esta pestaña."
+   },
+   "cls_en_estado": 0
+  },
+  "estudiante_entrega_fallida": {
+   "pantalla": "Estudiante: entrega no confirmada (sin red)",
+   "ruta": "/exam/:joinCode",
+   "captura_desktop": "docs/evaluacion/usabilidad/19_estudiante_entrega_fallida_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 768,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 3,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 2,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Entregando · ImprontIA",
+    "encabezados": [
+     "H1: La entrega no está confirmada"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Reintentar la entrega",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Entregar sin esos registros",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/20_estudiante_entrega_fallida_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 667,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "13": 3,
+     "32": 1
+    },
+    "fuente_min_px": 13,
+    "textos_menores_12px": 0,
+    "interactivos": 2,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Entregando · ImprontIA",
+    "encabezados": [
+     "H1: La entrega no está confirmada"
+    ],
+    "nav_superior": [],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "Reintentar la entrega",
+      "clase": "btn btn-primary",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Entregar sin esos registros",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": []
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 12,
+    "oraciones": 2,
+    "palabras_por_oracion": 6.0,
+    "silabas_por_palabra": 2.17,
+    "inflesz": 65.9,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 13,
+    "bloque_mas_largo_inicio": "No se pudieron enviar 91 registro(s) de interacción. Revisá la conexión y reintentá."
+   },
+   "cls_en_estado": 0.0043
+  },
+  "sesiones_lista": {
+   "pantalla": "Sesiones de la evaluación (abierta)",
+   "ruta": "/exams/:id/sessions",
+   "captura_desktop": "docs/evaluacion/usabilidad/21_sesiones_lista_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 2554,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 63,
+     "13": 176,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 40,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6929ff03-617e-4211-ab6e-299279b997c6"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b4d372f3-b135-45bf-b4fa-ff12786b5e4b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/477da967-73a7-4b0e-9de5-466625becfd8"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/649817b9-1b3d-45a9-a66d-1b322413159a"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6768310c-2f0a-4ad0-b5b5-c55981dd6bf4"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/09684945-8fa3-44d0-a593-017ebb20a8da"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/7e02781d-0b4f-4b99-835d-75a31cd2627c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/c9cd8268-80ce-4f95-bd1e-baad994affb2"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/ad81f388-ebf1-45e4-beda-0a018d476845"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/25ce5282-fe1e-416c-a1ba-5d707add5d79"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b52dad96-f28e-418f-b338-707095d34f95"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/29a760b9-cf1a-46d9-858b-4a06d7e30c14"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6e410fcb-6428-4588-986a-d810e01dd555"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a1e0b92a-9e5d-4fcd-8773-bf75427790d7"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/42c790f1-d585-4a20-9b26-91a51d4f9f8c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/40e64904-884b-4b69-aafc-dc4ae86dcf81"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/4aada3b8-2c79-4ffc-a195-6be2d8a1a247"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a8b1bc70-d34b-45d3-8e5a-8ae8d1a485ef"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/1aa79258-bc5c-4eb1-aced-ba6cee78717c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/dddbcef7-b643-46a1-b77a-3856338bf20b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/95a37d31-f89a-437d-be84-3f206647d8cd"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/bf11c309-dfcf-48e7-a94e-5c50c101c24e"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/83586ae9-5317-4e7c-820a-9816ef795cdc"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/5cd31455-42c2-4820-aee9-08876e392cda"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/019b054c-caef-4119-9ded-00eb350fe15c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/fce54ca3-1785-4a63-b176-62688c0f4820"
+     },
+     {
+      "texto": "Cerrar la evaluación y analizar…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/22_sesiones_lista_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 2790,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"PARTICIPANTE TIPO ESTADO INICIO INDICADO\"",
+      "right": 901
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 63,
+     "13": 176,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 40,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6929ff03-617e-4211-ab6e-299279b997c6"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b4d372f3-b135-45bf-b4fa-ff12786b5e4b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/477da967-73a7-4b0e-9de5-466625becfd8"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/649817b9-1b3d-45a9-a66d-1b322413159a"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6768310c-2f0a-4ad0-b5b5-c55981dd6bf4"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/09684945-8fa3-44d0-a593-017ebb20a8da"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/7e02781d-0b4f-4b99-835d-75a31cd2627c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/c9cd8268-80ce-4f95-bd1e-baad994affb2"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/ad81f388-ebf1-45e4-beda-0a018d476845"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/25ce5282-fe1e-416c-a1ba-5d707add5d79"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b52dad96-f28e-418f-b338-707095d34f95"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/29a760b9-cf1a-46d9-858b-4a06d7e30c14"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6e410fcb-6428-4588-986a-d810e01dd555"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a1e0b92a-9e5d-4fcd-8773-bf75427790d7"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/42c790f1-d585-4a20-9b26-91a51d4f9f8c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/40e64904-884b-4b69-aafc-dc4ae86dcf81"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/4aada3b8-2c79-4ffc-a195-6be2d8a1a247"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a8b1bc70-d34b-45d3-8e5a-8ae8d1a485ef"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/1aa79258-bc5c-4eb1-aced-ba6cee78717c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/dddbcef7-b643-46a1-b77a-3856338bf20b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/95a37d31-f89a-437d-be84-3f206647d8cd"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/bf11c309-dfcf-48e7-a94e-5c50c101c24e"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/83586ae9-5317-4e7c-820a-9816ef795cdc"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/5cd31455-42c2-4820-aee9-08876e392cda"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/019b054c-caef-4119-9ded-00eb350fe15c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/fce54ca3-1785-4a63-b176-62688c0f4820"
+     },
+     {
+      "texto": "Cerrar la evaluación y analizar…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 77,
+    "oraciones": 7,
+    "palabras_por_oracion": 11.0,
+    "silabas_por_palabra": 2.09,
+    "inflesz": 65.6,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 30,
+    "bloque_mas_largo_inicio": "El modelo poblacional compara cada sesión con el resto de la cohorte y se ejecuta una sola"
+   },
+   "cls_en_estado": 0
+  },
+  "sesiones_filtro": {
+   "pantalla": "Sesiones con filtro «requieren revisión»",
+   "ruta": "/exams/:id/sessions",
+   "captura_desktop": "docs/evaluacion/usabilidad/23_sesiones_filtro_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 1018,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 11,
+     "13": 20,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 14,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Cerrar la evaluación y analizar…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/24_sesiones_filtro_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 1256,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"PARTICIPANTE TIPO ESTADO INICIO INDICADO\"",
+      "right": 868
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 11,
+     "13": 20,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 14,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Cerrar la evaluación y analizar…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 77,
+    "oraciones": 7,
+    "palabras_por_oracion": 11.0,
+    "silabas_por_palabra": 2.09,
+    "inflesz": 65.6,
+    "escala_inflesz": "bastante fácil",
+    "bloque_mas_largo_palabras": 30,
+    "bloque_mas_largo_inicio": "El modelo poblacional compara cada sesión con el resto de la cohorte y se ejecuta una sola"
+   },
+   "cls_en_estado": 0
+  },
+  "sesion_detalle": {
+   "pantalla": "Detalle de sesión (abierta)",
+   "ruta": "/sessions/:id",
+   "captura_desktop": "docs/evaluacion/usabilidad/25_sesion_detalle_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 1513,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 6,
+     "13": 46,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 11,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesión de EST-USAB-01 · ImprontIA",
+    "encabezados": [
+     "H2: Sesión de EST-USAB-01"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Parcial 1 — Bases de Datos (usabilidad\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ir a la revisión ↓",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Marcar como revisada",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Requiere validación adicional",
+      "clase": "btn btn-warning",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta sesión…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/26_sesion_detalle_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 1997,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 6,
+     "13": 46,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 11,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesión de EST-USAB-01 · ImprontIA",
+    "encabezados": [
+     "H2: Sesión de EST-USAB-01"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Parcial 1 — Bases de Datos (usabilidad\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ir a la revisión ↓",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Marcar como revisada",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Requiere validación adicional",
+      "clase": "btn btn-warning",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta sesión…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 216,
+    "oraciones": 20,
+    "palabras_por_oracion": 10.8,
+    "silabas_por_palabra": 2.25,
+    "inflesz": 55.6,
+    "escala_inflesz": "normal",
+    "bloque_mas_largo_palabras": 51,
+    "bloque_mas_largo_inicio": "La clave primaria identifica cada fila. La foranea referencia otra tabla. Una clave primar"
+   },
+   "cls_en_estado": 0
+  },
+  "sesion_detalle_revisada": {
+   "pantalla": "Detalle de sesión con historial",
+   "ruta": "/sessions/:id",
+   "captura_desktop": "docs/evaluacion/usabilidad/27_sesion_detalle_revisada_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 1683,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 9,
+     "13": 49,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 11,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesión de EST-USAB-01 · ImprontIA",
+    "encabezados": [
+     "H2: Sesión de EST-USAB-01"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Parcial 1 — Bases de Datos (usabilidad\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ir a la revisión ↓",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Marcar como revisada",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Requiere validación adicional",
+      "clase": "btn btn-warning",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta sesión…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/28_sesion_detalle_revisada_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 2217,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 9,
+     "13": 49,
+     "14": 3,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 11,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 2,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesión de EST-USAB-01 · ImprontIA",
+    "encabezados": [
+     "H2: Sesión de EST-USAB-01"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Parcial 1 — Bases de Datos (usabilidad\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ir a la revisión ↓",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Marcar como revisada",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Requiere validación adicional",
+      "clase": "btn btn-warning",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta sesión…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 242,
+    "oraciones": 23,
+    "palabras_por_oracion": 10.5,
+    "silabas_por_palabra": 2.29,
+    "inflesz": 53.4,
+    "escala_inflesz": "algo difícil",
+    "bloque_mas_largo_palabras": 51,
+    "bloque_mas_largo_inicio": "La clave primaria identifica cada fila. La foranea referencia otra tabla. Una clave primar"
+   },
+   "cls_en_estado": 0
+  },
+  "validaciones": {
+   "pantalla": "Validaciones pendientes",
+   "ruta": "/validaciones",
+   "captura_desktop": "docs/evaluacion/usabilidad/29_validaciones_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 888,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 7,
+     "14": 2,
+     "18": 2,
+     "24": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 6,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Validaciones pendientes · ImprontIA",
+    "encabezados": [
+     "H2: Validaciones adicionales pendientes"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": true,
+      "aria_current": "page"
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "active",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/30_validaciones_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 853,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"PARTICIPANTE EVALUACIÓN PEDIDO NOTA DEL \"",
+      "right": 605
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 7,
+     "14": 2,
+     "18": 2,
+     "24": 1
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 6,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Validaciones pendientes · ImprontIA",
+    "encabezados": [
+     "H2: Validaciones adicionales pendientes"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": true,
+      "aria_current": "page"
+     }
+    ],
+    "pestanas": [],
+    "tabpanels": 0,
+    "migas": 0,
+    "enlaces_volver": [],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "active",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Parcial 1 — Bases de Datos (usabilidad)",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams/819f1b4e-f76e-43ac-a3c0-26ce8b526d9b/sessions"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 41,
+    "oraciones": 4,
+    "palabras_por_oracion": 10.2,
+    "silabas_por_palabra": 2.22,
+    "inflesz": 58.3,
+    "escala_inflesz": "normal",
+    "bloque_mas_largo_palabras": 41,
+    "bloque_mas_largo_inicio": "Sesiones en las que indicaste que la evidencia disponible no era suficiente. La validación"
+   },
+   "cls_en_estado": 0
+  },
+  "sesiones_cerrada": {
+   "pantalla": "Sesiones de la evaluación (cerrada)",
+   "ruta": "/exams/:id/sessions",
+   "captura_desktop": "docs/evaluacion/usabilidad/31_sesiones_cerrada_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 2537,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 65,
+     "13": 176,
+     "14": 6,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 40,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6929ff03-617e-4211-ab6e-299279b997c6"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/fce54ca3-1785-4a63-b176-62688c0f4820"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b4d372f3-b135-45bf-b4fa-ff12786b5e4b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/477da967-73a7-4b0e-9de5-466625becfd8"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/649817b9-1b3d-45a9-a66d-1b322413159a"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6768310c-2f0a-4ad0-b5b5-c55981dd6bf4"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/09684945-8fa3-44d0-a593-017ebb20a8da"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/7e02781d-0b4f-4b99-835d-75a31cd2627c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/c9cd8268-80ce-4f95-bd1e-baad994affb2"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/ad81f388-ebf1-45e4-beda-0a018d476845"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/25ce5282-fe1e-416c-a1ba-5d707add5d79"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b52dad96-f28e-418f-b338-707095d34f95"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/29a760b9-cf1a-46d9-858b-4a06d7e30c14"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6e410fcb-6428-4588-986a-d810e01dd555"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a1e0b92a-9e5d-4fcd-8773-bf75427790d7"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/42c790f1-d585-4a20-9b26-91a51d4f9f8c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/40e64904-884b-4b69-aafc-dc4ae86dcf81"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/4aada3b8-2c79-4ffc-a195-6be2d8a1a247"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a8b1bc70-d34b-45d3-8e5a-8ae8d1a485ef"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/1aa79258-bc5c-4eb1-aced-ba6cee78717c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/dddbcef7-b643-46a1-b77a-3856338bf20b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/95a37d31-f89a-437d-be84-3f206647d8cd"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/bf11c309-dfcf-48e7-a94e-5c50c101c24e"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/83586ae9-5317-4e7c-820a-9816ef795cdc"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/5cd31455-42c2-4820-aee9-08876e392cda"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/019b054c-caef-4119-9ded-00eb350fe15c"
+     },
+     {
+      "texto": "Ver panorama",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/32_sesiones_cerrada_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 2823,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [
+     {
+      "el": "table.table \"PARTICIPANTE TIPO ESTADO INICIO INDICADO\"",
+      "right": 918
+     }
+    ],
+    "elementos_recortados": [
+     "span.sr-only \"ACCIONES\""
+    ],
+    "tamanos_fuente_px": {
+     "12": 65,
+     "13": 176,
+     "14": 6,
+     "16": 2,
+     "18": 2,
+     "24": 1,
+     "18.72": 3
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 40,
+    "objetivos_menores_24px": [
+     {
+      "el": "input \"on\"",
+      "w": 18,
+      "h": 18
+     }
+    ],
+    "campos": 1,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6929ff03-617e-4211-ab6e-299279b997c6"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/466d7eb4-2957-4a18-af35-82ba26e9fc07"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/fce54ca3-1785-4a63-b176-62688c0f4820"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b4d372f3-b135-45bf-b4fa-ff12786b5e4b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/477da967-73a7-4b0e-9de5-466625becfd8"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/649817b9-1b3d-45a9-a66d-1b322413159a"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6768310c-2f0a-4ad0-b5b5-c55981dd6bf4"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/09684945-8fa3-44d0-a593-017ebb20a8da"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/7e02781d-0b4f-4b99-835d-75a31cd2627c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/c9cd8268-80ce-4f95-bd1e-baad994affb2"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/ad81f388-ebf1-45e4-beda-0a018d476845"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/25ce5282-fe1e-416c-a1ba-5d707add5d79"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/b52dad96-f28e-418f-b338-707095d34f95"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/29a760b9-cf1a-46d9-858b-4a06d7e30c14"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/6e410fcb-6428-4588-986a-d810e01dd555"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a1e0b92a-9e5d-4fcd-8773-bf75427790d7"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/42c790f1-d585-4a20-9b26-91a51d4f9f8c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/40e64904-884b-4b69-aafc-dc4ae86dcf81"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/4aada3b8-2c79-4ffc-a195-6be2d8a1a247"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/a8b1bc70-d34b-45d3-8e5a-8ae8d1a485ef"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/1aa79258-bc5c-4eb1-aced-ba6cee78717c"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/dddbcef7-b643-46a1-b77a-3856338bf20b"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/95a37d31-f89a-437d-be84-3f206647d8cd"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/bf11c309-dfcf-48e7-a94e-5c50c101c24e"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/83586ae9-5317-4e7c-820a-9816ef795cdc"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/5cd31455-42c2-4820-aee9-08876e392cda"
+     },
+     {
+      "texto": "Ver detalle →",
+      "clase": "btn btn-ghost",
+      "tag": "a",
+      "href": "/sessions/019b054c-caef-4119-9ded-00eb350fe15c"
+     },
+     {
+      "texto": "Ver panorama",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 74,
+    "oraciones": 8,
+    "palabras_por_oracion": 9.2,
+    "silabas_por_palabra": 2.27,
+    "inflesz": 56.1,
+    "escala_inflesz": "normal",
+    "bloque_mas_largo_palabras": 23,
+    "bloque_mas_largo_inicio": "Borra la evaluación, sus versiones de política y todas sus sesiones, con las respuestas, e"
+   },
+   "cls_en_estado": 0
+  },
+  "panorama": {
+   "pantalla": "Panorama de la evaluación",
+   "ruta": "/exams/:id/sessions",
+   "captura_desktop": "docs/evaluacion/usabilidad/33_panorama_desktop.png",
+   "desktop": {
+    "viewport_w": 1366,
+    "scroll_w": 1366,
+    "page_h": 1966,
+    "viewport_h": 768,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 45,
+     "14": 6,
+     "16": 16,
+     "18": 2,
+     "24": 1,
+     "26": 3,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 12,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver panorama",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "captura_mobile": "docs/evaluacion/usabilidad/34_panorama_mobile.png",
+   "mobile": {
+    "viewport_w": 375,
+    "scroll_w": 375,
+    "page_h": 3266,
+    "viewport_h": 667,
+    "desborde_horizontal": false,
+    "elementos_desbordados": [],
+    "elementos_recortados": [],
+    "tamanos_fuente_px": {
+     "12": 7,
+     "13": 45,
+     "14": 6,
+     "16": 16,
+     "18": 2,
+     "24": 1,
+     "26": 3,
+     "18.72": 6
+    },
+    "fuente_min_px": 12,
+    "textos_menores_12px": 0,
+    "interactivos": 12,
+    "objetivos_menores_24px": [],
+    "campos": 0,
+    "campos_sin_etiqueta": [],
+    "placeholder_sin_texto_label": [],
+    "titulo_documento": "Sesiones: Parcial 1 — Bases de Datos (usabilidad) · ImprontIA",
+    "encabezados": [
+     "H2: Parcial 1 — Bases de Datos (usabilidad)"
+    ],
+    "nav_superior": [
+     {
+      "texto": "ImprontIA",
+      "activo": false,
+      "aria_current": null
+     },
+     {
+      "texto": "Evaluaciones",
+      "activo": true,
+      "aria_current": "page"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "activo": false,
+      "aria_current": null
+     }
+    ],
+    "pestanas": [
+     {
+      "texto": "Sesiones",
+      "aria_selected": "false",
+      "aria_controls": "panel-evaluacion"
+     },
+     {
+      "texto": "Panorama",
+      "aria_selected": "true",
+      "aria_controls": "panel-evaluacion"
+     }
+    ],
+    "tabpanels": 1,
+    "migas": 1,
+    "enlaces_volver": [
+     "a \"← Evaluaciones\""
+    ],
+    "controles": [
+     {
+      "texto": "ImprontIA",
+      "clase": "brand",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Evaluaciones",
+      "clase": "active",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Validaciones pendientes1",
+      "clase": "",
+      "tag": "a",
+      "href": "/validaciones"
+     },
+     {
+      "texto": "Salir",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "← Evaluaciones",
+      "clase": "",
+      "tag": "a",
+      "href": "/exams"
+     },
+     {
+      "texto": "Copiar enlace",
+      "clase": "btn btn-ghost btn-small",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Sesiones",
+      "clase": "tab",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Panorama",
+      "clase": "tab tab-active",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver panorama",
+      "clase": "link-btn",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Ver detalle",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Editar (crea versión nueva)",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     },
+     {
+      "texto": "Eliminar esta evaluación…",
+      "clase": "btn btn-ghost",
+      "tag": "button",
+      "href": null
+     }
+    ],
+    "lang": "es"
+   },
+   "axe": {
+    "violaciones_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "nodos_por_impacto": {
+     "critical": 0,
+     "serious": 0,
+     "moderate": 0,
+     "minor": 0
+    },
+    "contraste_nodos_fallidos": 0,
+    "wcag": [],
+    "best_practice": [
+     {
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "tags": [],
+      "help": "Page should contain a level-one heading",
+      "nodos": 1,
+      "ejemplos": [
+       "html"
+      ]
+     }
+    ]
+   },
+   "legibilidad": {
+    "palabras_en_prosa": 236,
+    "oraciones": 21,
+    "palabras_por_oracion": 11.2,
+    "silabas_por_palabra": 2.16,
+    "inflesz": 61.0,
+    "escala_inflesz": "normal",
+    "bloque_mas_largo_palabras": 40,
+    "bloque_mas_largo_inicio": "¿El tiempo y la forma de trabajo fueron los esperados? Si la duración real se acerca al lí"
+   },
+   "cls_en_estado": 0
+  }
+ },
+ "carga": {
+  "login": {
+   "url": "/login",
+   "repeticiones": 3,
+   "dcl_ms": 50.4,
+   "load_ms": 50.5,
+   "lcp_ms": 80,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "evaluaciones_lista": {
+   "url": "/exams",
+   "repeticiones": 3,
+   "dcl_ms": 45.6,
+   "load_ms": 45.6,
+   "lcp_ms": 116,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "sesiones_cerrada": {
+   "url": "/exams/:id/sessions",
+   "repeticiones": 3,
+   "dcl_ms": 43.7,
+   "load_ms": 43.7,
+   "lcp_ms": 144,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "sesion_detalle_revisada": {
+   "url": "/sessions/:id",
+   "repeticiones": 3,
+   "dcl_ms": 41.8,
+   "load_ms": 41.8,
+   "lcp_ms": 88,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "validaciones": {
+   "url": "/validaciones",
+   "repeticiones": 3,
+   "dcl_ms": 40.6,
+   "load_ms": 40.7,
+   "lcp_ms": 76,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "estudiante_consentimiento_b": {
+   "url": "/exam/:joinCode",
+   "repeticiones": 3,
+   "dcl_ms": 48.8,
+   "load_ms": 48.9,
+   "lcp_ms": 104,
+   "cls": 0,
+   "transferido_kb": 0.9
+  },
+  "estudiante_codigo_inexistente": {
+   "url": "/exam/:joinCode",
+   "repeticiones": 3,
+   "dcl_ms": 48.1,
+   "load_ms": 48.1,
+   "lcp_ms": 84,
+   "cls": 0,
+   "transferido_kb": 0.9
+  }
+ },
+ "teclado_recorridos_de_foco": {
+  "login": {
+   "paradas_de_foco": 4,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "input",
+     "texto": "email",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "input",
+     "texto": "password",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Ingresar",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "¿Sos estudiante? Ingresá con el código",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "evaluaciones_vacio": {
+   "paradas_de_foco": 6,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "+ Nueva evaluación",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar mi cuenta…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "evaluacion_creada": {
+   "paradas_de_foco": 10,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "+ Nueva evaluación",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Copiar enlace",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "✕ Ocultar",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Copiar enlace",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver sesiones →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar mi cuenta…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "evaluaciones_lista": {
+   "paradas_de_foco": 8,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "+ Nueva evaluación",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Copiar enlace",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver sesiones →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar mi cuenta…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "estudiante_consentimiento": {
+   "paradas_de_foco": 3,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "input",
+     "texto": "ej. P-017 (el código que te asignó tu docente)",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "input",
+     "texto": "on",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Comenzar",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "estudiante_rindiendo": {
+   "paradas_de_foco": 2,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "textarea",
+     "texto": "La clave primaria identifica cada fila. La foranea",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Finalizar y entregar",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "estudiante_entrega_fallida": {
+   "paradas_de_foco": 2,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "button",
+     "texto": "Reintentar la entrega",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Entregar sin esos registros",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "sesiones_lista": {
+   "paradas_de_foco": 40,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "← Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Copiar enlace",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Sesiones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Panorama",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "input",
+     "texto": "on",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Cerrar la evaluación y analizar…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Ver detalle",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Editar (crea versión nueva)",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar esta evaluación…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "sesion_detalle": {
+   "paradas_de_foco": 12,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "← Parcial 1 — Bases de Datos (usabilidad)",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Ir a la revisión ↓",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "input",
+     "texto": "on",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "textarea",
+     "texto": "Observaciones sobre esta sesión…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Marcar como revisada",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Requiere validación adicional",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "summary",
+     "texto": "Métricas calculadas",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar esta sesión…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "validaciones": {
+   "paradas_de_foco": 6,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes1",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Parcial 1 — Bases de Datos (usabilidad)",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Ver detalle →",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  },
+  "panorama": {
+   "paradas_de_foco": 12,
+   "sin_foco_visible": [],
+   "fuera_de_pantalla_al_enfocar": 0,
+   "secuencia": [
+    {
+     "tag": "a",
+     "texto": "ImprontIA",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "Validaciones pendientes1",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Salir",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "a",
+     "texto": "← Evaluaciones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Copiar enlace",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Sesiones",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Panorama",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Ver panorama",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Ver detalle",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Editar (crea versión nueva)",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    },
+    {
+     "tag": "button",
+     "texto": "Eliminar esta evaluación…",
+     "outline": "solid 2px",
+     "foco_visible": true,
+     "en_pantalla": true
+    }
+   ]
+  }
+ },
+ "pruebas_de_error": [
+  {
+   "id": "P-login-error",
+   "descripcion": "Login con credenciales inválidas",
+   "mensaje": "Credenciales inválidas.",
+   "foco_tras_error": "INPUT email",
+   "captura": "docs/evaluacion/usabilidad/p_login_error.png"
+  },
+  {
+   "id": "P-crear-vacio",
+   "descripcion": "Enviar el formulario de evaluación vacío",
+   "bloqueado_por_validacion_nativa": true,
+   "mensaje_navegador": "Completá este campo.",
+   "marca_campos_obligatorios_visible": true
+  },
+  {
+   "id": "P-consent-errores",
+   "descripcion": "Comenzar sin código y sin consentimiento",
+   "mensaje_sin_codigo": "Ingresá tu código de participante.",
+   "mensaje_sin_consentimiento": "Se requiere confirmar el consentimiento para iniciar.",
+   "error_arriba_del_formulario": true,
+   "captura": "docs/evaluacion/usabilidad/p_consent_error.png"
+  },
+  {
+   "id": "P-recarga-examen",
+   "descripcion": "Recargar la página con el examen en curso",
+   "vuelve_a_consentimiento": false,
+   "respuesta_conservada": true,
+   "aviso_beforeunload": true,
+   "reingreso_mismo_codigo": "no hace falta: retoma la misma sesión",
+   "sesiones_de_ese_codigo": 1,
+   "captura": "docs/evaluacion/usabilidad/p_recarga_durante_examen.png"
+  }
+ ],
+ "resumen": {
+  "axe_violaciones_por_impacto": {
+   "critical": 0,
+   "serious": 0,
+   "moderate": 0,
+   "minor": 0
+  },
+  "axe_nodos_por_impacto": {
+   "critical": 0,
+   "serious": 0,
+   "moderate": 0,
+   "minor": 0
+  },
+  "axe_reglas": {},
+  "profundidad_desde_inicio": {
+   "/exams": 0,
+   "/exams/:id/sessions": 1,
+   "/validaciones": 1,
+   "/sessions/:id": 2,
+   "/exams/:id/sessions#panorama": 2
+  },
+  "terminologia": {
+   "controles": {
+    "+ Nueva evaluación": [
+     "evaluacion_creada:btn btn-primary",
+     "evaluaciones_lista:btn btn-primary",
+     "evaluaciones_vacio:btn btn-primary"
+    ],
+    "Cancelar": [
+     "crear_evaluacion:btn btn-ghost"
+    ],
+    "Cerrar la evaluación y analizar…": [
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost"
+    ],
+    "Comenzar": [
+     "estudiante_consentimiento:btn btn-primary"
+    ],
+    "Copiar enlace": [
+     "evaluacion_creada:btn btn-ghost btn-small",
+     "evaluaciones_lista:btn btn-ghost btn-small",
+     "panorama:btn btn-ghost btn-small",
+     "sesiones_cerrada:btn btn-ghost btn-small",
+     "sesiones_filtro:btn btn-ghost btn-small",
+     "sesiones_lista:btn btn-ghost btn-small"
+    ],
+    "Crear evaluación": [
+     "crear_evaluacion:btn btn-primary"
+    ],
+    "Editar (crea versión nueva)": [
+     "panorama:btn btn-ghost",
+     "sesiones_cerrada:btn btn-ghost",
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost"
+    ],
+    "Eliminar esta evaluación…": [
+     "panorama:btn btn-ghost",
+     "sesiones_cerrada:btn btn-ghost",
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost"
+    ],
+    "Eliminar esta sesión…": [
+     "sesion_detalle:btn btn-ghost",
+     "sesion_detalle_revisada:btn btn-ghost"
+    ],
+    "Eliminar mi cuenta…": [
+     "crear_evaluacion:btn btn-ghost",
+     "evaluacion_creada:btn btn-ghost",
+     "evaluaciones_lista:btn btn-ghost",
+     "evaluaciones_vacio:btn btn-ghost"
+    ],
+    "Entregar sin esos registros": [
+     "estudiante_entrega_fallida:btn btn-ghost"
+    ],
+    "Evaluaciones": [
+     "crear_evaluacion:active",
+     "evaluacion_creada:active",
+     "evaluaciones_lista:active",
+     "evaluaciones_vacio:active",
+     "panorama:active",
+     "sesion_detalle:active",
+     "sesion_detalle_revisada:active",
+     "sesiones_cerrada:active",
+     "sesiones_filtro:active",
+     "sesiones_lista:active",
+     "validaciones:"
+    ],
+    "Finalizar y entregar": [
+     "estudiante_rindiendo:btn btn-primary"
+    ],
+    "ImprontIA": [
+     "crear_evaluacion:brand",
+     "evaluacion_creada:brand",
+     "evaluaciones_lista:brand",
+     "evaluaciones_vacio:brand",
+     "panorama:brand",
+     "sesion_detalle:brand",
+     "sesion_detalle_revisada:brand",
+     "sesiones_cerrada:brand",
+     "sesiones_filtro:brand",
+     "sesiones_lista:brand",
+     "validaciones:brand"
+    ],
+    "Ingresar": [
+     "login:btn btn-primary"
+    ],
+    "Ingresar otro código": [
+     "estudiante_codigo_inexistente:btn btn-ghost"
+    ],
+    "Ir a la revisión ↓": [
+     "sesion_detalle:btn btn-ghost btn-small",
+     "sesion_detalle_revisada:btn btn-ghost btn-small"
+    ],
+    "Marcar como revisada": [
+     "sesion_detalle:btn btn-ghost",
+     "sesion_detalle_revisada:btn btn-ghost"
+    ],
+    "Panorama": [
+     "panorama:tab tab-active",
+     "sesiones_cerrada:tab",
+     "sesiones_filtro:tab",
+     "sesiones_lista:tab"
+    ],
+    "Parcial 1 — Bases de Datos (usabilidad)": [
+     "validaciones:"
+    ],
+    "Reintentar la entrega": [
+     "estudiante_entrega_fallida:btn btn-primary"
+    ],
+    "Requiere validación adicional": [
+     "sesion_detalle:btn btn-warning",
+     "sesion_detalle_revisada:btn btn-warning"
+    ],
+    "Salir": [
+     "crear_evaluacion:btn btn-ghost",
+     "evaluacion_creada:btn btn-ghost",
+     "evaluaciones_lista:btn btn-ghost",
+     "evaluaciones_vacio:btn btn-ghost",
+     "panorama:btn btn-ghost",
+     "sesion_detalle:btn btn-ghost",
+     "sesion_detalle_revisada:btn btn-ghost",
+     "sesiones_cerrada:btn btn-ghost",
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost",
+     "validaciones:btn btn-ghost"
+    ],
+    "Sesiones": [
+     "panorama:tab",
+     "sesiones_cerrada:tab tab-active",
+     "sesiones_filtro:tab tab-active",
+     "sesiones_lista:tab tab-active"
+    ],
+    "Validaciones pendientes": [
+     "crear_evaluacion:",
+     "evaluacion_creada:",
+     "evaluaciones_lista:",
+     "evaluaciones_vacio:",
+     "sesion_detalle:",
+     "sesiones_filtro:",
+     "sesiones_lista:"
+    ],
+    "Validaciones pendientes1": [
+     "panorama:",
+     "sesion_detalle_revisada:",
+     "sesiones_cerrada:",
+     "validaciones:active"
+    ],
+    "Ver detalle": [
+     "panorama:btn btn-ghost",
+     "sesiones_cerrada:btn btn-ghost",
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost"
+    ],
+    "Ver detalle →": [
+     "sesiones_cerrada:btn btn-ghost",
+     "sesiones_filtro:btn btn-ghost",
+     "sesiones_lista:btn btn-ghost",
+     "validaciones:btn btn-ghost"
+    ],
+    "Ver panorama": [
+     "panorama:link-btn",
+     "sesiones_cerrada:link-btn"
+    ],
+    "Ver sesiones →": [
+     "evaluacion_creada:btn btn-ghost",
+     "evaluaciones_lista:btn btn-ghost"
+    ],
+    "¿Sos estudiante? Ingresá con el código": [
+     "login:"
+    ],
+    "← Evaluaciones": [
+     "panorama:",
+     "sesiones_cerrada:",
+     "sesiones_filtro:",
+     "sesiones_lista:"
+    ],
+    "← Parcial 1 — Bases de Datos (usabilidad)": [
+     "sesion_detalle:",
+     "sesion_detalle_revisada:"
+    ],
+    "✕ Ocultar": [
+     "evaluacion_creada:link-btn"
+    ]
+   },
+   "usos_de_cerrar": [
+    "Cerrar la evaluación y analizar…"
+   ],
+   "controles_en_minuscula": []
+  }
+ }
+}

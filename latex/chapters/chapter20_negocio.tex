@@ -1,0 +1,570 @@
+% =====================================================================
+%  Capítulo: Modelo de negocio, viabilidad económico-financiera y marca
+%  Cifras generadas con latex/anexos/modelo_financiero.py (v2, 22/10/2026)
+%  y gen_bloque.py; planilla anexa: Modelo_Financiero_ImprontIA.xlsx. Las cifras de las tablas
+%  y del texto salen del script; si cambia un supuesto, regenerar.
+% =====================================================================
+\chapter{Modelo de negocio y viabilidad económico-financiera}
+\label{ch:negocio}
+
+\definecolor{improntiaazul}{HTML}{4888F4}
+\definecolor{improntiatinta}{HTML}{0B1220}
+
+\begin{chapterabstract}
+Este capítulo analiza cómo ImprontIA puede sostenerse como emprendimiento. Se define el segmento de clientes (instituciones de educación superior, con foco inicial en universidades privadas con oferta a distancia), la propuesta de valor frente a las alternativas existentes y el modelo de negocio mediante el lienzo de Osterwalder y Pigneur. Se propone un esquema de ingresos por suscripción anual con precio por asiento, se estiman los costos con fuentes públicas y se evalúa el proyecto a cinco años en tres escenarios (pesimista, base y optimista) con valor actual neto, tasa interna de retorno, período de recupero y punto de equilibrio. Con una inversión inicial reducida, porque el MVP ya está construido, y el precio de lista de USD~3,50 por asiento, el escenario base es viable con un margen moderado (VAN positivo y TIR de 23,8\,\% frente a una tasa exigida de 20,36\,\%); el optimista es claramente rentable y el pesimista no recupera la inversión, lo que lleva a proponer un lanzamiento y un financiamiento por etapas con hitos de continuidad. Cierra con la identidad de marca: nombre, logotipo, paleta, tipografía y posicionamiento.
+\end{chapterabstract}
+
+\section{Mercado y segmento de clientes}
+\label{sec:neg_mercado}
+
+ImprontIA es un producto de \textit{software} para instituciones, no para usuarios individuales: quien decide su adopción y la paga es la universidad, aunque quienes lo usan sean docentes y estudiantes. Esta distinción ordena el modelo de negocio. El cliente es la institución; el usuario principal es el docente, que recibe evidencia para su revisión; y el estudiante es un usuario afectado, cuya aceptación condiciona la viabilidad del producto, como mostró el relevamiento del Capítulo~\ref{ch:user_research}.
+
+El sistema universitario argentino reunía en 2022 a 2.540.854 estudiantes de pregrado y grado, de los cuales 510.221 cursaban en instituciones de gestión privada, y 237.003 lo hacían en modalidad a distancia, 156.916 de ellos en el sector privado~\parencite{DIU2023Sintesis}. La misma fuente registra 137 instituciones universitarias, de las cuales 68 son privadas~\parencite{DIU2023Sintesis}. De estos datos se desprende que en las instituciones privadas casi uno de cada tres estudiantes (30,8\,\%) cursa a distancia, frente a menos del 4\,\% en las estatales, y que una institución privada tiene en promedio unos 7.500 estudiantes.
+
+Sobre esa base se define un segmento inicial: \textbf{universidades e institutos universitarios privados con oferta a distancia o híbrida}. Se lo prioriza por tres razones: concentran la mayor parte de las evaluaciones en línea, deciden sus compras con más agilidad que el sector estatal, que contrata por procedimientos administrativos, y ya enfrentan la necesidad de sostener la validez de sus evaluaciones remotas. Las universidades estatales y la expansión regional quedan como segmentos posteriores. La Tabla~\ref{tab:neg_mercado} dimensiona el mercado de abajo hacia arriba, a partir de la cantidad de estudiantes, con el precio del escenario base (Sección~\ref{sec:neg_ingresos}); se trata de un orden de magnitud y no de una proyección de ventas.
+
+\begin{table}[htbp]
+    \caption{Dimensión del mercado argentino (ingreso anual potencial)}
+    \label{tab:neg_mercado}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r}
+        \toprule
+        \tblhead \textbf{Nivel} & \textbf{Estudiantes} & \textbf{USD/año} \\
+        \midrule
+        Mercado total (TAM): estudiantes de pregrado y grado del sector privado & 510.221 & 7.143.094 \\
+        Mercado disponible (SAM): estudiantes a distancia del sector privado & 156.916 & 2.196.824 \\
+        Mercado objetivo a cinco años (SOM, escenario base): 11,2 instituciones $\times$ 1.500 estudiantes & 16.800 & 235.200 \\
+        \bottomrule
+    \end{tabularx}
+    \par\smallskip
+    \raggedright\footnotesize Cálculo: estudiantes $\times$ 4 materias evaluadas por año $\times$ USD~3,50 por asiento (precio del escenario base), sin el cargo fijo por institución. El mercado objetivo corresponde a la cartera al cierre del quinto año; los ingresos de ese año en la Tabla~\ref{tab:neg_flujo_base} se calculan con 14.561 estudiantes, porque las instituciones que se incorporan durante el año aportan medio año de ingresos. Fuente de los estudiantes: \textcite{DIU2023Sintesis}.
+\end{table}
+
+El mercado objetivo del escenario base representa alrededor del 10\,\% del mercado disponible en el quinto año, una participación acotada para un producto de nicho que compite con proveedores establecidos.
+
+\section{Propuesta de valor y posicionamiento}
+\label{sec:neg_propuesta}
+
+Las alternativas que hoy usan las instituciones se agrupan en dos familias, analizadas en la Sección~\ref{ch:competencias}: los servicios de supervisión remota (\textit{proctoring}), que observan al estudiante y su entorno con cámara, micrófono o navegadores bloqueados, y los detectores de texto generado, que clasifican el producto final. ImprontIA ocupa un lugar distinto: registra señales del proceso de escritura, sin cámara ni contenido, y entrega al docente evidencia trazable hasta el evento que la originó, sin emitir veredictos.
+
+La propuesta de valor se formula para cada actor:
+
+\begin{itemize}
+    \item \textbf{Institución:} contar con evidencia proporcionada y documentada para sostener la validez de sus evaluaciones en línea y con información agregada sobre cómo se desarrollan, con un diseño que facilita el cumplimiento de la Ley~25.326 (Capítulo~\ref{ch:viabilidad}) y un costo por estudiante ubicado en el rango inferior de los servicios de supervisión con video, sin la observación audiovisual que estos requieren.
+    \item \textbf{Docente:} saber qué sesiones conviene revisar y por qué, con indicadores explicados en lenguaje claro, en lugar de revisar grabaciones completas o confiar en un puntaje opaco; y, además, contar con inteligencia sobre sus evaluaciones: un panorama agregado de cómo se desarrolló cada una, con los eventos interpretados según las reglas que definió, útil aunque ninguna sesión requiera revisión (Sección~\ref{sec:impl_panorama}).
+    \item \textbf{Estudiante:} reglas conocidas de antemano, que la plataforma también aplica al interpretar sus eventos, sin cámara ni micrófono, y la garantía de que ninguna alerta se convierte por sí sola en una sanción, condiciones que el 93,0\,\% y el 93,9\,\% de los encuestados valoraron como importantes (Capítulo~\ref{ch:user_research}).
+\end{itemize}
+
+El posicionamiento se resume en una frase: \textit{ImprontIA no vigila a la persona ni juzga el texto; documenta el proceso para que una persona decida}. Por eso el producto se presenta como una plataforma de trazabilidad e inteligencia del proceso de evaluación digital: una marca de atipicidad indica dónde mirar (Capítulo~\ref{ch:evaluacion}). Esta diferencia es también la principal barrera competitiva. Un proveedor de \textit{proctoring} podría incorporar señales de interacción, pero su modelo de negocio descansa en la observación audiovisual, y un detector de texto no puede reconstruir el proceso a partir del producto final.
+
+\section{Modelo de negocio}
+\label{sec:neg_canvas}
+
+El modelo se describe con el lienzo de modelo de negocio (\textit{Business Model Canvas}), que lo descompone en nueve bloques vinculados entre sí: segmentos de clientes, propuesta de valor, canales, relación con los clientes, fuentes de ingresos, recursos clave, actividades clave, socios clave y estructura de costos~\parencite{Osterwalder2010}. La Tabla~\ref{tab:neg_canvas} presenta su contenido para ImprontIA.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{11cm}}
+    \caption{Lienzo de modelo de negocio de ImprontIA}
+    \label{tab:neg_canvas} \\
+    \toprule
+    \tblhead \textbf{Bloque} & \textbf{Contenido} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Bloque} & \textbf{Contenido} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    Segmentos de clientes & Universidades e institutos universitarios privados con oferta a distancia o híbrida (segmento inicial); luego universidades estatales e instituciones de la región. \\
+    Propuesta de valor & Inteligencia sobre sus evaluaciones: evidencia trazable sobre el proceso de escritura, sin cámara ni contenido, que orienta la revisión docente sin emitir veredictos; panorama agregado de cada evaluación, con los eventos interpretados según las reglas del examen; diseño que facilita el cumplimiento normativo. \\
+    Canales & Venta directa a secretarías académicas y áreas de educación a distancia; prueba sin costo en una cátedra como canal de entrada comercial, posterior a la validación con voluntarios; presencia en jornadas de tecnología educativa; integración futura con plataformas de gestión del aprendizaje. \\
+    Relación con los clientes & Acompañamiento en la implementación (configuración de políticas, capacitación docente para interpretar indicadores) y soporte durante el ciclo lectivo; relación contractual anual. \\
+    Fuentes de ingresos & Suscripción anual por institución: cargo fijo de plataforma más precio por asiento (estudiante por materia evaluada con ImprontIA). \\
+    Recursos clave & Plataforma de captura y análisis (Capítulo~\ref{ch:implementacion}); conocimiento del dominio y del marco normativo; equipo de desarrollo y soporte; reputación de uso responsable. \\
+    Actividades clave & Desarrollo y mantenimiento del producto; calibración de indicadores con datos de cada institución; soporte y capacitación; gestión de la seguridad y de la protección de datos. \\
+    Socios clave & Proveedor de infraestructura en la nube; primeras instituciones adoptantes; asesoría legal en protección de datos; eventualmente, proveedores de plataformas de gestión del aprendizaje. \\
+    Estructura de costos & Predominio de costos fijos de personal; infraestructura de bajo costo y escalable; costos variables pequeños (almacenamiento, comercialización, impuestos sobre los ingresos). \\
+\end{longtable}
+}
+
+El lienzo muestra la lógica económica del producto: un \textit{software} con costos marginales muy bajos y costos fijos concentrados en el equipo. Por lo tanto, la rentabilidad depende casi por completo del volumen de clientes que se logre y retenga, y no del costo de servir a cada uno.
+
+\section{Modelo de ingresos}
+\label{sec:neg_ingresos}
+
+\subsection{Unidad de cobro}
+
+Se adopta una suscripción anual por institución con dos componentes: un \textbf{cargo fijo de plataforma}, que cubre la implementación, la configuración y el soporte, y un \textbf{precio por asiento}, entendido como un estudiante en una materia evaluada con ImprontIA durante el año. Esta unidad acompaña el uso real, porque la institución paga solo por las materias en las que habilita la herramienta, y coincide con la que usa uno de los proveedores del mercado~\parencite{Respondus2026Pricing}, lo que facilita la comparación en un proceso de compra.
+
+\subsection{Precios de referencia}
+
+Los proveedores de supervisión remota rara vez publican precios. La Tabla~\ref{tab:neg_precios} reúne los que pudieron verificarse en fuentes públicas: listas oficiales y documentos de universidades que informan lo que pagan. Todas corresponden al mercado estadounidense, lo que impone cautela al trasladarlas al argentino.
+
+\begin{table}[htbp]
+    \caption{Precios públicos de herramientas de supervisión e integridad académica}
+    \label{tab:neg_precios}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.4cm}}
+        \toprule
+        \tblhead \textbf{Herramienta} & \textbf{Precio publicado} & \textbf{Fuente} \\
+        \midrule
+        Respondus Monitor & USD~5.950 por bloque de 1.000 asientos (USD~5,95 por asiento); USD~1.950 por cada bloque adicional; USD~15 por año si paga el estudiante & \textcite{Respondus2026Pricing} \\
+        Proctorio & USD~9 a 14 por usuario y año (renovación 2025--26 de un \textit{college} californiano); USD~5 por examen o USD~15 por usuario y año (contrato de 2020) & \textcite{SRJC2025Proctorio}; \textcite{MNSU2020Proctoring} \\
+        Honorlock & USD~4,45 por examen o USD~9,95 por curso, a cargo del estudiante & \textcite{FSUHonorlock} \\
+        ProctorU & USD~17,50 por examen de hasta 60 minutos, con supervisión en vivo & \textcite{CameronProctorU} \\
+        AutoProctor & USD~0,10 por intento supervisado; plan anual de USD~150 por 1.800 intentos & \textcite{AutoProctorPricing} \\
+        Turnitin (detección de similitud y de texto generado) & USD~1,79 a 3,19 por estudiante y año en universidades de California & \textcite{CalMatters2025Turnitin} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Con un estudiante que rinde cuatro materias evaluadas por año, el precio de referencia de Respondus Monitor equivale a unos USD~24 por estudiante y año, y el de Proctorio, a entre USD~9 y 15. Se analizan precios de entre USD~3,00 y 4,00 por asiento, es decir, de USD~12 a 16 por estudiante y año con cuatro materias, más un cargo fijo de entre USD~1.500 y 2.500 por institución y año. Ese rango ubica a ImprontIA en el tramo inferior de la supervisión con video: por debajo del primer bloque de Respondus Monitor y en el rango que se paga por Proctorio, aunque por encima de los bloques adicionales de Respondus (USD~1,95 por asiento). El posicionamiento responde a que ImprontIA no ofrece observación audiovisual y se dirige a un mercado de menor poder adquisitivo; a la vez, su precio supera al de un detector de texto, porque aporta evidencia sobre el proceso.
+
+\section{Estructura de costos y supuestos}
+\label{sec:neg_costos}
+
+La evaluación se expresa en dólares estadounidenses nominales, para evitar proyectar la inflación en pesos, con un horizonte de cinco años de operación precedidos por un año~0 de puesta en producción. La Tabla~\ref{tab:neg_supuestos} reúne los supuestos comunes a todos los escenarios con su fuente. Los marcados como \textit{supuesto propio} son estimaciones del proyecto explicitadas para que puedan revisarse.
+
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{6.6cm} >{\raggedright\arraybackslash}p{4.1cm}}
+    \caption{Supuestos comunes del modelo financiero}
+    \label{tab:neg_supuestos} \\
+    \toprule
+    \tblhead \textbf{Concepto} & \textbf{Valor adoptado} & \textbf{Fuente} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tblhead \textbf{Concepto} & \textbf{Valor adoptado} & \textbf{Fuente} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    Remuneración de un desarrollador semi-\textit{senior} & ARS~2.705.000 brutos mensuales (mediana calculada sobre los datos abiertos de la encuesta 2026.1), equivalentes a USD~1.920 & \textcite{Sysarmy2026}; tipo de cambio de referencia del 27/02/2026: 1.408,97 ARS/USD~\parencite{BCRA2026TCRef} \\
+    Sueldos por año & 13 (doce mensuales más el sueldo anual complementario) & Ley~20.744, arts.~121 y~122~\parencite{Argentina1976LCT} \\
+    Contribuciones patronales & 20,4\,\% más 6\,\% de obra social: 26,4\,\%. El 20,4\,\% corresponde a los empleadores de servicios cuyas ventas superan el tope de empresa mediana; una pequeña empresa tributaría el 18\,\%, por lo que el valor es conservador. No incluye la cobertura de riesgos del trabajo & Ley~27.541, art.~19~\parencite{Argentina2019Ley27541}; Ley~23.660, art.~16~\parencite{Argentina1989Ley23660} \\
+    Costo laboral anual por persona & USD~31.547 & Cálculo con los tres renglones anteriores \\
+    Equipo & Las dos personas fundadoras desde el año~1 y una persona adicional de desarrollo y soporte cada seis instituciones activas & Supuesto propio \\
+    Infraestructura fija & USD~150,45 por mes (USD~1.805 por año): dos servidores de 4~vCPU y 8~GB (USD~48 c/u), base PostgreSQL gestionada de 2~GB (USD~30,45) y un servidor de pruebas (USD~24); certificado TLS sin costo & \textcite{DigitalOcean2026Droplets}; \textcite{DigitalOcean2026DB}; \textcite{LetsEncrypt} \\
+    Infraestructura variable & USD~0,10 por estudiante activo y año: 40~MB de eventos almacenados por estudiante durante los doce meses, a USD~0,215 por GB y mes, más un servidor cada 10.000 estudiantes. Los 40~MB son una cota de un año de evaluaciones: hasta 36.000 eventos de mouse por hora, unos 100~bytes por evento y unas 10~horas de evaluación por año & Precio: \textcite{DigitalOcean2026DB}; eventos por hora: Capítulo~\ref{ch:viabilidad}; tamaño del evento y horas: supuesto propio \\
+    Ingresos Brutos & 3\,\% de los ingresos (alícuota general de servicios, Ciudad de Buenos Aires) & \textcite{BDO2025TarifariaCABA} \\
+    Comercialización & 10\,\% de los ingresos & Supuesto propio \\
+    Administración & USD~6.000 por año (servicios contables y legales, herramientas, dominio) & Supuesto propio \\
+    Impuesto a las Ganancias & 25\,\% hasta USD~88.077 de ganancia (tramo 2026 convertido a 1.515,88 ARS/USD) y 30\,\% sobre el excedente, con compensación de los quebrantos de hasta cinco años anteriores & \textcite{ARCA2026EscalaPJ}; \textcite{BCRA2026TCRef}; \textcite{Argentina2019LIG}, art.~25 \\
+    Amortización & La inversión inicial se amortiza en forma lineal en tres años a efectos del impuesto a las ganancias; no es una salida de caja & Criterio de la guía de la cátedra~\parencite{UADE2026ModeloNegocio} \\
+    Capital de trabajo & Cuentas a cobrar por 30 días de ingresos (8,2\,\% de los ingresos del año), con la suscripción anual facturada al comienzo del ciclo lectivo; se invierte a medida que crecen las ventas y se recupera al final del horizonte & Supuesto propio, en el extremo inferior del rango de 30 a 60 días de la venta a organizaciones~\parencite{UADE2026ModeloNegocio} \\
+    Régimen de Promoción de la Economía del Conocimiento & Bono de crédito fiscal del 70\,\% de las contribuciones patronales y reducción del 60\,\% del impuesto a las ganancias en los años~1 a~3 (2027 a 2029), con inscripción desde el inicio & Ley~27.506, modificada por la Ley~27.570~\parencite{Argentina2020Ley27570} \\
+    Inversión inicial (año~0) & USD~16.817: dos meses de trabajo de las dos personas fundadoras para llevar a producción el MVP ya construido (USD~10.516), USD~2.000 de constitución de una sociedad por acciones simplificada, contratos y evaluación de impacto, USD~4.000 de auditoría de seguridad y USD~301 de infraestructura & Supuesto propio; tareas previas a producción según el Capítulo~\ref{ch:viabilidad}; \textcite{Argentina2017Ley27349} \\
+    Altas de clientes & Las instituciones que se suman en un año aportan medio año de ingresos (convención de medio año) & Supuesto propio \\
+    IVA & Excluido: el modelo trabaja con importes netos de IVA & --- \\
+\end{longtable}
+}
+
+La inversión inicial del año~0 no incluye capital de trabajo, porque este se forma a medida que se facturan las primeras suscripciones; su variación anual figura en el flujo de fondos. El caso de referencia incluye los beneficios del Régimen de Promoción de la Economía del Conocimiento, porque una empresa de \textit{software} puede inscribirse desde el inicio y la inscripción forma parte del plan; su efecto se aísla en la sensibilidad (Sección~\ref{sec:neg_sensibilidad}). Como control, el margen bruto típico de las empresas de \textit{software} cotizantes ronda el 72\,\%~\parencite{Damodaran2026Margins}. Si se toman como costo de ventas la infraestructura y la persona de soporte que se incorpora con la cartera, el margen bruto del escenario base en el quinto año es del 84\,\%, algo superior a esa referencia, lo que resulta esperable porque el modelo no incluye licencias de terceros ni otros costos directos de servicio. Ese año, la infraestructura representa el 1,7\,\% de los ingresos y el personal, el 42,4\,\%, de modo que la estructura de costos de ImprontIA está dominada por el equipo.
+
+\section{Evaluación económico-financiera}
+\label{sec:neg_evaluacion}
+
+\subsection{Método y criterios}
+
+El proyecto se evalúa con los criterios habituales de la evaluación de proyectos~\parencite{SapagChain2014} y con la secuencia que propone la cátedra para el capítulo económico-financiero: supuestos con fuente, inversión inicial con capital de trabajo, flujo de fondos libre con impuestos, tasa de descuento justificada, indicadores, riesgo y plan de financiamiento~\parencite{UADE2026ModeloNegocio}. El \textbf{valor actual neto} (VAN) descuenta los flujos de fondos a la tasa de rentabilidad exigida; un VAN positivo indica que el proyecto rinde más que esa tasa y, si los indicadores no coinciden, decide el VAN. La \textbf{tasa interna de retorno} (TIR) es la tasa que anula el VAN. El \textbf{período de recupero}, simple y descontado, mide en cuánto tiempo los flujos acumulados recuperan la inversión; informa sobre liquidez y riesgo, no sobre rentabilidad. El \textbf{punto de equilibrio} indica el número de instituciones cuyo margen de contribución cubre los costos fijos de un año. Se calcula con los costos fijos del año~3, es decir, con el equipo que cada escenario tiene ese año (2 personas en el pesimista y 3 en el base y el optimista), sin volver a calcular el equipo para el número de instituciones resultante; es, por lo tanto, una aproximación a un año típico de operación. La \textbf{necesidad máxima de financiamiento} es el punto más bajo del flujo acumulado: lo que hay que conseguir para llegar al equilibrio, que puede superar ampliamente la inversión inicial.
+
+\textbf{Moneda.} Flujos y tasa se expresan en dólares estadounidenses, con precios y costos constantes en esa moneda: no se proyecta la inflación en pesos ni la del dólar. Como la tasa de descuento es nominal en dólares, no ajustar los precios por la inflación del dólar es un criterio conservador.
+
+\textbf{Valor residual.} Como un producto de suscripción sigue generando ingresos después del quinto año, se calcula un valor residual prudente: a partir del sexto año no se suman clientes y la cartera se reduce cada año a la tasa de bajas del escenario, lo que equivale a una perpetuidad con crecimiento negativo, $VR = FF_5\,(1-b)/(k+b)$, donde $FF_5$ es el flujo operativo normalizado del año~5 (con el impuesto pleno, sin quebrantos ni movimientos de capital de trabajo), $b$ la tasa de bajas y $k$ la tasa de descuento. Se informan los indicadores con y sin valor residual, como recomienda la cátedra, porque el valor residual puede pesar más que el resto del flujo.
+
+\subsection{Tasa de descuento}
+
+La tasa exigida se estima con el modelo de valuación de activos de capital, agregándole una prima por riesgo país, como se hace para proyectos en mercados emergentes~\parencite{Damodaran2025ERP}:
+\[
+k = r_f + \beta \cdot PRM + PRP = 5{,}24\,\text{\%} + 1{,}28 \times 4{,}23\,\text{\%} + 9{,}71\,\text{\%} = 20{,}36\,\text{\%}
+\]
+donde $r_f$ es el rendimiento del bono del Tesoro de Estados Unidos a diez años del 9/10/2026~\parencite{USTreasury2026Yield}, $\beta$ es la beta de la industria de \textit{software} de sistemas y aplicaciones~\parencite{Damodaran2026WACC}, $PRM$ es la prima de riesgo de mercado implícita para Estados Unidos a enero de 2026~\parencite{Damodaran2026ERPImpl} y $PRP$ es la prima de riesgo país de Argentina a enero de 2026~\parencite{Damodaran2026CRP}. El proyecto se financia íntegramente con capital propio y con aportes no reembolsables (Sección~\ref{sec:neg_financiamiento}), sin deuda: el costo promedio ponderado del capital (WACC) coincide, entonces, con el costo del capital propio, y $k$ es la tasa del proyecto. Es una tasa en dólares, coherente con la moneda de los flujos. No incluye una prima por etapa temprana: los fondos de capital de riesgo exigen tasas mucho mayores a una empresa que recién empieza~\parencite{UADE2026ModeloNegocio}, por lo que la sensibilidad a la tasa se analiza hasta el 30\,\% y el perfil del VAN (Figura~\ref{fig:neg_perfil_van}) muestra el resultado con tasas mayores.
+
+\subsection{Escenarios}
+
+Se definen tres escenarios que combinan de forma coherente precio, tamaño de cada cliente, ritmo de incorporación de instituciones y tasa de bajas (Tabla~\ref{tab:neg_escenarios}). Cada uno corresponde a una situación de mercado y no a una variación uniforme de todos los parámetros:
+
+\begin{itemize}
+    \item \textbf{Pesimista:} la oferta se percibe como un complemento y no como una necesidad; las instituciones la habilitan solo en parte de su oferta a distancia (1.000 estudiantes y tres materias), negocian un precio menor que el de lista y la abandonan con más frecuencia.
+    \item \textbf{Base:} la prueba en una cátedra convierte a la institución donde se realiza y a una segunda en el primer año; luego se suman tres instituciones por año, con el precio de lista de USD~3,50 por asiento y una retención como la habitual en el \textit{software} como servicio.
+    \item \textbf{Optimista:} las instituciones extienden el uso a más estudiantes, la incorporación se acelera desde el tercer año y el precio se ubica por encima del de lista, todavía por debajo del primer bloque de Respondus Monitor.
+\end{itemize}
+
+\begin{table}[htbp]
+    \caption{Parámetros de los escenarios}
+    \label{tab:neg_escenarios}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r}
+        \toprule
+        \tblhead \textbf{Parámetro} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
+        \midrule
+        Precio por asiento (USD) & 3,00 & 3,50 & 4,00 \\
+        Cargo fijo por institución (USD/año) & 1.500 & 2.000 & 2.500 \\
+        Estudiantes activos por institución & 1.000 & 1.500 & 2.000 \\
+        Materias evaluadas por estudiante y año & 3 & 4 & 4 \\
+        Instituciones nuevas, años 1 a 5 & 1-2-2-2-2 & 2-3-3-3-3 & 2-3-4-4-4 \\
+        Bajas anuales de instituciones & 15\,\% & 12\,\% & 10\,\% \\
+        Instituciones activas al año~5 & 6,9 & 11,2 & 14,3 \\
+        \bottomrule
+    \end{tabularx}
+    \par\smallskip
+    \raggedright\footnotesize Fuente: supuestos propios, con los fundamentos que se indican en el texto. Las instituciones activas al año~5 resultan del modelo.
+\end{table}
+
+Todos los parámetros de la Tabla~\ref{tab:neg_escenarios} son supuestos propios, apoyados en referencias públicas donde existen. El precio por asiento y el cargo fijo se fijaron en relación con los precios de referencia (Tabla~\ref{tab:neg_precios}). Los estudiantes activos por institución equivalen a entre el 13 y el 27\,\% de una institución privada promedio~\parencite{DIU2023Sintesis}, es decir, a una adopción parcial concentrada en la oferta a distancia. La tasa de bajas se apoya en la retención bruta que informan las empresas de \textit{software} como servicio privadas, de alrededor del 86 al 90\,\% anual~\parencite{KeyBanc2025SaaS}. En cambio, el ritmo de incorporación de instituciones y la cantidad de materias evaluadas por estudiante no tienen una referencia externa y son, junto con el precio, los supuestos que más conviene validar con potenciales clientes. Con 14,3 instituciones activas en el quinto año, el escenario optimista implica alcanzar a una de cada cinco instituciones privadas.
+
+\subsection{Flujos de fondos}
+
+Las Tablas~\ref{tab:neg_flujo_pes}, \ref{tab:neg_flujo_base} y~\ref{tab:neg_flujo_opt} presentan el flujo de fondos libre de cada escenario con la estructura de la plantilla de la cátedra: ingresos, costos, resultado operativo antes de amortizaciones (EBITDA), amortización de la inversión ---que no es una salida de caja y solo reduce la base del impuesto---, impuesto a las ganancias con compensación de quebrantos, inversión y capital de trabajo. Las cifras de instituciones son valores esperados y por eso admiten decimales. La Figura~\ref{fig:neg_ingresos_costos} muestra la relación entre ingresos y costos operativos en el escenario base.
+
+\begin{table}[htbp]
+    \caption{Flujo de fondos libre, escenario pesimista (USD)}
+    \label{tab:neg_flujo_pes}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r r r r}
+        \toprule
+        \tblhead \textbf{Concepto} & \textbf{Año 0} & \textbf{Año 1} & \textbf{Año 2} & \textbf{Año 3} & \textbf{Año 4} & \textbf{Año 5} \\
+        \midrule
+        Instituciones al cierre & -- & 1,0 & 2,9 & 4,4 & 5,8 & 6,9 \\
+        Estudiantes activos & -- & 500 & 1.850 & 3.422 & 4.759 & 5.895 \\
+        (+) Ingresos & -- & 5.250 & 19.425 & 35.936 & 49.971 & 61.900 \\
+        ($-$) Personal (personas) & -- & $-$55.966 (2) & $-$55.966 (2) & $-$55.966 (2) & $-$63.094 (2) & $-$94.641 (3) \\
+        ($-$) Infraestructura & -- & $-$1.857 & $-$1.996 & $-$2.159 & $-$2.297 & $-$2.414 \\
+        ($-$) Ingresos Brutos y comercialización & -- & $-$682 & $-$2.525 & $-$4.672 & $-$6.496 & $-$8.047 \\
+        ($-$) Administración & -- & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 \\
+        (=) EBITDA & -- & $-$59.255 & $-$47.062 & $-$32.860 & $-$27.916 & $-$49.201 \\
+        ($-$) Amortización de la inversión & -- & $-$5.606 & $-$5.606 & $-$5.606 & 0 & 0 \\
+        (=) Resultado antes de impuestos & -- & $-$64.861 & $-$52.668 & $-$38.465 & $-$27.916 & $-$49.201 \\
+        ($-$) Impuesto a las Ganancias & -- & 0 & 0 & 0 & 0 & 0 \\
+        (+) Amortización (no es salida de caja) & -- & 5.606 & 5.606 & 5.606 & 0 & 0 \\
+        ($-$) Inversión inicial & $-$16.817 & -- & -- & -- & -- & -- \\
+        ($-$) Variación del capital de trabajo & -- & $-$432 & $-$1.165 & $-$1.357 & $-$1.154 & $-$980 \\
+        (+) Recupero del capital de trabajo & -- & -- & -- & -- & -- & 5.088 \\
+        \textbf{(=) Flujo de fondos libre} & \textbf{$-$16.817} & \textbf{$-$59.687} & \textbf{$-$48.227} & \textbf{$-$34.217} & \textbf{$-$29.069} & \textbf{$-$45.094} \\
+        Flujo acumulado & $-$16.817 & $-$76.503 & $-$124.731 & $-$158.948 & $-$188.017 & $-$233.111 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+    \caption{Flujo de fondos libre, escenario base (USD)}
+    \label{tab:neg_flujo_base}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r r r r}
+        \toprule
+        \tblhead \textbf{Concepto} & \textbf{Año 0} & \textbf{Año 1} & \textbf{Año 2} & \textbf{Año 3} & \textbf{Año 4} & \textbf{Año 5} \\
+        \midrule
+        Instituciones al cierre & -- & 2,0 & 4,8 & 7,2 & 9,3 & 11,2 \\
+        Estudiantes activos & -- & 1.500 & 4.890 & 8.533 & 11.739 & 14.561 \\
+        (+) Ingresos & -- & 23.000 & 74.980 & 130.842 & 180.001 & 223.261 \\
+        ($-$) Personal (personas) & -- & $-$55.966 (2) & $-$55.966 (2) & $-$83.949 (3) & $-$94.641 (3) & $-$94.641 (3) \\
+        ($-$) Infraestructura & -- & $-$1.960 & $-$2.310 & $-$2.686 & $-$3.593 & $-$3.884 \\
+        ($-$) Ingresos Brutos y comercialización & -- & $-$2.990 & $-$9.747 & $-$17.010 & $-$23.400 & $-$29.024 \\
+        ($-$) Administración & -- & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 \\
+        (=) EBITDA & -- & $-$43.916 & 957 & 21.198 & 52.367 & 89.712 \\
+        ($-$) Amortización de la inversión & -- & $-$5.606 & $-$5.606 & $-$5.606 & 0 & 0 \\
+        (=) Resultado antes de impuestos & -- & $-$49.522 & $-$4.649 & 15.593 & 52.367 & 89.712 \\
+        ($-$) Impuesto a las Ganancias & -- & 0 & 0 & 0 & $-$3.447 & $-$22.510 \\
+        (+) Amortización (no es salida de caja) & -- & 5.606 & 5.606 & 5.606 & 0 & 0 \\
+        ($-$) Inversión inicial & $-$16.817 & -- & -- & -- & -- & -- \\
+        ($-$) Variación del capital de trabajo & -- & $-$1.890 & $-$4.272 & $-$4.591 & $-$4.040 & $-$3.556 \\
+        (+) Recupero del capital de trabajo & -- & -- & -- & -- & -- & 18.350 \\
+        \textbf{(=) Flujo de fondos libre} & \textbf{$-$16.817} & \textbf{$-$45.806} & \textbf{$-$3.316} & \textbf{16.607} & \textbf{44.880} & \textbf{81.997} \\
+        Flujo acumulado & $-$16.817 & $-$62.623 & $-$65.939 & $-$49.332 & $-$4.452 & 77.545 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+    \caption{Flujo de fondos libre, escenario optimista (USD)}
+    \label{tab:neg_flujo_opt}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r r r r}
+        \toprule
+        \tblhead \textbf{Concepto} & \textbf{Año 0} & \textbf{Año 1} & \textbf{Año 2} & \textbf{Año 3} & \textbf{Año 4} & \textbf{Año 5} \\
+        \midrule
+        Instituciones al cierre & -- & 2,0 & 4,8 & 8,3 & 11,5 & 14,3 \\
+        Estudiantes activos & -- & 2.000 & 6.600 & 12.640 & 18.976 & 24.678 \\
+        (+) Ingresos & -- & 34.500 & 113.850 & 218.040 & 327.336 & 425.702 \\
+        ($-$) Personal (personas) & -- & $-$55.966 (2) & $-$55.966 (2) & $-$83.949 (3) & $-$94.641 (3) & $-$126.188 (4) \\
+        ($-$) Infraestructura & -- & $-$2.012 & $-$2.487 & $-$3.686 & $-$4.340 & $-$5.504 \\
+        ($-$) Ingresos Brutos y comercialización & -- & $-$4.485 & $-$14.800 & $-$28.345 & $-$42.554 & $-$55.341 \\
+        ($-$) Administración & -- & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 & $-$6.000 \\
+        (=) EBITDA & -- & $-$33.963 & 34.597 & 96.060 & 179.802 & 232.669 \\
+        ($-$) Amortización de la inversión & -- & $-$5.606 & $-$5.606 & $-$5.606 & 0 & 0 \\
+        (=) Resultado antes de impuestos & -- & $-$39.568 & 28.992 & 90.455 & 179.802 & 232.669 \\
+        ($-$) Impuesto a las Ganancias & -- & 0 & 0 & $-$7.988 & $-$49.537 & $-$65.397 \\
+        (+) Amortización (no es salida de caja) & -- & 5.606 & 5.606 & 5.606 & 0 & 0 \\
+        ($-$) Inversión inicial & $-$16.817 & -- & -- & -- & -- & -- \\
+        ($-$) Variación del capital de trabajo & -- & $-$2.836 & $-$6.522 & $-$8.564 & $-$8.983 & $-$8.085 \\
+        (+) Recupero del capital de trabajo & -- & -- & -- & -- & -- & 34.989 \\
+        \textbf{(=) Flujo de fondos libre} & \textbf{$-$16.817} & \textbf{$-$36.798} & \textbf{28.075} & \textbf{79.509} & \textbf{121.282} & \textbf{194.177} \\
+        Flujo acumulado & $-$16.817 & $-$53.615 & $-$25.540 & 53.969 & 175.251 & 369.428 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.85\textwidth, height=6.2cm, ybar, bar width=12pt,
+            xlabel={Año}, ylabel={Miles de USD}, ymin=0,
+            xtick={1,2,3,4,5}, enlarge x limits=0.15,
+            /pgf/number format/use comma,
+            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=2, font=\small}, legend cell align=left,
+            grid=major, grid style={gray!25}, label style={font=\small}, tick label style={font=\small},
+        ]
+            \addplot[fill=improntiaazul, draw=none] coordinates {(1,23.0) (2,75.0) (3,130.8) (4,180.0) (5,223.3)};
+            \addlegendentry{Ingresos}
+            \addplot[fill=warnline!80, draw=none] coordinates {(1,66.9) (2,74.0) (3,109.6) (4,127.6) (5,133.5)};
+            \addlegendentry{Costos operativos (sin amortización ni impuestos)}
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Ingresos y costos operativos del escenario base]{Ingresos y costos operativos del escenario base. Los ingresos superan ligeramente a los costos operativos desde el segundo año y el excedente aumenta a partir del tercero; los costos están dominados por el personal y crecen por escalones al sumar una persona cada seis instituciones. Fuente: elaboración propia con el modelo financiero.}
+    \label{fig:neg_ingresos_costos}
+\end{figure}
+
+\subsection{Resultados}
+
+La Tabla~\ref{tab:neg_resultados} resume los indicadores y la Figura~\ref{fig:neg_acumulado} muestra el flujo acumulado de cada escenario.
+
+\begin{table}[htbp]
+    \caption{Indicadores de evaluación por escenario (tasa de descuento 20,36\,\%)}
+    \label{tab:neg_resultados}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r}
+        \toprule
+        \tblhead \textbf{Indicador} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
+        \midrule
+        VAN sin valor residual (USD) & $-$151.016 & 6.201 & 152.230 \\
+        Valor residual al año~5 (USD) & 0 & 182.726 & 495.795 \\
+        VAN con valor residual (USD) & $-$151.016 & 78.530 & 348.481 \\
+        TIR sin valor residual & no existe & 23,8\,\% & 90,6\,\% \\
+        TIR con valor residual & no existe & 49,9\,\% & 116,6\,\% \\
+        Período de recupero simple & no se recupera & 4,1 años & 2,3 años \\
+        Período de recupero descontado & no se recupera & 4,8 años & 2,6 años \\
+        Necesidad máxima de financiamiento (USD) & 233.111 & 65.939 & 53.615 \\
+        Año de la necesidad máxima & 5 & 2 & 1 \\
+        Punto de equilibrio (instituciones, costos fijos del año~3) & 7,1 & 4,6 & 3,1 \\
+        Instituciones activas al cierre del año~3 & 4,4 & 7,2 & 8,3 \\
+        Precio por asiento que anula el VAN con valor residual (USD) & 8,82 & 2,71 & 1,80 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.85\textwidth, height=6.6cm,
+            xlabel={Año}, ylabel={Flujo acumulado (miles de USD)},
+            xmin=0, xmax=5, xtick={0,1,2,3,4,5},
+            /pgf/number format/use comma, /pgf/number format/1000 sep={.},
+            legend style={at={(0.03,0.97)}, anchor=north west, font=\small}, legend cell align=left,
+            grid=major, grid style={gray!25}, label style={font=\small}, tick label style={font=\small},
+        ]
+            \addplot[black, thin, dashed, forget plot] coordinates {(0,0) (5,0)};
+            \addplot[color=warnline, mark=triangle*, thick] coordinates {(0,-16.8) (1,-76.5) (2,-124.7) (3,-158.9) (4,-188.0) (5,-233.1)};
+            \addlegendentry{Pesimista}
+            \addplot[color=accent, mark=*, thick] coordinates {(0,-16.8) (1,-62.6) (2,-65.9) (3,-49.3) (4,-4.5) (5,77.5)};
+            \addlegendentry{Base}
+            \addplot[color=improntiaazul, mark=square*, thick] coordinates {(0,-16.8) (1,-53.6) (2,-25.5) (3,54.0) (4,175.3) (5,369.4)};
+            \addlegendentry{Optimista}
+            \node[font=\scriptsize, anchor=north, align=center, fill=white, inner sep=1pt] at (axis cs:2,-110.9) {necesidad máxima\\(base): USD~65.939};
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Flujo de fondos acumulado por escenario]{Flujo de fondos acumulado por escenario. El punto más bajo de cada curva es la necesidad máxima de financiamiento; el cruce con el eje, el período de recupero. Fuente: elaboración propia con el modelo financiero (Apéndice~\ref{apx:modelo_financiero}).}
+    \label{fig:neg_acumulado}
+\end{figure}
+
+En el \textbf{escenario base} el proyecto es viable sin depender del valor residual: el VAN es de USD~6.201, la TIR (23,8\,\%) supera la tasa exigida del 20,36\,\% y la inversión se recupera en 4,1 años (4,8 años en términos descontados), dentro del horizonte. El resultado operativo es prácticamente nulo en el segundo año y positivo desde el tercero. El punto de equilibrio exige 4,6 instituciones con los costos fijos del año~3, y la cartera llega a 7,2 al cierre de ese año. La necesidad máxima de financiamiento es de USD~65.939, al cierre del año~2: unas cuatro veces la inversión inicial (USD~16.817), porque a la inversión se suman las pérdidas del primer año y el capital de trabajo. Con el valor residual de la cartera existente, el VAN llega a USD~78.530. Es un resultado positivo pero moderado: el margen sobre la tasa exigida es acotado y depende de sostener el precio de lista y el ritmo de incorporación de instituciones.
+
+En el \textbf{escenario optimista} el proyecto es rentable con holgura: el VAN es de USD~152.230 aun sin valor residual, la TIR (90,6\,\%) supera ampliamente la tasa exigida y la inversión se recupera en 2,3 años (2,6 años en términos descontados).
+
+En el \textbf{escenario pesimista} el proyecto no es viable: con 1.000 estudiantes por institución, tres materias y un precio menor, los ingresos no llegan a cubrir el costo de las dos personas fundadoras, el punto de equilibrio exige 7,1 instituciones y el flujo es negativo en todos los años. Ese escenario es el que justifica el hito de continuidad de la Sección~\ref{sec:neg_decisiones}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.85\textwidth, height=6.6cm,
+            xlabel={Tasa de descuento (\%)}, ylabel={VAN (miles de USD)},
+            xmin=0, xmax=60, xtick={0,10,20,30,40,50,60},
+            /pgf/number format/use comma, /pgf/number format/1000 sep={.},
+            legend style={at={(0.97,0.97)}, anchor=north east, font=\small}, legend cell align=left,
+            grid=major, grid style={gray!25}, label style={font=\small}, tick label style={font=\small},
+        ]
+            \addplot[black, thin, dashed, forget plot] coordinates {(0,0) (60,0)};
+            \addplot[color=improntiaazul, mark=square*, thick] coordinates {(0,369.4) (10,236.1) (20,154.6) (30,102.4) (40,67.9) (50,44.2) (60,27.6)};
+            \addlegendentry{Optimista}
+            \addplot[color=accent, mark=*, thick] coordinates {(0,77.5) (10,32.8) (20,6.9) (30,-8.7) (40,-18.2) (50,-24.2) (60,-28.0)};
+            \addlegendentry{Base}
+            \addplot[gray, thick, dotted, forget plot] coordinates {(20.36,-150) (20.36,250)};
+            \node[font=\scriptsize, anchor=south west] at (axis cs:20.36,150) {tasa del proyecto: 20,36\,\%};
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Perfil del VAN sin valor residual según la tasa de descuento]{Perfil del VAN sin valor residual según la tasa de descuento. Donde cada curva corta el cero está su TIR; la distancia entre la TIR y la tasa del proyecto es el margen de seguridad frente a una tasa mal estimada. Fuente: elaboración propia con el modelo financiero.}
+    \label{fig:neg_perfil_van}
+\end{figure}
+
+\subsection{Sensibilidad}
+\label{sec:neg_sensibilidad}
+
+La Tabla~\ref{tab:neg_sensibilidad} muestra cómo cambia el VAN con valor residual al variar una sola variable por vez, manteniendo los demás parámetros de cada escenario, y la Figura~\ref{fig:neg_precio} muestra el efecto del precio, la variable más influyente.
+
+\begin{table}[htbp]
+    \caption{Sensibilidad del VAN con valor residual (USD)}
+    \label{tab:neg_sensibilidad}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r}
+        \toprule
+        \tblhead \textbf{Variación} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
+        \midrule
+        Precio por asiento: USD 2,50 & $-$161.666 & $-$23.524 & 113.638 \\
+        Precio por asiento: USD 3,00 & $-$151.016 & 29.679 & 190.759 \\
+        Precio por asiento: USD 3,50 & $-$140.365 & 78.530 & 269.620 \\
+        Precio por asiento: USD 4,00 & $-$129.714 & 124.979 & 348.481 \\
+        Precio por asiento: USD 4,50 & $-$119.064 & 172.131 & 427.011 \\
+        \midrule
+        Bajas anuales: 5\,\% & $-$155.308 & 117.106 & 453.351 \\
+        Bajas anuales: 10\,\% & $-$160.849 & 97.675 & 348.481 \\
+        Bajas anuales: 15\,\% & $-$151.016 & 53.127 & 265.196 \\
+        Bajas anuales: 20\,\% & $-$155.886 & 18.617 & 202.251 \\
+        \midrule
+        Tasa de descuento: 15\,\% & $-$166.724 & 127.088 & 489.966 \\
+        Tasa de descuento: 25\,\% & $-$139.634 & 50.544 & 266.671 \\
+        Tasa de descuento: 30\,\% & $-$129.164 & 29.265 & 203.806 \\
+        \midrule
+        Días de cobro: 0 (cobro anticipado) & $-$150.151 & 81.751 & 353.880 \\
+        Días de cobro: 90 & $-$152.745 & 72.087 & 337.683 \\
+        \midrule
+        Sin beneficios de la Ley~27.506 & $-$165.945 & 64.335 & 328.213 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.85\textwidth, height=6.2cm,
+            xlabel={Precio por asiento (USD)}, ylabel={VAN con valor residual (miles de USD)},
+            xmin=2.5, xmax=5, xtick={2.5,3,3.5,4,4.5,5},
+            /pgf/number format/use comma, /pgf/number format/1000 sep={.},
+            legend style={at={(0.03,0.97)}, anchor=north west, font=\small}, legend cell align=left,
+            grid=major, grid style={gray!25}, label style={font=\small}, tick label style={font=\small},
+        ]
+            \addplot[black, thin, dashed, forget plot] coordinates {(2.5,0) (5,0)};
+            \addplot[color=warnline, mark=triangle*, thick] coordinates {(2.5,-161.7) (3.0,-151.0) (3.5,-140.4) (4.0,-129.7) (4.5,-119.1) (5.0,-108.4)};
+            \addlegendentry{Pesimista}
+            \addplot[color=accent, mark=*, thick] coordinates {(2.5,-23.5) (3.0,29.7) (3.5,78.5) (4.0,125.0) (4.5,172.1) (5.0,219.7)};
+            \addlegendentry{Base}
+            \addplot[color=improntiaazul, mark=square*, thick] coordinates {(2.5,113.6) (3.0,190.8) (3.5,269.6) (4.0,348.5) (4.5,427.0) (5.0,505.4)};
+            \addlegendentry{Optimista}
+            \node[font=\scriptsize, anchor=south east] at (axis cs:2.71,0) {base: VAN $=0$ con USD~2,71};
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Sensibilidad del VAN con valor residual al precio por asiento, con los demás parámetros de cada escenario]{Sensibilidad del VAN con valor residual al precio por asiento, con los demás parámetros de cada escenario. Fuente: elaboración propia con el modelo financiero.}
+    \label{fig:neg_precio}
+\end{figure}
+
+Se destacan cuatro resultados. Primero, el \textbf{precio por asiento} es la variable crítica: en el escenario base, el VAN sin valor residual se anula con un precio de USD~3,39 por asiento y el VAN con valor residual, con USD~2,71; el precio de lista tiene, por lo tanto, un margen de error acotado, de alrededor del 3\,\% sin valor residual y del 23\,\% con él. Segundo, la \textbf{tasa de bajas} pesa menos que el precio en el horizonte analizado, porque la cartera todavía es pequeña, aunque su efecto se acumula en el valor residual. En el escenario pesimista su efecto ni siquiera es monótono, pero se trata de un artefacto de la regla discreta de incorporación de personal: con menos bajas, la cartera cruza antes el umbral de seis instituciones y suma una persona cuyo costo los ingresos de esas instituciones no alcanzan a cubrir. Tercero, los \textbf{días de cobro} tienen un efecto moderado: cobrar por adelantado mejora el VAN y cobrar a noventa días lo empeora, pero ninguno de los dos cambia la conclusión de un escenario. Cuarto, sin los beneficios del Régimen de Promoción de la Economía del Conocimiento (Ley~27.506, modificada por la Ley~27.570: un bono de crédito fiscal de hasta el 70\,\% de las contribuciones patronales y una reducción del 60\,\% del impuesto a las ganancias para micro y pequeñas empresas, vigentes hasta el 31 de diciembre de 2029~\parencite{Argentina2020Ley27570}), que el caso de referencia incluye en los años~1 a~3, el VAN sin valor residual del escenario base pasa a USD~$-$7.993 y el VAN con valor residual sigue siendo positivo (USD~64.335): la inscripción en el régimen es parte de la estrategia, pero el valor de la cartera no depende de ella.
+
+\subsection{Plan de financiamiento}
+\label{sec:neg_financiamiento}
+
+El plan responde cuánto financiamiento hace falta, cuándo y de dónde, con la regla práctica de no financiar con deuda lo que todavía no genera flujo para pagarla~\parencite{UADE2026ModeloNegocio}. La cifra que lo ordena es la necesidad máxima de financiamiento del escenario base, USD~65.939, y no la inversión inicial de USD~16.817. La Tabla~\ref{tab:neg_financiamiento} distribuye esa necesidad por etapas según el flujo acumulado del escenario base (Figura~\ref{fig:neg_acumulado}).
+
+\begin{table}[htbp]
+    \caption{Plan de financiamiento por etapas (escenario base)}
+    \label{tab:neg_financiamiento}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}X}
+        \toprule
+        \tblhead \textbf{Etapa} & \textbf{Necesidad acumulada (USD)} & \textbf{Fuentes previstas} \\
+        \midrule
+        Año~0: puesta en producción & 16.817 & Aporte de las personas fundadoras, en trabajo y en dinero, bajo la forma de una sociedad por acciones simplificada~\parencite{Argentina2017Ley27349}; concursos e incubadoras universitarias. \\
+        Años~1 y~2: primeras instituciones & 65.939 (máximo, al cierre del año~2) & Aportes no reembolsables para desarrollo tecnológico (FONTAR, Agencia~I+D+i) y capital semilla de inversores ángeles; inscripción en el Régimen de Promoción de la Economía del Conocimiento~\parencite{UADE2026ModeloNegocio, Argentina2020Ley27570}. \\
+        Años~3 y~4: flujo positivo & se reduce a 4.452 & Fondos propios del proyecto; el segundo tramo de capital semilla se condiciona al hito de continuidad del año~2 (Sección~\ref{sec:neg_decisiones}). \\
+        Año~5: recupero & acumulado positivo de 77.545 & Recién entonces cabe el crédito bancario con aval de una sociedad de garantía recíproca para financiar el crecimiento. \\
+        \bottomrule
+    \end{tabularx}
+    \par\smallskip
+    \raggedright\footnotesize Fuente: elaboración propia con el modelo financiero; etapas e instrumentos según la guía de la cátedra~\parencite{UADE2026ModeloNegocio}. Antes de recurrir a un instrumento debe verificarse su convocatoria y sus requisitos vigentes.
+\end{table}
+
+El financiamiento por etapas acota el riesgo de quien aporta los fondos: cada tramo se libera solo si se cumple el hito de la etapa anterior. Sin deuda, el plan es coherente con la tasa de descuento adoptada, que corresponde a un proyecto financiado con capital propio.
+
+\subsection{Decisiones que se derivan del análisis}
+\label{sec:neg_decisiones}
+
+El análisis identifica las condiciones en las que ImprontIA es rentable y permite organizar el lanzamiento para comprobarlas con el menor costo posible:
+
+\begin{enumerate}
+    \item \textbf{Precio de lista de USD~3,50 por asiento}, con el cargo fijo de plataforma, y descuentos solo por volumen o por compromiso plurianual. Es el precio del escenario base; como el margen sobre el precio de equilibrio es acotado, los descuentos no deberían llevarlo por debajo de USD~3,39. El precio sigue por debajo del primer bloque de Respondus Monitor.
+    \item \textbf{Lanzamiento por etapas con un hito de continuidad al cierre del año~2}: continuar solo si hay al menos cuatro instituciones activas con más de 1.000 estudiantes cada una, un nivel por debajo del escenario base en ese año (4,8 instituciones). Si en el escenario pesimista se abandona el proyecto al cierre del año~2, el VAN de la pérdida se reduce de USD~$-$151.016 a USD~$-$99.694.
+    \item \textbf{Prueba sin costo en una cátedra} como canal de entrada comercial, posterior e independiente del piloto con voluntarios del Capítulo~\ref{ch:evaluacion}, que se realiza antes y con su propio protocolo.
+    \item \textbf{Inscripción en el Régimen de Promoción de la Economía del Conocimiento} desde el inicio, como supone el caso de referencia, y \textbf{facturación de la suscripción anual al comienzo del ciclo lectivo}, para acotar el capital de trabajo.
+\end{enumerate}
+
+\begin{keyfinding}{Síntesis de la viabilidad económico-financiera}
+ImprontIA tiene una estructura de costos típica del \textit{software}: costos fijos de personal, costos variables muy bajos y una inversión inicial reducida (USD~16.817), porque el MVP ya está construido. En el escenario base, con el precio de lista de USD~3,50 por asiento y dos instituciones el primer año, el proyecto es viable: VAN de USD~6.201 sin valor residual, TIR de 23,8\,\% frente a una tasa exigida del 20,36\,\% y recupero en 4,1 años, con una necesidad máxima de financiamiento de USD~65.939. Con mayor adopción, el escenario optimista es claramente rentable (VAN de USD~152.230), y con menor adopción y precio el proyecto no recupera la inversión (escenario pesimista: VAN de USD~$-$151.016). La viabilidad depende de sostener el precio y el ritmo de incorporación de instituciones, y el riesgo se gestiona con un lanzamiento y un financiamiento por etapas y un hito de continuidad al cierre del segundo año.
+\end{keyfinding}
+
+\subsection{Limitaciones del análisis}
+
+Los precios de referencia provienen del mercado estadounidense y algunos tienen varios años; la disposición a pagar de las universidades argentinas no se relevó y es la principal incertidumbre. Para relevarla, la literatura sobre medición de la disposición a pagar desaconseja preguntar en forma directa por el precio aceptable, porque las respuestas tienden a sesgarse, y recomienda métodos indirectos como el análisis conjunto o, al menos, cuestionarios estructurados de sensibilidad al precio~\parencite{Breidert2006}. Las remuneraciones se tomaron de una encuesta voluntaria y se convirtieron a dólares a una fecha fija, por lo que una apreciación real del peso encarecería el proyecto en dólares. En sentido contrario, no se incorporaron las reducciones de contribuciones patronales que prevé la Ley~27.802 de Modernización Laboral, publicada en marzo de 2026, para nuevas contrataciones y como contrapartida de los aportes al Fondo de Asistencia Laboral, porque su aplicación depende de la reglamentación y de la situación de cada persona contratada~\parencite{KPMG2026Ley27802}; de aplicarse, reducirían el costo laboral. La tasa de descuento usa parámetros de mercados cotizantes y no incluye una prima específica por tamaño o por etapa temprana, que la elevaría. Los días de cobro son un supuesto: la contratación con universidades puede seguir circuitos administrativos más largos, cuyo efecto se acota en la sensibilidad. El caso de referencia supone, además, la inscripción en el Régimen de Promoción de la Economía del Conocimiento y dos instituciones en el primer año, supuestos que el lanzamiento debe confirmar. La planilla de cálculo con todos los supuestos, el flujo de fondos y los indicadores se incluye en el Apéndice~\ref{apx:modelo_financiero}.
+
+\section{Identidad de marca}
+\label{sec:neg_marca}
+
+La marca es una herramienta de negocio: el valor que agrega a un producto depende de lo que los clientes saben y asocian con ella, es decir, de su notoriedad y de su imagen~\parencite{Keller1993}. Para un producto que trata datos de estudiantes, la imagen buscada es la de una herramienta \textbf{confiable, transparente y respetuosa}, que ayuda a decidir sin decidir por nadie. Los elementos de la identidad se diseñaron con ese objetivo.
+
+\subsection{Nombre}
+
+\textit{ImprontIA} combina \textit{impronta} con la sigla \textit{IA}. Impronta designa la reproducción de una imagen en relieve sobre una materia blanda y, en sentido figurado, la marca o huella que algo deja en otra cosa~\parencite{RAEImpronta}. El nombre expresa así el concepto central del proyecto: cada persona deja una huella característica en su forma de escribir, y el sistema registra esa huella del proceso para reconstruir la autoría. La sigla final, destacada en el logotipo, sitúa el producto en el campo de la inteligencia artificial y alude también al problema que lo motiva, la escritura asistida por IA.
+
+\subsection{Logotipo}
+
+El logotipo (Figura~\ref{fig:neg_logo}) combina un símbolo y un nombre en disposición horizontal. El símbolo es una huella dactilar formada por crestas concéntricas, una imagen asociada de inmediato con la identidad y la autoría personal. Se eligió una figura reconocible y de trazo simple por sobre un ícono abstracto, porque los logotipos naturales, armónicos y de complejidad moderada se reconocen mejor y generan una reacción más favorable~\parencite{HendersonCote1998}. El trazo se basa en un ícono de la biblioteca Lucide, distribuido bajo licencia ISC, que permite usarlo, modificarlo y distribuirlo con fines comerciales conservando el aviso de autoría~\parencite{LucideLicense}; los trazos se recompusieron y se recolorearon para la marca.
+
+\begin{figure}[htbp]
+    \centering
+    \IfFileExists{./figures/logo_improntia.png}{%
+        \includegraphics[width=0.6\textwidth]{./figures/logo_improntia.png}%
+    }{%
+        \fbox{\parbox[c][2.2cm][c]{0.6\textwidth}{\centering\sffamily\Huge\color{improntiatinta}impront\textbf{\color{improntiaazul}IA}}}%
+    }
+    \caption{Logotipo de ImprontIA, versión horizontal sobre fondo blanco. Fuente: elaboración propia.}
+    \label{fig:neg_logo}
+\end{figure}
+
+\subsection{Paleta y tipografía}
+
+La paleta se reduce a tres colores: negro (\#000000) como fondo principal en piezas digitales, una tinta oscura (\#0B1220) para fondos claros e impresión, y un azul vívido (\#4888F4, {\color{improntiaazul}\rule{1.2em}{0.8em}}) como acento en la huella y en la sigla IA. El azul se asocia con la competencia y la confiabilidad~\parencite{LabrecqueMilne2012}, los atributos que debe transmitir una herramienta que produce evidencia para decisiones académicas. El contraste entre fondo oscuro y acento azul identifica la marca con el ámbito tecnológico, y la versión sobre fondo blanco asegura la legibilidad en documentos e impresión.
+
+La tipografía es Poppins, una familia geométrica de código abierto publicada bajo la licencia SIL Open Font License~1.1~\parencite{Poppins}, que admite su uso comercial. En el logotipo se usa en peso medio para \textit{impront} y en negrita para \textit{IA}, y se convirtió a curvas para no depender de que la fuente esté instalada.
+
+\subsection{Tono, mensaje y aplicaciones}
+
+El tono de la marca es sobrio, explicativo y respetuoso: describe lo que el sistema registra y lo que no, evita el vocabulario de la vigilancia (\textit{detectar tramposos}, \textit{atrapar}) y nunca presenta un indicador como una prueba. El mensaje central es \textit{de un evento, a una señal, a evidencia}, que resume el recorrido de la información y la idea de trazabilidad. El nombre, el símbolo de la huella y este mensaje forman un sistema coherente: identidad, proceso y decisión humana.
+
+El sistema de identidad contempla versiones horizontal y vertical del logotipo, sobre fondo negro, sobre fondo blanco, transparentes y monocromas, además de íconos cuadrados para aplicaciones, con un margen libre alrededor del logotipo igual a la altura de la huella. Las acciones de comunicación previstas se dirigen a quienes deciden en las instituciones (secretarías académicas y áreas de educación a distancia) y se apoyan en contenidos sobre integridad académica, protección de datos y uso responsable de la inteligencia artificial, coherentes con el posicionamiento del producto.
+
+\section{Conclusión del capítulo}
+
+ImprontIA cuenta con un modelo de negocio claro: suscripción anual a instituciones de educación superior, con un precio por asiento que acompaña el uso real y se ubica en el tramo inferior de la supervisión con video. La evaluación económico-financiera muestra que el proyecto es viable en el escenario base, con un margen moderado, rentable con holgura si la adopción es mayor y no viable si la adopción y el precio son menores. La viabilidad depende, por lo tanto, de la adopción y del precio, no de los costos de operación, que son bajos y escalables. Por eso se propone un lanzamiento y un financiamiento por etapas ---con una necesidad máxima de USD~65.939 en el escenario base---, con una prueba sin costo en una cátedra como canal de entrada comercial y un hito de continuidad que limite la pérdida si la adopción es baja. El análisis supone, además, que el producto llega a producción una vez cumplidas las condiciones de la puesta en producción ---piloto con voluntarios, calibración con datos reales, evaluación de impacto, procedimiento para el ejercicio de derechos, pruebas de carga en la infraestructura de producción y auditoría de seguridad (Capítulo~\ref{ch:viabilidad})---; la inversión del año~0 incluye la evaluación de impacto, la auditoría de seguridad y dos meses de trabajo de las personas fundadoras para llevar el MVP a producción. La viabilidad económico-financiera queda así vinculada a ese plan y a la validación del precio y de la adopción. La identidad de marca refuerza el posicionamiento: una huella que documenta el proceso para que una persona decida.

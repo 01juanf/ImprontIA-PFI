@@ -1,0 +1,58 @@
+# Artefactos de compilación LaTeX (se regeneran al compilar)
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bcf
+*.run.xml
+*.bbl
+*.bbl-SAVE-ERROR
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+
+# Archivos del sistema
+.DS_Store
+
+# ---- MVP: Python ----
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Bases SQLite locales (se crean al correr el backend o los tests)
+*.db
+*.sqlite3
+
+# ---- MVP: dashboard (Node) ----
+node_modules/
+mvp/dashboard/dist/
+*.tsbuildinfo
+
+# ---- Configuración local y secretos ----
+.env
+.env.*
+!.env.example
+
+# ---- Salidas regenerables de los scripts del MVP ----
+# (los reportes .md y los CSV chicos sí se versionan; ver mvp/docs/bitacora.md)
+mvp/docs/evaluacion/resultados_sinteticos.json
+mvp/docs/evaluacion/sesiones_sinteticas.csv
+mvp/docs/evaluacion/prueba_interna.json
+mvp/docs/evaluacion/prueba_red.json
+
+# ---- Respaldos de la base (contienen datos de estudiantes: nunca al repo) ----
+mvp/respaldos/
+*.dump
+
+# ---- Material descartado ----
+_to_delete/
+
+# Entornos virtuales con otro nombre (p. ej. .venv312)
+.venv*/

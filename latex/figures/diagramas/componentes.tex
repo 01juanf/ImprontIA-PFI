@@ -1,0 +1,106 @@
+% Diagrama de componentes del MVP de ImprontIA (T25, rúbrica 3.2).
+% Fiel al código de TESIS/pfi/mvp al 14/10/2026 (Incremento 10 + revisión M7); espaciado vertical
+% corregido el 22/10/2026 para que routers/exams.py y routers/sessions.py no se superpongan: cada caja nombra el módulo real.
+% - Quien lee y escribe la base es routers/sessions.py::_run_processing; los módulos de
+%   processing/ son funciones puras (no acceden a la base).
+% - _run_processing llama a features.compute_all_features, anomaly.fit_population_model y
+%   pipeline.evaluate_session; esta última compone las reglas (indicators.py) y el puntaje
+%   del modelo (anomaly.score_with_model).
+% - api.ts es el mismo módulo en las dos vistas: endpoints públicos con token de sesión
+%   (estudiante) y endpoints con JWT (docente).
+% Uso:
+%   \begin{figure}[h!]
+%     \centering
+%     \input{figures/diagramas/componentes}
+%     \caption{...}\label{fig:diag_componentes}
+%   \end{figure}
+% IMPORTANTE: las bibliotecas TikZ se cargan UNA vez en el preámbulo de main_full.tex:
+%   \usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.multipart}
+% (cargarlas dentro de un entorno figure no sirve: la carga queda local a ese grupo
+% y el segundo diagrama falla con "Unknown arrow tip kind 'Stealth'").
+\begin{tikzpicture}[
+    font={\linespread{1}\scriptsize},
+    execute at begin node={\hyphenpenalty=10000},
+    comp/.style={draw=accent, fill=white, rounded corners=1.5pt, minimum height=7mm,
+                 text width=#1, align=center, inner sep=2pt},
+    comp/.default=31mm,
+    grupo/.style={draw=accent, fill=accentlight, rounded corners=3pt, inner xsep=5pt, inner ysep=5pt},
+    subgrupo/.style={draw=accent, dashed, fill=white!55!accentlight, rounded corners=2pt, inner sep=3.5pt},
+    etiq/.style={font={\linespread{1}\scriptsize\bfseries}, text=accent, anchor=south west, inner sep=1pt},
+    externo/.style={draw=black!70, fill=black!4, rounded corners=1.5pt, minimum height=7mm,
+                 text width=#1, align=center, inner sep=2pt},
+    flecha/.style={-{Stealth[length=1.8mm]}, draw=black!75, semithick},
+    doble/.style={{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, draw=black!75, semithick},
+    proto/.style={font={\linespread{1}\tiny}, align=center, inner sep=1pt},
+]
+% ======================= Backend (columna central) =======================
+\def\xB{0}
+\def\xP{0.62}   % columna de processing/, corrida a la derecha para dejar un canal a la izquierda
+\node[comp=40mm] (rauth) at (\xB, 0)      {\texttt{routers/auth.py} + \texttt{auth.py}\\ login y JWT del docente};
+\node[comp=40mm] (rexam) at (\xB,-1.15)   {\texttt{routers/exams.py}\\ evaluaciones, política versionada y cierre con análisis de la cohorte};
+\node[comp=40mm] (rsess) at (\xB,-2.72)   {\texttt{routers/sessions.py}\\ inicio, eventos validados y fin (token de sesión); consulta, revisión y eliminación (JWT); \texttt{\_run\_processing}};
+\node[comp=33mm] (feat)  at (\xP,-4.40)   {\texttt{features.py}\\ eventos $\rightarrow$ métricas};
+\node[comp=33mm] (pipe)  at (\xP,-5.35)   {\texttt{pipeline.py}\\ \texttt{evaluate\_session}};
+\node[comp=33mm] (ind)   at (\xP,-6.30)   {\texttt{indicators.py}\\ reglas; nivel por percentil};
+\node[comp=33mm] (anom)  at (\xP,-7.25)   {\texttt{anomaly.py} + \texttt{cohort.py}\\ Isolation Forest sobre la cohorte};
+\begin{scope}[on background layer]
+  \node[subgrupo, fit=(feat)(anom)] (gProc) {};
+\end{scope}
+\node[proto, font={\linespread{1}\tiny\bfseries}, text=accent, anchor=north west] at (gProc.south west)
+     {\texttt{processing/}: funciones puras, sin acceso a la base};
+\node[comp=40mm] (orm)   at (\xB,-8.70)   {\texttt{models.py} + \texttt{database.py}\\ SQLAlchemy (ORM)};
+\begin{scope}[on background layer]
+  \node[grupo, fit=(rauth)(orm)(gProc)] (gBack) {};
+\end{scope}
+\node[etiq] at (gBack.north west) {Backend FastAPI (monolito modular)};
+
+\node[externo=40mm] (db) at (\xB,-10.30) {Base de datos relacional\\ PostgreSQL (SQLite en desarrollo)};
+
+% ======================= Navegador del estudiante (izquierda) =======================
+\def\xS{-6.05}
+\node[comp=31mm] (take) at (\xS,-1.15) {\texttt{TakeExam.tsx}\\ vista \texttt{/exam/:código}};
+\node[comp=31mm] (cap)  at (\xS,-2.35) {\texttt{capture.ts}\\ \textit{listeners} nativos del DOM};
+\node[comp=31mm] (cola) at (\xS,-3.55) {\texttt{syncQueue.ts}\\ buffer acotado y \textit{backoff}};
+\node[comp=31mm] (apiE) at (\xS,-4.95) {\texttt{api.ts}\\ endpoints públicos y token de sesión};
+\begin{scope}[on background layer]
+  \node[grupo, fit=(take)(apiE)] (gEst) {};
+\end{scope}
+\node[etiq] at (gEst.north west) {Navegador del estudiante};
+
+% ======================= Navegador del docente (derecha) =======================
+\def\xD{6.05}
+\node[comp=31mm] (vistas) at (\xD,-0.50) {\texttt{Login}, \texttt{ExamsList}, \texttt{SessionsList}, \texttt{SessionDetail}, \texttt{PendingValidations}, \texttt{PolicyCard}};
+\node[comp=31mm] (apits)  at (\xD,-1.95) {\texttt{api.ts}\\ cliente HTTP con JWT};
+\begin{scope}[on background layer]
+  \node[grupo, fit=(vistas)(apits)] (gDoc) {};
+\end{scope}
+\node[etiq] at (gDoc.north west) {Navegador del docente};
+
+% ======================= Evaluación fuera de línea =======================
+\node[externo=31mm, dashed, fill=white] (eval) at (\xD,-5.35) {\texttt{evaluation/} + \texttt{scripts/evaluar.py}\\ evaluación con datos sintéticos (fuera de línea)};
+
+% ======================= Conexiones =======================
+% Estudiante: la vista engancha la captura, encola los eventos y envía los lotes con api.ts
+\draw[flecha] (take) -- (cap);
+\draw[flecha] (cap) -- (cola);
+\draw[flecha] (cola) -- node[proto, right] {lotes con \texttt{seq}} (apiE);
+\coordinate (busE) at ($(apiE.east)+(0.22,0)$);
+\draw[semithick, black!75] (apiE.east) -- (busE) -- (busE |- rexam.west);
+\draw[flecha] (busE |- rexam.west) -- node[proto, above] {\texttt{GET /exams/}\\ \texttt{\{código\}/info}} (rexam.west);
+\draw[flecha] (busE |- rsess.west) -- node[proto, above] {\texttt{POST /sessions/}\\ \texttt{X-Session-Token}} (rsess.west);
+% Docente: bus vertical hacia los tres routers
+\coordinate (bus) at ($(rauth.east)+(0.45,0)$);
+\draw[semithick, black!75] (bus) -- ($(rsess.east)+(0.45,0)$);
+\foreach \r in {rauth, rexam, rsess} { \draw[flecha] ($(\r.east)+(0.45,0)$) -- (\r.east); }
+\draw[doble] (apits.west) -- node[proto, above] {HTTPS + JSON} node[proto, below] {\texttt{Bearer JWT}} ($(apits.west -| bus)$);
+\draw[flecha] (vistas) -- (apits);
+% Procesamiento: el router llama a funciones puras y es el único que toca la base
+\draw[flecha] (rsess.south -| feat.north) -- node[proto, right] {al finalizar la sesión} (feat.north);
+\draw[flecha] (pipe) -- (ind);
+\draw[flecha] (pipe.west) -- ++(-0.13,0) |- (anom.west);
+\coordinate (canal) at ($(rsess.south west)+(0.40,0)$);
+\draw[doble] (canal) -- node[proto, sloped, above] {lee eventos y métricas de la cohorte}
+                         node[proto, sloped, below] {persiste métricas e indicadores} (canal |- orm.north);
+\draw[doble] (orm) -- node[proto, right] {SQL} (db);
+\draw[flecha, dashed] (eval.west) -- node[proto, above, pos=0.4] {reutiliza} ++(-1.2,0) |- (pipe.east);
+\end{tikzpicture}

@@ -1,0 +1,2346 @@
+{
+  "config": {
+    "repeticiones": 20,
+    "semilla_base": 2026,
+    "n_poblacion": 40,
+    "contaminacion_poblacion": 0.0,
+    "n_normales_test": 40,
+    "n_anomalas_test": 40,
+    "perfiles": [
+      "pegado_masivo",
+      "cambio_pestana",
+      "tecleo_automatizado",
+      "ritmo_distinto"
+    ],
+    "params": {
+      "dwell_mu": 95.0,
+      "dwell_sd_between": 15.0,
+      "dwell_sd_within_range": [
+        15.0,
+        30.0
+      ],
+      "flight_mu": 160.0,
+      "flight_sd_between": 35.0,
+      "flight_sd_within_range": [
+        40.0,
+        80.0
+      ],
+      "keys_range": [
+        250,
+        500
+      ],
+      "mouse_speed_mu": 0.6,
+      "mouse_speed_sd_between": 0.15,
+      "mouse_speed_cv_within": 0.3,
+      "mouse_moves_range": [
+        60,
+        150
+      ],
+      "tab_switch_lambda": 0.6,
+      "tab_hidden_mean_ms": 4000.0,
+      "paste_prob": 0.2,
+      "paste_chars_range": [
+        5,
+        60
+      ],
+      "copy_lambda": 0.3,
+      "dificultad": 2.0
+    },
+    "protocolo": "cierre"
+  },
+  "versiones": {
+    "scikit-learn": "1.5.2",
+    "numpy": "1.26.4"
+  },
+  "agregado": {
+    "pipeline": {
+      "far": {
+        "mean": 0.12375,
+        "std": 0.023612831034708313,
+        "p2_5": 0.075,
+        "p97_5": 0.16312499999999996,
+        "n": 20
+      },
+      "frr": {
+        "mean": 0.028750000000000005,
+        "std": 0.027235570781415135,
+        "p2_5": 0.0,
+        "p97_5": 0.08812499999999997,
+        "n": 20
+      }
+    },
+    "solo_reglas": {
+      "far": {
+        "mean": 0.25,
+        "std": 0.0,
+        "p2_5": 0.25,
+        "p97_5": 0.25,
+        "n": 20
+      },
+      "frr": {
+        "mean": 0.0,
+        "std": 0.0,
+        "p2_5": 0.0,
+        "p97_5": 0.0,
+        "n": 20
+      }
+    },
+    "solo_modelo": {
+      "far": {
+        "mean": 0.7625000000000001,
+        "std": 0.026282874151892347,
+        "p2_5": 0.725,
+        "p97_5": 0.813125,
+        "n": 20
+      },
+      "frr": {
+        "mean": 0.028750000000000005,
+        "std": 0.027235570781415135,
+        "p2_5": 0.0,
+        "p97_5": 0.08812499999999997,
+        "n": 20
+      }
+    },
+    "modelo_score": {
+      "auc_roc": {
+        "mean": 0.72359375,
+        "std": 0.05343923127389406,
+        "p2_5": 0.635609375,
+        "p97_5": 0.819546875,
+        "n": 20
+      },
+      "average_precision": {
+        "mean": 0.7647315383531839,
+        "std": 0.06188669560953627,
+        "p2_5": 0.6500415961350814,
+        "p97_5": 0.852350563021528,
+        "n": 20
+      },
+      "eer": {
+        "mean": 0.33,
+        "std": 0.05826437026266792,
+        "p2_5": 0.22375,
+        "p97_5": 0.4262499999999999,
+        "n": 20
+      }
+    },
+    "por_perfil": {
+      "pegado_masivo": {
+        "deteccion_pipeline": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_reglas": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_modelo": {
+          "mean": 0.06000000000000001,
+          "std": 0.08207826816681235,
+          "p2_5": 0.0,
+          "p97_5": 0.2,
+          "n": 20
+        },
+        "auc_roc": {
+          "mean": 0.543625,
+          "std": 0.12829980052903228,
+          "p2_5": 0.3804375,
+          "p97_5": 0.806125,
+          "n": 20
+        },
+        "average_precision": {
+          "mean": 0.30263919809944884,
+          "std": 0.1327203126500777,
+          "p2_5": 0.16819861741565886,
+          "p97_5": 0.6108637525076549,
+          "n": 20
+        },
+        "eer": {
+          "mean": 0.4612499999999999,
+          "std": 0.11076141975102682,
+          "p2_5": 0.24750000000000003,
+          "p97_5": 0.6,
+          "n": 20
+        }
+      },
+      "cambio_pestana": {
+        "deteccion_pipeline": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_reglas": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_modelo": {
+          "mean": 0.015000000000000003,
+          "std": 0.03663475485325233,
+          "p2_5": 0.0,
+          "p97_5": 0.1,
+          "n": 20
+        },
+        "auc_roc": {
+          "mean": 0.47612500000000013,
+          "std": 0.10938366507029523,
+          "p2_5": 0.31999999999999995,
+          "p97_5": 0.6934374999999997,
+          "n": 20
+        },
+        "average_precision": {
+          "mean": 0.24413862491116078,
+          "std": 0.07865924484339364,
+          "p2_5": 0.15604269282251493,
+          "p97_5": 0.4037489511318369,
+          "n": 20
+        },
+        "eer": {
+          "mean": 0.5337500000000001,
+          "std": 0.10074557584644389,
+          "p2_5": 0.29500000000000004,
+          "p97_5": 0.6381249999999999,
+          "n": 20
+        }
+      },
+      "tecleo_automatizado": {
+        "deteccion_pipeline": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_reglas": {
+          "mean": 1.0,
+          "std": 0.0,
+          "p2_5": 1.0,
+          "p97_5": 1.0,
+          "n": 20
+        },
+        "deteccion_modelo": {
+          "mean": 0.37,
+          "std": 0.10310954828418376,
+          "p2_5": 0.2,
+          "p97_5": 0.5524999999999999,
+          "n": 20
+        },
+        "auc_roc": {
+          "mean": 0.9487500000000001,
+          "std": 0.03640506760560156,
+          "p2_5": 0.8786875,
+          "p97_5": 0.9963124999999999,
+          "n": 20
+        },
+        "average_precision": {
+          "mean": 0.783719378961252,
+          "std": 0.13528804502217326,
+          "p2_5": 0.5733667881825777,
+          "p97_5": 0.9873106060606059,
+          "n": 20
+        },
+        "eer": {
+          "mean": 0.0975,
+          "std": 0.053125967483450415,
+          "p2_5": 0.025000000000000005,
+          "p97_5": 0.19999999999999998,
+          "n": 20
+        }
+      },
+      "ritmo_distinto": {
+        "deteccion_pipeline": {
+          "mean": 0.505,
+          "std": 0.09445132413883325,
+          "p2_5": 0.34750000000000003,
+          "p97_5": 0.7,
+          "n": 20
+        },
+        "deteccion_reglas": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        },
+        "deteccion_modelo": {
+          "mean": 0.505,
+          "std": 0.09445132413883325,
+          "p2_5": 0.34750000000000003,
+          "p97_5": 0.7,
+          "n": 20
+        },
+        "auc_roc": {
+          "mean": 0.9258750000000001,
+          "std": 0.042668204296580574,
+          "p2_5": 0.8485625,
+          "p97_5": 0.988,
+          "n": 20
+        },
+        "average_precision": {
+          "mean": 0.802213497593437,
+          "std": 0.10950612330843512,
+          "p2_5": 0.5881735103132162,
+          "p97_5": 0.9617626817626815,
+          "n": 20
+        },
+        "eer": {
+          "mean": 0.13874999999999998,
+          "std": 0.05705203073095923,
+          "p2_5": 0.04875,
+          "p97_5": 0.23812499999999998,
+          "n": 20
+        }
+      }
+    },
+    "falsas_alarmas_por_indicador": {
+      "paste_volume_alto": {
+        "mean": 0.0,
+        "std": 0.0,
+        "p2_5": 0.0,
+        "p97_5": 0.0,
+        "n": 20
+      },
+      "cambios_pestana_frecuentes": {
+        "mean": 0.0,
+        "std": 0.0,
+        "p2_5": 0.0,
+        "p97_5": 0.0,
+        "n": 20
+      },
+      "perdida_foco_prolongada": {
+        "mean": 0.0,
+        "std": 0.0,
+        "p2_5": 0.0,
+        "p97_5": 0.0,
+        "n": 20
+      },
+      "ritmo_tecleo_atipico": {
+        "mean": 0.0,
+        "std": 0.0,
+        "p2_5": 0.0,
+        "p97_5": 0.0,
+        "n": 20
+      },
+      "atipico_modelo_poblacional": {
+        "mean": 0.028750000000000005,
+        "std": 0.027235570781415135,
+        "p2_5": 0.0,
+        "p97_5": 0.08812499999999997,
+        "n": 20
+      }
+    }
+  },
+  "por_repeticion": [
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.0,
+        "tp": 35,
+        "fp": 0,
+        "tn": 40,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.0,
+        "tp": 9,
+        "fp": 0,
+        "tn": 40,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.8093750000000001,
+        "average_precision": 0.8596257559248018,
+        "eer": 0.2
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.5,
+            "average_precision": 0.28593696431354215,
+            "eer": 0.5
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.7825000000000001,
+            "average_precision": 0.6215114560236511,
+            "eer": 0.2
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.975,
+            "average_precision": 0.9243181818181818,
+            "eer": 0.09999999999999998
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.98,
+            "average_precision": 0.9183658008658008,
+            "eer": 0.049999999999999996
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.0,
+        "tp": 35,
+        "fp": 0,
+        "tn": 40,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.725,
+        "frr": 0.0,
+        "tp": 11,
+        "fp": 0,
+        "tn": 40,
+        "fn": 29
+      },
+      "modelo_score": {
+        "auc_roc": 0.7474999999999999,
+        "average_precision": 0.8193473739393468,
+        "eer": 0.32499999999999996
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.32,
+            "average_precision": 0.15586045772859142,
+            "eer": 0.625
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.6975,
+            "average_precision": 0.47944108047597267,
+            "eer": 0.375
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9775,
+            "average_precision": 0.9295482295482294,
+            "eer": 0.1
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.995,
+            "average_precision": 0.9833333333333333,
+            "eer": 0.05
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.075,
+        "frr": 0.025,
+        "tp": 37,
+        "fp": 1,
+        "tn": 39,
+        "fn": 3
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.025,
+        "tp": 10,
+        "fp": 1,
+        "tn": 39,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.705,
+        "average_precision": 0.7617773179700437,
+        "eer": 0.35
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.4575,
+            "average_precision": 0.2912626161410356,
+            "eer": 0.525
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.4799999999999999,
+            "average_precision": 0.20446015400820894,
+            "eer": 0.5
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.7,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.7,
+          "modelo_score": {
+            "auc_roc": 0.9275,
+            "average_precision": 0.8399192665571975,
+            "eer": 0.15
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.955,
+            "average_precision": 0.7488339438339439,
+            "eer": 0.1
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.1,
+        "frr": 0.0,
+        "tp": 36,
+        "fp": 0,
+        "tn": 40,
+        "fn": 4
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.725,
+        "frr": 0.0,
+        "tp": 11,
+        "fp": 0,
+        "tn": 40,
+        "fn": 29
+      },
+      "modelo_score": {
+        "auc_roc": 0.7225,
+        "average_precision": 0.8040148692973532,
+        "eer": 0.35
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.595,
+            "average_precision": 0.35037581746865776,
+            "eer": 0.5
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.3975,
+            "average_precision": 0.22149083213122622,
+            "eer": 0.6
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.6,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.6,
+          "modelo_score": {
+            "auc_roc": 0.9075,
+            "average_precision": 0.8924865831842576,
+            "eer": 0.1
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.99,
+            "average_precision": 0.9572979797979797,
+            "eer": 0.025000000000000012
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.05,
+        "tp": 35,
+        "fp": 2,
+        "tn": 38,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.05,
+        "tp": 9,
+        "fp": 2,
+        "tn": 38,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.7025000000000001,
+        "average_precision": 0.74134981964606,
+        "eer": 0.375
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.4175,
+            "average_precision": 0.1787109023919159,
+            "eer": 0.6
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.5299999999999999,
+            "average_precision": 0.3459712633913401,
+            "eer": 0.425
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.92,
+            "average_precision": 0.7775396825396825,
+            "eer": 0.19999999999999996
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.9425,
+            "average_precision": 0.6606349206349207,
+            "eer": 0.09999999999999998
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.05
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.025,
+        "tp": 35,
+        "fp": 1,
+        "tn": 39,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.025,
+        "tp": 10,
+        "fp": 1,
+        "tn": 39,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.7593749999999999,
+        "average_precision": 0.8060439360766806,
+        "eer": 0.275
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.525,
+            "average_precision": 0.2384568810319271,
+            "eer": 0.5
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.56,
+            "average_precision": 0.31858100679068085,
+            "eer": 0.475
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9750000000000001,
+            "average_precision": 0.8841777666777666,
+            "eer": 0.075
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9774999999999999,
+            "average_precision": 0.8737698412698411,
+            "eer": 0.05
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.15,
+        "frr": 0.025,
+        "tp": 34,
+        "fp": 1,
+        "tn": 39,
+        "fn": 6
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.025,
+        "tp": 9,
+        "fp": 1,
+        "tn": 39,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.7,
+        "average_precision": 0.7516175302896558,
+        "eer": 0.35
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.4075,
+            "average_precision": 0.26552814016725235,
+            "eer": 0.6
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.5150000000000001,
+            "average_precision": 0.23163714109047612,
+            "eer": 0.4
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.4,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.93,
+            "average_precision": 0.7554419191919192,
+            "eer": 0.175
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9474999999999999,
+            "average_precision": 0.8183761989644343,
+            "eer": 0.15
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.025,
+        "tp": 35,
+        "fp": 1,
+        "tn": 39,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.025,
+        "tp": 10,
+        "fp": 1,
+        "tn": 39,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.7425,
+        "average_precision": 0.7807451313169594,
+        "eer": 0.275
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.5825,
+            "average_precision": 0.2578782068382909,
+            "eer": 0.4
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.5025,
+            "average_precision": 0.30935082441384965,
+            "eer": 0.55
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9525,
+            "average_precision": 0.8700641025641025,
+            "eer": 0.1
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9325,
+            "average_precision": 0.7233573289455641,
+            "eer": 0.09999999999999999
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.0,
+        "tp": 35,
+        "fp": 0,
+        "tn": 40,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.0,
+        "tp": 10,
+        "fp": 0,
+        "tn": 40,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.82875,
+        "average_precision": 0.8443095603389623,
+        "eer": 0.25
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.7825,
+            "average_precision": 0.45203892920804684,
+            "eer": 0.2
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.665,
+            "average_precision": 0.3235262216774822,
+            "eer": 0.375
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.88,
+            "average_precision": 0.7638773276059803,
+            "eer": 0.225
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9874999999999999,
+            "average_precision": 0.9430122655122655,
+            "eer": 0.025000000000000012
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.025,
+        "tp": 35,
+        "fp": 1,
+        "tn": 39,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.025,
+        "tp": 10,
+        "fp": 1,
+        "tn": 39,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.80625,
+        "average_precision": 0.8311143539236199,
+        "eer": 0.275
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.48,
+            "average_precision": 0.20743603970289767,
+            "eer": 0.55
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.2,
+          "modelo_score": {
+            "auc_roc": 0.8275,
+            "average_precision": 0.5990952380952381,
+            "eer": 0.30000000000000004
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.96,
+            "average_precision": 0.8577777777777778,
+            "eer": 0.125
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.3,
+          "modelo_score": {
+            "auc_roc": 0.9575,
+            "average_precision": 0.8173015873015873,
+            "eer": 0.09999999999999998
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.05,
+        "tp": 35,
+        "fp": 2,
+        "tn": 38,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.05,
+        "tp": 9,
+        "fp": 2,
+        "tn": 38,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.7106250000000001,
+        "average_precision": 0.7289450825146517,
+        "eer": 0.35
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.47750000000000004,
+            "average_precision": 0.2108382670137579,
+            "eer": 0.575
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.49,
+            "average_precision": 0.21948433096991343,
+            "eer": 0.5
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.95,
+            "average_precision": 0.793560606060606,
+            "eer": 0.09999999999999998
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9249999999999999,
+            "average_precision": 0.6299891774891775,
+            "eer": 0.15
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.05
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.0,
+        "tp": 35,
+        "fp": 0,
+        "tn": 40,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.0,
+        "tp": 10,
+        "fp": 0,
+        "tn": 40,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.76125,
+        "average_precision": 0.8005782811148724,
+        "eer": 0.3
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.475,
+            "average_precision": 0.21122382620366492,
+            "eer": 0.55
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.6799999999999999,
+            "average_precision": 0.4206833272556404,
+            "eer": 0.30000000000000004
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9275,
+            "average_precision": 0.8212645249487355,
+            "eer": 0.19999999999999996
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9625,
+            "average_precision": 0.852983682983683,
+            "eer": 0.07500000000000001
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.15,
+        "frr": 0.1,
+        "tp": 34,
+        "fp": 4,
+        "tn": 36,
+        "fn": 6
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.8,
+        "frr": 0.1,
+        "tp": 8,
+        "fp": 4,
+        "tn": 36,
+        "fn": 32
+      },
+      "modelo_score": {
+        "auc_roc": 0.629375,
+        "average_precision": 0.6278950688973501,
+        "eer": 0.4
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.41500000000000004,
+            "average_precision": 0.17609462233859877,
+            "eer": 0.55
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.365,
+            "average_precision": 0.164401254300164,
+            "eer": 0.6
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.4,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.845,
+            "average_precision": 0.5395027195027194,
+            "eer": 0.25
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.8925000000000001,
+            "average_precision": 0.5658428121586017,
+            "eer": 0.15000000000000002
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.1
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.15,
+        "frr": 0.05,
+        "tp": 34,
+        "fp": 2,
+        "tn": 38,
+        "fn": 6
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.825,
+        "frr": 0.05,
+        "tp": 7,
+        "fp": 2,
+        "tn": 38,
+        "fn": 33
+      },
+      "modelo_score": {
+        "auc_roc": 0.6775,
+        "average_precision": 0.7215999955537007,
+        "eer": 0.325
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.40750000000000003,
+            "average_precision": 0.1892939537893899,
+            "eer": 0.6
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.4174999999999999,
+            "average_precision": 0.1875089403350273,
+            "eer": 0.5
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.4,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9375,
+            "average_precision": 0.7473841354723707,
+            "eer": 0.09999999999999998
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.3,
+          "modelo_score": {
+            "auc_roc": 0.9475,
+            "average_precision": 0.7654836829836829,
+            "eer": 0.07499999999999998
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.05
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.025,
+        "tp": 35,
+        "fp": 1,
+        "tn": 39,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.8,
+        "frr": 0.025,
+        "tp": 8,
+        "fp": 1,
+        "tn": 39,
+        "fn": 32
+      },
+      "modelo_score": {
+        "auc_roc": 0.738125,
+        "average_precision": 0.7872359408419939,
+        "eer": 0.30000000000000004
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.535,
+            "average_precision": 0.32834333794525966,
+            "eer": 0.55
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.5525,
+            "average_precision": 0.26238667810078187,
+            "eer": 0.475
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.9025,
+            "average_precision": 0.8421753246753246,
+            "eer": 0.09999999999999998
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.3,
+          "modelo_score": {
+            "auc_roc": 0.9625,
+            "average_precision": 0.761461038961039,
+            "eer": 0.09999999999999998
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.075,
+        "frr": 0.0,
+        "tp": 37,
+        "fp": 0,
+        "tn": 40,
+        "fn": 3
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.725,
+        "frr": 0.0,
+        "tp": 11,
+        "fp": 0,
+        "tn": 40,
+        "fn": 29
+      },
+      "modelo_score": {
+        "auc_roc": 0.7418750000000001,
+        "average_precision": 0.8276020018098998,
+        "eer": 0.32499999999999996
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.49,
+            "average_precision": 0.33873647098597504,
+            "eer": 0.6
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.48250000000000004,
+            "average_precision": 0.2683745619459905,
+            "eer": 0.5
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.7,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.7,
+          "modelo_score": {
+            "auc_roc": 0.9974999999999999,
+            "average_precision": 0.9909090909090909,
+            "eer": 0.024999999999999998
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9974999999999999,
+            "average_precision": 0.9909090909090909,
+            "eer": 0.024999999999999998
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.0
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.075,
+        "tp": 35,
+        "fp": 3,
+        "tn": 37,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.075,
+        "tp": 9,
+        "fp": 3,
+        "tn": 37,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.693125,
+        "average_precision": 0.7068898242885305,
+        "eer": 0.4
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.5925,
+            "average_precision": 0.25053454729186986,
+            "eer": 0.425
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.4225,
+            "average_precision": 0.19004339437474377,
+            "eer": 0.6
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.88,
+            "average_precision": 0.696484348984349,
+            "eer": 0.15
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.8775,
+            "average_precision": 0.6272619047619047,
+            "eer": 0.2
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.075
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.125,
+        "frr": 0.05,
+        "tp": 35,
+        "fp": 2,
+        "tn": 38,
+        "fn": 5
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.05,
+        "tp": 10,
+        "fp": 2,
+        "tn": 38,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.661875,
+        "average_precision": 0.674519336766258,
+        "eer": 0.375
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.31999999999999995,
+            "average_precision": 0.15624411055790405,
+            "eer": 0.65
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.5349999999999999,
+            "average_precision": 0.2533096558096558,
+            "eer": 0.45
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.5,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.5,
+          "modelo_score": {
+            "auc_roc": 0.88,
+            "average_precision": 0.6419675422616599,
+            "eer": 0.125
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.4,
+          "modelo_score": {
+            "auc_roc": 0.9125,
+            "average_precision": 0.5816827616827617,
+            "eer": 0.125
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.05
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.1,
+        "frr": 0.025,
+        "tp": 36,
+        "fp": 1,
+        "tn": 39,
+        "fn": 4
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.75,
+        "frr": 0.025,
+        "tp": 10,
+        "fp": 1,
+        "tn": 39,
+        "fn": 30
+      },
+      "modelo_score": {
+        "auc_roc": 0.691875,
+        "average_precision": 0.7278808691654319,
+        "eer": 0.35
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.38,
+            "average_precision": 0.1740639431715984,
+            "eer": 0.575
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.1,
+          "modelo_score": {
+            "auc_roc": 0.5675,
+            "average_precision": 0.2591308978345693,
+            "eer": 0.5
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.6,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.6,
+          "modelo_score": {
+            "auc_roc": 0.9400000000000001,
+            "average_precision": 0.8206564707222601,
+            "eer": 0.175
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.3,
+          "modelo_score": {
+            "auc_roc": 0.88,
+            "average_precision": 0.6482067880519892,
+            "eer": 0.19999999999999996
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    },
+    {
+      "pipeline": {
+        "far": 0.175,
+        "frr": 0.025,
+        "tp": 33,
+        "fp": 1,
+        "tn": 39,
+        "fn": 7
+      },
+      "solo_reglas": {
+        "far": 0.25,
+        "frr": 0.0,
+        "tp": 30,
+        "fp": 0,
+        "tn": 40,
+        "fn": 10
+      },
+      "solo_modelo": {
+        "far": 0.775,
+        "frr": 0.025,
+        "tp": 9,
+        "fp": 1,
+        "tn": 39,
+        "fn": 31
+      },
+      "modelo_score": {
+        "auc_roc": 0.6425000000000001,
+        "average_precision": 0.6915387173875028,
+        "eer": 0.44999999999999996
+      },
+      "por_perfil": {
+        "cambio_pestana": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.36250000000000004,
+            "average_precision": 0.16391446393303977,
+            "eer": 0.6
+          }
+        },
+        "pegado_masivo": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.0,
+          "modelo_score": {
+            "auc_roc": 0.4025,
+            "average_precision": 0.1723957029643637,
+            "eer": 0.6
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": 0.3,
+          "deteccion_reglas": 0.0,
+          "deteccion_modelo": 0.3,
+          "modelo_score": {
+            "auc_roc": 0.8525,
+            "average_precision": 0.6552143508665247,
+            "eer": 0.19999999999999996
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": 1.0,
+          "deteccion_reglas": 1.0,
+          "deteccion_modelo": 0.6,
+          "modelo_score": {
+            "auc_roc": 0.9524999999999999,
+            "average_precision": 0.8062834387834388,
+            "eer": 0.1
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": 0.0,
+        "cambios_pestana_frecuentes": 0.0,
+        "perdida_foco_prolongada": 0.0,
+        "ritmo_tecleo_atipico": 0.0,
+        "atipico_modelo_poblacional": 0.025
+      }
+    }
+  ],
+  "barrido_dificultad": [
+    {
+      "dificultad": 0.0,
+      "auc_mean": 0.49371875000000004,
+      "auc_std": 0.07246354431667149,
+      "eer_mean": 0.5,
+      "eer_std": 0.06230231895658797,
+      "ap_mean": 0.5234708135292251,
+      "deteccion_modelo_mean": 0.10500000000000001,
+      "frr_modelo_mean": 0.09125
+    },
+    {
+      "dificultad": 0.5,
+      "auc_mean": 0.51878125,
+      "auc_std": 0.07115629659002705,
+      "eer_mean": 0.48125,
+      "eer_std": 0.04358521598697864,
+      "ap_mean": 0.5425702040936609,
+      "deteccion_modelo_mean": 0.11375000000000002,
+      "frr_modelo_mean": 0.09625
+    },
+    {
+      "dificultad": 1.0,
+      "auc_mean": 0.5724374999999999,
+      "auc_std": 0.0667104468363484,
+      "eer_mean": 0.45375000000000004,
+      "eer_std": 0.051474955586494474,
+      "ap_mean": 0.5920598386290874,
+      "deteccion_modelo_mean": 0.14375,
+      "frr_modelo_mean": 0.07875
+    },
+    {
+      "dificultad": 1.5,
+      "auc_mean": 0.63615625,
+      "auc_std": 0.06518107212089218,
+      "eer_mean": 0.39875,
+      "eer_std": 0.05409239172106612,
+      "ap_mean": 0.6381563863105848,
+      "deteccion_modelo_mean": 0.15999999999999998,
+      "frr_modelo_mean": 0.07499999999999998
+    },
+    {
+      "dificultad": 2.0,
+      "auc_mean": 0.70103125,
+      "auc_std": 0.061760185541270066,
+      "eer_mean": 0.3475,
+      "eer_std": 0.06171880204861229,
+      "ap_mean": 0.6853013399428344,
+      "deteccion_modelo_mean": 0.1725,
+      "frr_modelo_mean": 0.07
+    },
+    {
+      "dificultad": 3.0,
+      "auc_mean": 0.7926249999999999,
+      "auc_std": 0.05543473521557629,
+      "eer_mean": 0.28625,
+      "eer_std": 0.04622243132824945,
+      "ap_mean": 0.7540567530145973,
+      "deteccion_modelo_mean": 0.19375,
+      "frr_modelo_mean": 0.05500000000000001
+    }
+  ],
+  "sensibilidad_contaminacion": {
+    "config": {
+      "repeticiones": 20,
+      "semilla_base": 2026,
+      "n_poblacion": 40,
+      "contaminacion_poblacion": 0.1,
+      "n_normales_test": 40,
+      "n_anomalas_test": 40,
+      "perfiles": [
+        "pegado_masivo",
+        "cambio_pestana",
+        "tecleo_automatizado",
+        "ritmo_distinto"
+      ],
+      "params": {
+        "dwell_mu": 95.0,
+        "dwell_sd_between": 15.0,
+        "dwell_sd_within_range": [
+          15.0,
+          30.0
+        ],
+        "flight_mu": 160.0,
+        "flight_sd_between": 35.0,
+        "flight_sd_within_range": [
+          40.0,
+          80.0
+        ],
+        "keys_range": [
+          250,
+          500
+        ],
+        "mouse_speed_mu": 0.6,
+        "mouse_speed_sd_between": 0.15,
+        "mouse_speed_cv_within": 0.3,
+        "mouse_moves_range": [
+          60,
+          150
+        ],
+        "tab_switch_lambda": 0.6,
+        "tab_hidden_mean_ms": 4000.0,
+        "paste_prob": 0.2,
+        "paste_chars_range": [
+          5,
+          60
+        ],
+        "copy_lambda": 0.3,
+        "dificultad": 2.0
+      },
+      "protocolo": "cierre"
+    },
+    "agregado": {
+      "pipeline": {
+        "far": {
+          "mean": 0.13999999999999999,
+          "std": 0.02969139517382807,
+          "p2_5": 0.1,
+          "p97_5": 0.20124999999999993,
+          "n": 20
+        },
+        "frr": {
+          "mean": 0.03375,
+          "std": 0.02599974696233144,
+          "p2_5": 0.0,
+          "p97_5": 0.075,
+          "n": 20
+        }
+      },
+      "solo_reglas": {
+        "far": {
+          "mean": 0.25,
+          "std": 0.0,
+          "p2_5": 0.25,
+          "p97_5": 0.25,
+          "n": 20
+        },
+        "frr": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        }
+      },
+      "solo_modelo": {
+        "far": {
+          "mean": 0.7975000000000001,
+          "std": 0.027980256196863246,
+          "p2_5": 0.761875,
+          "p97_5": 0.85,
+          "n": 20
+        },
+        "frr": {
+          "mean": 0.03375,
+          "std": 0.02599974696233144,
+          "p2_5": 0.0,
+          "p97_5": 0.075,
+          "n": 20
+        }
+      },
+      "modelo_score": {
+        "auc_roc": {
+          "mean": 0.7251250000000001,
+          "std": 0.035280012419439274,
+          "p2_5": 0.6678437500000001,
+          "p97_5": 0.7893125,
+          "n": 20
+        },
+        "average_precision": {
+          "mean": 0.7539299604085846,
+          "std": 0.042835264164291176,
+          "p2_5": 0.6744430747885123,
+          "p97_5": 0.8159578739375584,
+          "n": 20
+        },
+        "eer": {
+          "mean": 0.335,
+          "std": 0.03284733426658931,
+          "p2_5": 0.27375,
+          "p97_5": 0.375,
+          "n": 20
+        }
+      },
+      "por_perfil": {
+        "pegado_masivo": {
+          "deteccion_pipeline": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_reglas": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_modelo": {
+            "mean": 0.02,
+            "std": 0.04103913408340616,
+            "p2_5": 0.0,
+            "p97_5": 0.1,
+            "n": 20
+          },
+          "auc_roc": {
+            "mean": 0.53725,
+            "std": 0.09297672317645735,
+            "p2_5": 0.39237500000000003,
+            "p97_5": 0.672625,
+            "n": 20
+          },
+          "average_precision": {
+            "mean": 0.2676289813785978,
+            "std": 0.06610974694039393,
+            "p2_5": 0.17984725151778008,
+            "p97_5": 0.4075854498290423,
+            "n": 20
+          },
+          "eer": {
+            "mean": 0.45875000000000005,
+            "std": 0.07357193043116661,
+            "p2_5": 0.335625,
+            "p97_5": 0.575,
+            "n": 20
+          }
+        },
+        "cambio_pestana": {
+          "deteccion_pipeline": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_reglas": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_modelo": {
+            "mean": 0.02,
+            "std": 0.04103913408340616,
+            "p2_5": 0.0,
+            "p97_5": 0.1,
+            "n": 20
+          },
+          "auc_roc": {
+            "mean": 0.51375,
+            "std": 0.09445654807203263,
+            "p2_5": 0.3446874999999999,
+            "p97_5": 0.6891249999999999,
+            "n": 20
+          },
+          "average_precision": {
+            "mean": 0.2513153499226099,
+            "std": 0.07358165436914924,
+            "p2_5": 0.16592055062354996,
+            "p97_5": 0.4147781807006592,
+            "n": 20
+          },
+          "eer": {
+            "mean": 0.48,
+            "std": 0.07504384683215819,
+            "p2_5": 0.37375,
+            "p97_5": 0.6,
+            "n": 20
+          }
+        },
+        "tecleo_automatizado": {
+          "deteccion_pipeline": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_reglas": {
+            "mean": 1.0,
+            "std": 0.0,
+            "p2_5": 1.0,
+            "p97_5": 1.0,
+            "n": 20
+          },
+          "deteccion_modelo": {
+            "mean": 0.33,
+            "std": 0.11285761872936695,
+            "p2_5": 0.14750000000000002,
+            "p97_5": 0.5,
+            "n": 20
+          },
+          "auc_roc": {
+            "mean": 0.9393749999999998,
+            "std": 0.028629610637645037,
+            "p2_5": 0.8859374999999999,
+            "p97_5": 0.9827499999999999,
+            "n": 20
+          },
+          "average_precision": {
+            "mean": 0.7462485900537372,
+            "std": 0.11119131826723161,
+            "p2_5": 0.5667186589962326,
+            "p97_5": 0.9181107503607502,
+            "n": 20
+          },
+          "eer": {
+            "mean": 0.11499999999999999,
+            "std": 0.04687609647840391,
+            "p2_5": 0.036875000000000005,
+            "p97_5": 0.18812499999999996,
+            "n": 20
+          }
+        },
+        "ritmo_distinto": {
+          "deteccion_pipeline": {
+            "mean": 0.44000000000000006,
+            "std": 0.1187655806953123,
+            "p2_5": 0.195,
+            "p97_5": 0.6,
+            "n": 20
+          },
+          "deteccion_reglas": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p2_5": 0.0,
+            "p97_5": 0.0,
+            "n": 20
+          },
+          "deteccion_modelo": {
+            "mean": 0.44000000000000006,
+            "std": 0.1187655806953123,
+            "p2_5": 0.195,
+            "p97_5": 0.6,
+            "n": 20
+          },
+          "auc_roc": {
+            "mean": 0.9101250000000001,
+            "std": 0.051717062999199356,
+            "p2_5": 0.8086250000000001,
+            "p97_5": 0.98775,
+            "n": 20
+          },
+          "average_precision": {
+            "mean": 0.7684201148939926,
+            "std": 0.10369983278511968,
+            "p2_5": 0.602546212543495,
+            "p97_5": 0.9433987748362747,
+            "n": 20
+          },
+          "eer": {
+            "mean": 0.16999999999999998,
+            "std": 0.07416198487095663,
+            "p2_5": 0.04875000000000001,
+            "p97_5": 0.30000000000000004,
+            "n": 20
+          }
+        }
+      },
+      "falsas_alarmas_por_indicador": {
+        "paste_volume_alto": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        },
+        "cambios_pestana_frecuentes": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        },
+        "perdida_foco_prolongada": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        },
+        "ritmo_tecleo_atipico": {
+          "mean": 0.0,
+          "std": 0.0,
+          "p2_5": 0.0,
+          "p97_5": 0.0,
+          "n": 20
+        },
+        "atipico_modelo_poblacional": {
+          "mean": 0.03375,
+          "std": 0.02599974696233144,
+          "p2_5": 0.0,
+          "p97_5": 0.075,
+          "n": 20
+        }
+      }
+    }
+  }
+}
